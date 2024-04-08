@@ -8,7 +8,7 @@ const router = createRouter({
         {
             path: '/',
             name: 'Home',
-            component: () => import('@/views/portofolio/home/Index.vue'),
+            component: () => import('@/views/finance/dashboard/Index.vue'),
             meta:{
                 guestOnly:true,
             }
@@ -16,17 +16,16 @@ const router = createRouter({
         {
             path: '/sign-out',
             name: 'signout',
-            component: () => import('@/views/survey/administrator/sign/SignOut.vue'),
+            component: () => import('@/views/finance/auth/SignOut.vue'),
             meta:{
                 requiresAuth: true,
                 distributor:true,
-                // admin:true,
             }
         },
         {
             path: '/auth/login',
             name: 'login',
-            component: () => import('@/views/pages/auth/Login2.vue'),
+            component: () => import('@/views/finance/auth/Login2.vue'),
             meta:{
                 guestOnly:true,
             }
@@ -34,7 +33,7 @@ const router = createRouter({
         {
             path: '/:pathMatch(.*)*',
             name: 'notfound',
-            component: () => import('@/views/survey/administrator/sign/NotFound.vue')
+            component: () => import('@/views/finance/auth/NotFound.vue')
         },
     ]
 });

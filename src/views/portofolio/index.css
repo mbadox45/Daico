@@ -1,0 +1,53 @@
+/* Text Color */
+.text-black{
+    color: #050505;
+}
+.text-pink{
+    color: #ff747d;
+}
+.text-cream{
+    color: #fdd5b0;
+}
+.text-green{
+    color: #32594f;
+}
+
+/* Background Color */
+.bg-blacks{
+    background-color: #050505;
+}
+.bg-pinks{
+    background-color: #ff747d;
+}
+.bg-creams{
+    background-color: #fdd5b0;
+}
+.bg-greens{
+    background-color: #32594f;
+}
+
+@keyframes slidedown-icon {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(20px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.slidedown-icon {
+    animation: slidedown-icon;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+.box {
+    background-image: radial-gradient(var(--primary-300), var(--primary-600));
+    border-radius: 50% !important;
+    color: var(--primary-color-text);
+}

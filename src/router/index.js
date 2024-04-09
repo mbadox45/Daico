@@ -7,7 +7,7 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            name: 'Home',
+            name: 'dashboard',
             component: () => import('@/views/finance/dashboard/Index.vue'),
             meta:{
                 guestOnly:true,

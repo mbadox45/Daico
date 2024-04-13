@@ -1,18 +1,40 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
-import AppLayout from '@/layout/AppLayout.vue';
-// import AppLayout2 from '@/layout/layout_sso/AppLayout.vue';
+import RoomLayout from '@/views/finance/layout/Index.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
             path: '/',
-            name: 'dashboard',
-            component: () => import('@/views/finance/dashboard/Index.vue'),
-            meta:{
-                guestOnly:true,
-            }
+            component: RoomLayout,
+            redirect:'/dashboard',
+            children: [
+                {
+                    path: '/dashboard',
+                    name: 'dashboard',
+                    component: () => import('@/views/finance/dashboard/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/master-database',
+                    name: 'database',
+                    component: () => import('@/views/finance/master/DatabasePage.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+            ]
         },
+        // {
+        //     path: '/',
+        //     name: 'dashboard',
+        //     component: () => import('@/views/finance/dashboard/Index.vue'),
+        //     meta:{
+        //         guestOnly:true,
+        //     }
+        // },
         {
             path: '/sign-out',
             name: 'signout',

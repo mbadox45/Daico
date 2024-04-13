@@ -37,7 +37,7 @@
 </script>
 
 <template>
-    <div class="flex flex-column gap-2 px-4 py-2">
+    <div class="flex flex-column gap-2 py-2">
         <div class="text-center bg-yellow-100 py-2">
             <span class="font-semibold">MINIMUM SELLING PRICE (EXCL. LEVY DUTY) --> GPM 7% Base On CPO Olah INL</span>
         </div>

@@ -14,17 +14,11 @@
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-column relative">
-        <header-page/>
-        <div class="min-h-screen flex flex-column pb-3 px-4 gap-3 bg-white" style="padding-top: 7rem;">
-            <!-- Header + Menu -->
+    <!-- Header + Menu -->
 
-            <!-- Card Product -->
-            <card-product-page/>
+    <!-- Card Product -->
+    <card-product-page/>
 
-            <!-- Chart Dougnut Realisasi RKAP & Kinerja Produksi -->
-            <chart-dougnut-page/>
-        </div>
-        <footer-page/>
-    </div>
+    <!-- Chart Dougnut Realisasi RKAP & Kinerja Produksi -->
+    <chart-dougnut-page/>
 </template>

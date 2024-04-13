@@ -78,7 +78,7 @@
 </script>
 
 <template>
-    <div class="flex flex-column gap-2 px-4">
+    <div class="flex flex-column gap-2">
         <div class="gap-7 flex align-items-start">
             <div class="flex flex-wrap w-full border-round shadow-3">
                 <div class="w-full bg-white pt-2 text-center">

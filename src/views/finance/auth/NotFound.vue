@@ -21,7 +21,7 @@
                 <div class="text-900 font-bold text-5xl mb-3">404</div>
                 <div class="text-700 text-2xl mb-5">Not Found</div>
                 <Button @click="pushBack()" label="Back" icon="pi pi-chevron-left" class="font-bold px-5 py-3 p-button-raised p-button-rounded p-button-secondary white-space-nowrap"></Button>
-                <div class="text-gray-400 font-bold mt-5">SURVEY &nbsp; | &nbsp; PT INDUSTRI NABATI LESTARI</div>
+                <div class="text-gray-400 font-bold mt-5 uppercase">DAICO &nbsp; | &nbsp; PT INDUSTRI NABATI LESTARI</div>
             </div>
         </div>
     </div>

@@ -25,6 +25,30 @@ const router = createRouter({
                         guestOnly:true,
                     }
                 },
+                {
+                    path: '/general-leager',
+                    name: 'general leager',
+                    component: () => import('@/views/finance/master/GlPage.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/cpo-kpbn',
+                    name: 'cpo kpbn',
+                    component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/prop-cost',
+                    name: 'proportion cost',
+                    component: () => import('@/views/finance/accounting/propcost/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
             ]
         },
         // {

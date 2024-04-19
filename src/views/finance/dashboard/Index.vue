@@ -6,19 +6,26 @@
     import { useToast } from 'primevue/usetoast';
 
     // Components
-    import FooterPage from '@/views/finance/dashboard/components/FooterPage.vue'
+    import CardPotensiPage from '@/views/finance/dashboard/components/CardPotensiPage.vue'
     import CardProductPage from '@/views/finance/dashboard/components/CardProductPage.vue'
     import ChartDougnutPage from '@/views/finance/dashboard/components/ChartDougnutPage.vue'
-    import HeaderPage from '@/views/finance/component/HeaderPage.vue'
+    import ChartLinePage from '@/views/finance/dashboard/components/ChartLinePage.vue'
 
 </script>
 
 <template>
-    <!-- Header + Menu -->
+    <div>
+        <!-- Header + Menu -->
+    
+        <!-- Card Product -->
+        <card-product-page/>
+        
+        <!-- Chart Dougnut Realisasi RKAP & Kinerja Produksi -->
+        <chart-dougnut-page/>
+        
+        <card-potensi-page/>
 
-    <!-- Card Product -->
-    <card-product-page/>
-
-    <!-- Chart Dougnut Realisasi RKAP & Kinerja Produksi -->
-    <chart-dougnut-page/>
+        <!-- Chart Dougnut Realisasi RKAP & Kinerja Produksi -->
+        <chart-line-page/>
+    </div>
 </template>

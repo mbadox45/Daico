@@ -80,10 +80,9 @@
 <template>
     <div class="flex flex-column gap-2">
         <div class="gap-7 flex align-items-start">
-            <div class="flex flex-wrap w-full border-round shadow-3">
-                <div class="w-full bg-white pt-2 text-center">
+            <div class="card flex flex-wrap w-full border-round shadow-3">
+                <div class="w-full bg-white text-center border-bottom-1 pb-3 border-gray-300">
                     <span class="text-sm font-bold">REALISASI VS RKAP SALES (Kg)</span>
-                    <Divider/>
                 </div>
                 <Card v-for="(item, index) in sales" :key="index" class="w-4 border-noround shadow-none" :class="`${index <= (sales.length - 1) && index > 0 ? 'border-left-1 border-gray-200' : ''}`">
                     <template #content>
@@ -105,10 +104,9 @@
                 </Card>
             </div>
 
-            <div class="flex flex-wrap w-8 border-round shadow-3">
-                <div class="w-full bg-white pt-2 text-center">
+            <div class="card flex flex-wrap w-8 border-round shadow-3">
+                <div class="w-full bg-white text-center border-bottom-1 pb-3 border-gray-300">
                     <span class="text-sm font-bold uppercase">Kinerja Produksi</span>
-                    <Divider/>
                 </div>
                 <Card v-for="(item, index) in produksi" :key="index" class="w-6 border-noround shadow-none" :class="`${index <= (produksi.length - 1) && index > 0 ? 'border-left-1 border-gray-200' : ''}`">
                     <template #content>

@@ -11,121 +11,123 @@
     // Variable
     const visible = ref(false);
     const route = useRoute();
-    const currentRouteName = computed(() => route.name);
+    const router = useRouter();
+    const menu = ref(true);
+    const routeName = computed(() => { 
+        route.name;
+    });
 
     const items = ref([
         {
             label: 'Dashboard',
             icon: 'pi pi-th-large',
-            to:'/'
+            route:'/',
+            root: true,
         },
         {
-            label: 'Features',
-            icon: 'pi pi-star',
-            to:'/'
-        },
-        {
-            label: 'Projects',
-            icon: 'pi pi-search',
+            label: 'Accounting',
+            icon: 'pi pi-book',
+            root: true,
             items: [
                 {
-                    label: 'Core',
-                    icon: 'pi pi-bolt',
-                    shortcut: '⌘+S'
+                    label: 'Target',
+                    route:'target',
+                    // icon: 'pi pi-bolt',
                 },
                 {
-                    label: 'Blocks',
-                    icon: 'pi pi-server',
-                    shortcut: '⌘+B'
+                    label: 'CPO KPBN',
+                    route:'cpo-kpbn',
+                    // icon: 'pi pi-server',
                 },
                 {
-                    label: 'UI Kit',
-                    icon: 'pi pi-pencil',
-                    shortcut: '⌘+U'
+                    label: 'Proportion Cost',
+                    route:'prop-cost',
+                    // icon: 'pi pi-server',
                 },
-                {
-                    separator: true
-                },
-                {
-                    label: 'Templates',
-                    icon: 'pi pi-palette',
-                    items: [
-                        {
-                            label: 'Apollo',
-                            icon: 'pi pi-palette',
-                            badge: 2
-                        },
-                        {
-                            label: 'Ultima',
-                            icon: 'pi pi-palette',
-                            badge: 3
-                        }
-                    ]
-                }
             ]
         },
         {
-            label: 'Contact',
-            icon: 'pi pi-envelope',
-            badge: 3
-        }
+            label: 'Reporting',
+            icon: 'pi pi-chart-bar',
+            root: true,
+            items: [
+                {
+                    label: 'Average Price',
+                    // icon: 'pi pi-bolt',
+                },
+                {
+                    label: 'Costing HPP',
+                    // icon: 'pi pi-server',
+                },
+                {
+                    label: 'Cost Production',
+                    // icon: 'pi pi-server',
+                },
+            ]
+        },
+        {
+            label: 'Master',
+            icon: 'pi pi-cog',
+            root: true,
+            items: [
+                {
+                    label: 'General Leager',
+                    // icon: 'pi pi-bolt',
+                    route:'general-leager'
+                },
+                {
+                    label: 'Database',
+                    // icon: 'pi pi-server',
+                    route:'master-database'
+                },
+            ]
+        },
     ]);
-
-    const toggleSidebar = (cond) => {
-        visible.value = cond;
-    };
 
 </script>
 
 <template>
-    <div class="fixed flex px-6 bg-teal-800 align-items-center justify-content-between w-full z-5 shadow-4" style="padding-block: 10px;">
-        <div class="flex gap-5 align-items-center w-full">
-            <!-- <div class="border-circle bg-transparent border-1 text-teal-300 border-teal-300 hover:bg-teal-700 hover:text-white" style="padding: 10px;" @click="toggleSidebar(true)">
-                <i class="pi pi-th-large text-xl"></i>
-            </div> -->
-            <span class="text-2xl font-semibold text-white">Daily Inventory Costing</span>
+    <div class="fixed flex px-6 bg-gray-100 align-items-center justify-content-between w-full z-5" style="padding-block: 10px;">
+        <div class="flex flex-column w-3">
+            <span class="text-2xl font-medium text-teal-800">DAICO</span>
+            <span class="text-xs font-semibold text-gray-600">Daily Inventory Costing</span>
         </div>
-        <div class="flex gap-6 justify-content-end w-full">
-            <a v-ripple v-for="(item, index) in items" :key="index">
-                <div class="flex text-white align-items-center gap-1 py-2 cursor-pointer" >
-                    <span :class="item.icon" />
-                    <span class="ml-2">{{ item.label }}</span>
-                    <span v-if="item.items != null" class="pi pi-angle-down ml-1"/>
+        <div class="flex justify-content-center w-8">
+            <Menubar :model="items" class="bg-transparent flex gap-2 justify-content-center border-none w-full">
+                <template #item="{ item }">
+                    <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                        <a v-ripple v-if="item.root" :href="href" @click="navigate" class="text-teal-800 hover:text-teal-500 focus:text-teal-500 active:text-teal-500 flex align-items-center cursor-pointer gap-2 px-3 py-2">
+                            <span :class="`${item.icon == null ? 'hidden': item.icon}`" />
+                            <span >{{ item.label }}</span>
+                        </a>
+                        <a v-ripple v-else :href="href" @click="navigate" class="text-teal-800 flex align-items-center cursor-pointer gap-2 px-3 py-2">
+                            <span :class="`${item.icon == null ? 'hidden': item.icon}`" />
+                            <span class="font-medium">{{ item.label }}</span>
+                        </a>
+                    </router-link>
+                    <a v-else v-ripple :href="item.url" :target="item.target" class="">
+                        <div class="text-teal-800 hover:text-teal-500 focus:text-teal-500 active:text-teal-500 flex align-items-center cursor-pointer gap-2 px-3 py-2" v-if="item.root">
+                            <span :class="`${item.icon == null ? 'hidden': item.icon}`" />
+                            <span>{{ item.label }}</span>
+                            <span class="pi pi-fw pi-angle-down" v-show="item.items != null"/>
+                        </div>
+                        <div class="text-teal-800 flex align-items-center cursor-pointer gap-2 px-3 py-2" v-else>
+                            <span :class="`${item.icon == null ? 'hidden': item.icon}`" />
+                            <span class="font-medium">{{ item.label }}</span>
+                            <span class="pi pi-fw pi-angle-down" v-show="item.items != null"/>
+                        </div>
+                    </a>
+                </template>
+            </Menubar  >
+        </div>
+        <div class="flex justify-content-end align-items-center w-3">
+            <a v-ripple class="">
+                <div class="flex text-teal-800 align-items-center hover:bg-white gap-2 py-2 px-3 cursor-pointer border-round w-auto" >
+                    <span class="pi pi-sign-out font-bold" />
+                    <span class="font-bold">Sign Out</span>
                 </div>
             </a>
-            <!-- <span class="text-white">Master</span>
-            <span class="text-white">Costing</span> -->
         </div>
-        <!-- <span class="text-3xl uppercase font-light text-white">{{ currentRouteName }}</span> -->
-        <sidebar-page :visible="visible" @close="toggleSidebar"/>
-        <!-- <Menubar :model="items">
-            <template #start>
-                <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-2rem">
-                    <path
-                        d="M25.87 18.05L23.16 17.45L25.27 20.46V29.78L32.49 23.76V13.53L29.18 14.73L25.87 18.04V18.05ZM25.27 35.49L29.18 31.58V27.67L25.27 30.98V35.49ZM20.16 17.14H20.03H20.17H20.16ZM30.1 5.19L34.89 4.81L33.08 12.33L24.1 15.67L30.08 5.2L30.1 5.19ZM5.72 14.74L2.41 13.54V23.77L9.63 29.79V20.47L11.74 17.46L9.03 18.06L5.72 14.75V14.74ZM9.63 30.98L5.72 27.67V31.58L9.63 35.49V30.98ZM4.8 5.2L10.78 15.67L1.81 12.33L0 4.81L4.79 5.19L4.8 5.2ZM24.37 21.05V34.59L22.56 37.29L20.46 39.4H14.44L12.34 37.29L10.53 34.59V21.05L12.42 18.23L17.45 26.8L22.48 18.23L24.37 21.05ZM22.85 0L22.57 0.69L17.45 13.08L12.33 0.69L12.05 0H22.85Z"
-                        fill="var(--primary-color)"
-                    />
-                    <path
-                        d="M30.69 4.21L24.37 4.81L22.57 0.69L22.86 0H26.48L30.69 4.21ZM23.75 5.67L22.66 3.08L18.05 14.24V17.14H19.7H20.03H20.16H20.2L24.1 15.7L30.11 5.19L23.75 5.67ZM4.21002 4.21L10.53 4.81L12.33 0.69L12.05 0H8.43002L4.22002 4.21H4.21002ZM21.9 17.4L20.6 18.2H14.3L13 17.4L12.4 18.2L12.42 18.23L17.45 26.8L22.48 18.23L22.5 18.2L21.9 17.4ZM4.79002 5.19L10.8 15.7L14.7 17.14H14.74H15.2H16.85V14.24L12.24 3.09L11.15 5.68L4.79002 5.2V5.19Z"
-                        fill="var(--text-color)"
-                    />
-                </svg>
-            </template>
-            <template #item="{ item, hasSubmenu, root }">
-                <a v-ripple class="flex align-items-center">
-                    <span :class="item.icon" />
-                    <span class="ml-2">{{ item.label }}</span>
-                    <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
-                    <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
-                    <i v-if="hasSubmenu" :class="['pi pi-angle-down', { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root }]"></i>
-                </a>
-            </template>
-            <template #end>
-                <div class="flex align-items-center gap-2">
-                    <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" />
-                    <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
-                </div>
-            </template>
-        </Menubar> -->
+        <!-- <sidebar-page :visible="visible" @close="toggleSidebar"/> -->
     </div>
 </template>

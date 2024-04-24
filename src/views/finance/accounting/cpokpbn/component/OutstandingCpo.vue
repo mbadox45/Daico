@@ -5,7 +5,8 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import {database} from '@/api/DummyData.js'
+    import {outstanding_cpo} from '@/api/dummy/variable_form.js';
+    import OutstandingCpo from '@/api/cpo/OutstandingCpo.js';
 
     // VARIABLE
     const products = ref();
@@ -15,35 +16,24 @@
     const tahun = ref(Number(moment().format('yyyy')));
     const list_tahun = ref([]);
     const op = ref();
+    const forms = ref({outstanding_cpo})
+    const loadingTable = ref(false)
     
     // Dialog Configure
     const visible = ref(false);
     const status_form = ref('add');
     const title_dialog = ref('');
 
+    // Message Configure
+    const messages = ref([]);
+    let count = ref(0);
+    const time = ref(3000)
+
 
     // Function ===================================================================================================================================================
     onMounted(() => {
         loadData()
     });
-
-    const loadBulan = () => {
-        list_bulan.value = []
-        if (tahun.value >= Number(moment().format('yyyy'))) {
-            const month = Number(moment().format('M'))
-            for (let i = 1; i <= month; i++) {
-                const dateString = `2024-${i.toString().padStart(2, '0')}-01`;
-                const monthName = moment(dateString, 'YYYY-MM-DD').format('MMMM');
-                list_bulan.value.push({ id: i, name: monthName });
-            }
-        } else {
-            for (let i = 1; i <= 12; i++) {
-                const dateString = `2024-${i.toString().padStart(2, '0')}-01`;
-                const monthName = moment(dateString, 'YYYY-MM-DD').format('MMMM');
-                list_bulan.value.push({ id: i, name: monthName });
-            }
-        }
-    }
 
     const loadTahun = () => {
         const year = Number(moment().format('yyyy'))
@@ -54,21 +44,55 @@
     }
 
     const loadData = async() => {
-        products.value = []
-        for (let i = 0; i < 10; i++) {
-            const kontrak = `MP/${Math.floor(Math.random() * 111)+100}/BAU/XX/2024`;
-            const qty = Math.floor(Math.random() * 111)+100;
-            const harga = Number(`12${Math.floor(Math.random()*900) + 100}`);
-            products.value.push({id: i, kontrak:kontrak, supplier:'PT Maju Mundur Bersama', qty: qty, harga:formatsCurrency(harga), value: formatsCurrency(qty * harga)});
+        loadingTable.value = true
+        try {
+            products.value = []
+            const response = await OutstandingCpo.getAll()
+            const load = response.data;
+            const data = load.data;
+            console.log(load)
+            for (let a = 0; a < data.length; a++) {
+                products.value.push({
+                    id:data[a].id,
+                    tanggal:moment(data[a].tanggal).format('DD-MMM-YYYY'),
+                    harga:formatCurrency(data[a].harga),
+                    qty: data[a].qty,
+                    value: formatCurrency(data[a].value),
+                })
+            }
+            loadingTable.value = false
+        } catch (error) {
+            products.value = []
+            loadingTable.value = false
         }
-        loadTahun();
-        loadBulan();
     }
 
     const formDatabase = (cond, data) => {
         visible.value = true
         status_form.value = cond;
-        title_dialog.value = cond == 'add' ? 'Tambah Data' : cond == 'edit' ? 'Edit Data' : 'Hapus Data' ;
+        title_dialog.value = cond == 'add' ? 'Outstanding CPO - Tambah Data' : cond == 'edit' ? 'Outstanding CPO - Edit Data' : 'Outstanding CPO - Hapus Data' ;
+        if (cond == 'add') {
+            resetForm()
+        } else {
+            console.log(data)
+            forms.value = {
+                id: data.id,
+                kontrak: data.kontrak,
+                supplier: data.supplier,
+                harga: currencyToNumber(data.harga),
+                qty: data.qty,
+            }
+        }
+    }
+
+    const resetForm = () => {
+        forms.value = {
+            id: null,
+            kontrak: null,
+            supplier: null,
+            qty: null,
+            harga: null,
+        }
     }
 
     const opByPeriod = (event) => {
@@ -77,25 +101,77 @@
 
     const loadByPeriod = () => {
         op.value.toggle();
+        loadData();
     }
 
-    const formatsCurrency = (amount) => {
-        // Convert the number to a string and insert commas every three digits from the right
+    const formatCurrency = (amount) => {
         let parts = amount.toString().split('.');
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-        // Combine the integer part with the decimal part (if any)
         return 'Rp ' + parts.join(',');
+    }
+
+    const currencyToNumber = (money) => {
+        const numericString = money.replace(/[^\d,.]/g, ''); // Removes all non-numeric characters except ',' and '.'
+        const numericValue = parseFloat(numericString.replace('.', ''));
+        return numericValue;
+    }
+
+    const saveData = async () => {
+        status_form.value
+        if (forms.value.tanggal != null && forms.value.harga != null && forms.value.qty != null) {
+            if (status_form.value == 'add') {
+                const response = await OutstandingCpo.addOutstanding(forms.value);
+                const load = response.data;
+                if (load.success == true) {
+                    messages.value = [
+                        { severity: 'success', content: 'Data berhasil di tambahkan', id: count.value++ }
+                    ];
+                    setTimeout(function() {
+                        loadData()
+                        visible.value = false
+                    }, time.value);
+                } else {
+                    messages.value = [
+                        { severity: 'error', content: 'Proses gagal, silahkan hubungi tim IT', id: count.value++ }
+                    ];
+                }
+            } else if (status_form.value == 'edit') {
+                const response = await OutstandingCpo.updateOutstanding(forms.value.id, forms.value);
+                const load = response.data;
+                if (load.success == true) {
+                    messages.value = [
+                        { severity: 'success', content: 'Data berhasil di update', id: count.value++ }
+                    ];
+                    setTimeout(function() {
+                        loadData()
+                        visible.value = false
+                    }, time.value);
+                } else {
+                    messages.value = [
+                        { severity: 'error', content: 'Proses gagal, silahkan hubungi tim IT', id: count.value++ }
+                    ];
+                }
+            } else {
+                messages.value = [
+                    { severity: 'success', content: 'Data berhasil di hapus', id: count.value++ }
+                ];
+            }
+        } else {
+            messages.value = [
+                { severity: 'warn', content: 'Mohon data diisi dengan lengkap', id: count.value++ }
+            ];
+        }
     }
 </script>
 
 <template>
-    <div class="card shadow-3 flex flex-column gap-3 w-full">
-        <span class="font-medium text-xl">Outstanding CPO</span>
+    <div class="flex flex-column gap-3 w-full">
+        <span class="font-medium text-xl uppercase">Outstanding CPO</span>
         <div class="flex justify-content-between align-items-center gap-5">
             <div class="w-full flex gap-2">
                 <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)"/>
-                <Button label="Select by Period" outlined severity="secondary" size="small" @click="opByPeriod"/>
+                <!-- <Button label="Select by Period" outlined severity="secondary" size="small" @click="opByPeriod"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">
                     <div class="flex flex-column gap-3">
                         <span class="font-light text-sm">Please select a period</span>
@@ -108,28 +184,53 @@
                         </div>
                         <Button icon="pi pi-check" label="Submit" severity="success" class="w-auto" @click="loadByPeriod"/>
                     </div>
-                </OverlayPanel>
+                </OverlayPanel> -->
+            </div>
+            <div class="p-inputgroup p-fluid">
+                <span class="p-inputgroup-addon bg-white">
+                    <i class="pi pi-search"></i>
+                </span>
+                <InputText type="text" placeholder="Search" class="w-full" v-model="filters['global'].value"/>
             </div>
         </div>
         <!-- Dialog -->
         <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '50rem' }">
-            <span class="p-text-secondary block mb-5">Update your information.</span>
+            <transition-group name="p-message" tag="div">
+                <Message v-for="msg of messages" :key="msg.id" :severity="msg.severity">{{ msg.content }}</Message>
+            </transition-group>
             <div class="flex align-items-center gap-3 mb-3">
-                <label for="username" class="font-semibold w-6rem">Username</label>
-                <InputText id="username" class="flex-auto" autocomplete="off" />
+                <label for="username" class="font-semibold w-6rem">Kontrak</label>
+                <InputText id="username" v-model="forms.kontrak" class="flex-auto" autocomplete="off" />
+            </div>
+            <div class="flex align-items-center gap-3 mb-3">
+                <label for="supplier" class="font-semibold w-6rem">Supplier</label>
+                <InputText id="supplier" v-model="forms.supplier" class="flex-auto" autocomplete="off" />
             </div>
             <div class="flex align-items-center gap-3 mb-5">
-                <label for="email" class="font-semibold w-6rem">Email</label>
-                <InputText id="email" class="flex-auto" autocomplete="off" />
+                <label for="avg" class="font-semibold w-6rem">Qty</label>
+                <InputNumber v-model="forms.qty" inputId="avg" :minFractionDigits="1" :maxFractionDigits="2" class="flex-auto"/>
+            </div>
+            <div class="flex align-items-center gap-3 mb-5">
+                <label for="harga" class="font-semibold w-6rem">Harga (Rp)</label>
+                <InputNumber v-model="forms.harga" inputId="harga" :minFractionDigits="1" :maxFractionDigits="3" class="flex-auto"/>
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-                <Button type="button" label="Save" @click="visible = false"></Button>
+                <Button type="button" label="Save" @click="saveData"></Button>
             </div>
         </Dialog>
 
         <!-- Table -->
-        <DataTable v-model:filters="filters" :value="products" dataKey="id" scrollable :globalFilterFields="['date']">
+        <div v-if="loadingTable == true" class="flex flex-column-reverse justify-content-center align-items-center gap-3">
+            <div>
+                <span class="text-xl font-normal">Loading...</span>
+            </div>
+            <div>
+                <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
+            </div>
+        </div>
+        <!-- Table -->
+        <DataTable v-else v-model:filters="filters" :value="products" showGridlines paginator dataKey="id" scrollable :globalFilterFields="['date']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <ColumnGroup type="header">
@@ -146,9 +247,27 @@
                     <Column :rowspan="2" />
                 </Row>
                 <Row>
-                    <Column header="Qty" sortable field="qty" />
-                    <Column header="Harga" sortable field="harga" />
-                    <Column header="Value" sortable field="value" />
+                    <Column sortable field="qty">
+                        <template #header>
+                            <div class="flex">
+                                <span>Qty</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column sortable field="harga">
+                        <template #header>
+                            <div class="flex justify-content-end w-full">
+                                <span>Harga</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column sortable field="value">
+                        <template #header>
+                            <div class="flex justify-content-end w-full">
+                                <span>Value</span>
+                            </div>
+                        </template>
+                    </Column>
                 </Row>
             </ColumnGroup>
             <Column field="kontrak">
@@ -163,24 +282,29 @@
             </Column>
             <Column field="qty">
                 <template #body="{ data }">
-                    {{ data.qty }}
+                    <div class="flex">
+                        <span>{{ data.qty }}</span>
+                    </div>
                 </template>
             </Column>
             <Column field="harga">
                 <template #body="{ data }">
-                    {{ data.harga }}
+                    <div class="flex justify-content-end">
+                        <span>{{ data.harga }}</span>
+                    </div>
                 </template>
             </Column>
             <Column field="value">
                 <template #body="{ data }">
-                    {{ data.value }}
+                    <div class="flex justify-content-end">
+                        <span>{{ data.value }}</span>
+                    </div>
                 </template>
             </Column>
-            <Column header="">
+            <Column header="" style="max-width: 10px;">
                 <template #body="{ data }">
-                    <div class="flex gap-3">
+                    <div class="flex justify-content-end gap-3">
                         <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
-                        <button @click="formDatabase('delete', data)" class="bg-transparent text-sm border-none border-round text-pink-500"><i class="pi pi-trash"></i></button>
                     </div>
                 </template>
             </Column>

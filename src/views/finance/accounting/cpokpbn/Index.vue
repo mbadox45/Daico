@@ -12,16 +12,35 @@
 </script>
 
 <template>
-    <!-- Header + Menu -->
     <div class="flex flex-wrap justify-content-between gap-5">
-        <div class="w-full md:w-full">
-            <avg-cpo/>
-        </div>
-        <div class="w-full md:w-full">
-            <incoming-cpo/>
-        </div>
-        <div class="w-full md:w-full">
-            <outstanding-cpo/>
-        </div>
+        <TabView class="tabview-custom card w-full">
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-chart-line text-xl"/>
+                        <span class="font-bold white-space-nowrap">CPO KPBN</span>
+                    </div>
+                </template>
+                <avg-cpo/>
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-money-bill text-xl"/>
+                        <span class="font-bold white-space-nowrap">Actual CPO</span>
+                    </div>
+                </template>
+                <incoming-cpo/>
+            </TabPanel>
+            <TabPanel>
+                <template #header>
+                    <div class="flex align-items-center gap-2">
+                        <i class="pi pi-money-bill text-xl"/>
+                        <span class="font-bold white-space-nowrap">Outstanding CPO</span>
+                    </div>
+                </template>
+                <outstanding-cpo/>
+            </TabPanel>
+        </TabView>
     </div>
 </template>

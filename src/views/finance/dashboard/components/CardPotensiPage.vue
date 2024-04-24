@@ -25,7 +25,7 @@
                 usd_olah: changeValue(Math.round(pm[i].usd_olah)),
             })
         }
-        console.log(list_potensi_margin.value)
+        // console.log(list_potensi_margin.value)
     }
 
     const changeValue = (value) => {

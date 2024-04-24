@@ -84,6 +84,27 @@
         },
     ]);
 
+    const onSettingsClick = () => {
+        // const roles = localStorage.getItem('roles');
+        try {
+            // const resp = UserService.logoutUser();
+            // const load = resp.data;
+            // if (load.code == 200) {
+                localStorage.removeItem('usertoken');
+                localStorage.removeItem('payload');
+                localStorage.removeItem('roles');
+                router.push('/auth/login');
+                window.close();
+            // }
+        } catch (error) {
+            localStorage.removeItem('usertoken');
+            localStorage.removeItem('payload');
+            localStorage.removeItem('roles');
+            router.push('/auth/login');
+            window.close();
+        }
+    };
+
 </script>
 
 <template>
@@ -121,7 +142,7 @@
             </Menubar  >
         </div>
         <div class="flex justify-content-end align-items-center w-3">
-            <a v-ripple class="">
+            <a v-ripple @click="onSettingsClick">
                 <div class="flex text-teal-800 align-items-center hover:bg-white gap-2 py-2 px-3 cursor-pointer border-round w-auto" >
                     <span class="pi pi-sign-out font-bold" />
                     <span class="font-bold">Sign Out</span>

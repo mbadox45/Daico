@@ -14,7 +14,10 @@ const router = createRouter({
                     name: 'dashboard',
                     component: () => import('@/views/finance/dashboard/Index.vue'),
                     meta:{
-                        guestOnly:true,
+                        // guestOnly:true,
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
                     }
                 },
                 {
@@ -22,7 +25,9 @@ const router = createRouter({
                     name: 'database',
                     component: () => import('@/views/finance/master/DatabasePage.vue'),
                     meta:{
-                        guestOnly:true,
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
                     }
                 },
                 {
@@ -30,7 +35,9 @@ const router = createRouter({
                     name: 'general leager',
                     component: () => import('@/views/finance/master/GlPage.vue'),
                     meta:{
-                        guestOnly:true,
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
                     }
                 },
                 {
@@ -38,7 +45,9 @@ const router = createRouter({
                     name: 'cpo kpbn',
                     component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
                     meta:{
-                        guestOnly:true,
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
                     }
                 },
                 {
@@ -46,7 +55,9 @@ const router = createRouter({
                     name: 'proportion cost',
                     component: () => import('@/views/finance/accounting/propcost/Index.vue'),
                     meta:{
-                        guestOnly:true,
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
                     }
                 },
             ]
@@ -65,7 +76,15 @@ const router = createRouter({
             component: () => import('@/views/finance/auth/SignOut.vue'),
             meta:{
                 requiresAuth: true,
-                distributor:true,
+                user:true,
+            }
+        },
+        {
+            path: '/verify/:id',
+            name: 'verify',
+            component: () => import('@/views/finance/auth/Verify.vue'),
+            meta:{
+                guestOnly:true,
             }
         },
         {
@@ -95,13 +114,13 @@ router.beforeEach((to, from, next) => {
                 if (to.matched.some((route) => route.meta.admin)) {
                     next();
                 } else {
-                    next('/home');
+                    next('/dashboard');
                 }
             } else {
-                if (to.matched.some((route) => route.meta.distributor)) {
+                if (to.matched.some((route) => route.meta.user)) {
                     next();
                 } else {
-                    next('/beranda');
+                    next('/dashboard');
                 }
             }
         } else {
@@ -110,9 +129,9 @@ router.beforeEach((to, from, next) => {
     } else if (to.matched.some((route) => route.meta.guestOnly)) {
         if (tokens) {
             if (roles == 'admin') {
-                next('/home');
+                next('/dashboard');
             } else {
-                next('/beranda');
+                next('/dashboard');
             }
         } else {
             next();

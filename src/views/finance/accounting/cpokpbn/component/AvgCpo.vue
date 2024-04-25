@@ -72,7 +72,6 @@
             const response = await KpbnCpo.getByDate({tanggal: dateString})
             const load = response.data;
             const data = load.data;
-            console.log(load)
             for (let a = 0; a < data.length; a++) {
                 products.value.push({
                     id:data[a].id,
@@ -94,8 +93,6 @@
         if (cond == 'add') {
             resetForm()
         } else {
-            console.log(data)
-            console.log(currencyToNumber(data.avg))
             forms.value = {
                 id: data.id,
                 tanggal: moment(data.tanggal).format('YYYY-MM-DD'),
@@ -261,7 +258,6 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-end gap-3">
                         <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
-                        <!-- <button @click="formDatabase('delete', data)" class="bg-transparent text-sm border-none border-round text-pink-500"><i class="pi pi-trash"></i></button> -->
                     </div>
                 </template>
             </Column>

@@ -66,7 +66,7 @@
             ]
         },
         {
-            label: 'Master',
+            label: 'Configuration',
             icon: 'pi pi-cog',
             root: true,
             items: [
@@ -78,7 +78,12 @@
                 {
                     label: 'Database',
                     // icon: 'pi pi-server',
-                    route:'master-database'
+                    route:'database'
+                },
+                {
+                    label: 'Master Data',
+                    // icon: 'pi pi-server',
+                    route:'master-data'
                 },
             ]
         },

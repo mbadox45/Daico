@@ -21,9 +21,9 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/master-database',
+                    path: '/database',
                     name: 'database',
-                    component: () => import('@/views/finance/master/DatabasePage.vue'),
+                    component: () => import('@/views/finance/config/DatabasePage.vue'),
                     meta:{
                         requiresAuth: true,
                         admin:true,
@@ -33,7 +33,17 @@ const router = createRouter({
                 {
                     path: '/general-leager',
                     name: 'general leager',
-                    component: () => import('@/views/finance/master/GlPage.vue'),
+                    component: () => import('@/views/finance/config/GlPage.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+                {
+                    path: '/master-data',
+                    name: 'master data',
+                    component: () => import('@/views/finance/config/master/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         admin:true,

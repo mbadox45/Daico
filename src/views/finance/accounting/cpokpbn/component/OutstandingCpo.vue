@@ -50,11 +50,12 @@
             const response = await OutstandingCpo.getAll()
             const load = response.data;
             const data = load.data;
-            console.log(load)
+            // console.log(load)
             for (let a = 0; a < data.length; a++) {
                 products.value.push({
                     id:data[a].id,
-                    tanggal:moment(data[a].tanggal).format('DD-MMM-YYYY'),
+                    kontrak: data[a].kontrak,
+                    supplier: data[a].supplier,
                     harga:formatCurrency(data[a].harga),
                     qty: data[a].qty,
                     value: formatCurrency(data[a].value),
@@ -119,7 +120,7 @@
 
     const saveData = async () => {
         status_form.value
-        if (forms.value.tanggal != null && forms.value.harga != null && forms.value.qty != null) {
+        if (forms.value.kontrak != null && forms.value.supplier != null && forms.value.harga != null && forms.value.qty != null) {
             if (status_form.value == 'add') {
                 const response = await OutstandingCpo.addOutstanding(forms.value);
                 const load = response.data;
@@ -230,12 +231,12 @@
             </div>
         </div>
         <!-- Table -->
-        <DataTable v-else v-model:filters="filters" :value="products" showGridlines paginator dataKey="id" scrollable :globalFilterFields="['date']">
+        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" showGridlines :rowsPerPageOptions="[5, 10, 20, 50]" dataKey="id" scrollable :globalFilterFields="['kontrak','supplier','qty','harga','value']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <ColumnGroup type="header">
                 <Row>
-                    <Column header="Kontrak" :rowspan="2" />
+                    <Column header="Kontrak" field="kontrak" :rowspan="2" />
                     <Column header="Supplier" :rowspan="2" />
                     <Column :colspan="3">
                         <template #header>
@@ -272,12 +273,12 @@
             </ColumnGroup>
             <Column field="kontrak">
                 <template #body="{ data }">
-                    <strong class="text-sm">{{ data.kontrak }}</strong>
+                    <strong class="text-sm uppercase">{{ data.kontrak }}</strong>
                 </template>
             </Column>
             <Column field="supplier">
                 <template #body="{ data }">
-                    <strong class="text-sm">{{ data.supplier }}</strong>
+                    <strong class="text-sm uppercase">{{ data.supplier }}</strong>
                 </template>
             </Column>
             <Column field="qty">

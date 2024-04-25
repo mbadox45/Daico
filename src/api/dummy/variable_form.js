@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+
+// CPO Form
 export const cpo_kpbn = {
     id: null,
     tanggal: moment().format('YYYY-MM-DD'),
@@ -19,4 +21,20 @@ export const outstanding_cpo = {
     supplier: null,
     qty: null,
     harga: null,
+}
+
+// Config Form
+export const debe = {
+    id: null,
+    coa: null,
+    id_category3: null,
+    id_m_report: null,
+    id_c_centre: null,
+    id_plant: null,
+    id_allocation: null,
+}
+
+export const master = {
+    id: null,
+    nama: null,
 }

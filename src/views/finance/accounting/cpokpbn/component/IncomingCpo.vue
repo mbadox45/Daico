@@ -72,7 +72,6 @@
             const response = await ActualCpo.getByDate({tanggal: dateString})
             const load = response.data;
             const data = load.data;
-            console.log(load)
             for (let a = 0; a < data.length; a++) {
                 products.value.push({
                     id:data[a].id,
@@ -96,7 +95,6 @@
         if (cond == 'add') {
             resetForm()
         } else {
-            console.log(data)
             forms.value = {
                 id: data.id,
                 tanggal: moment(data.tanggal).format('YYYY-MM-DD'),

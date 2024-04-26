@@ -1,21 +1,75 @@
 <script setup>
     // Vue Component
-    import { ref, computed } from 'vue';
+    import { ref, computed, onMounted, defineProps } from 'vue';
+    import moment from 'moment';
 
     // API
     import {avg_cpo} from '@/api/dummy/avg_cpo.js'
+    import KpbnCpo from '@/api/cpo/KpbnCpo.js';
 
     // Variable
+    const props = defineProps({
+        tanggal:{
+            type:String
+        },
+    });
+
+    const date = props.tanggal;
+
+    // const tanggal = computed(() => { 
+    //     date
+    // });
+
     const chartData = ref();
     const chartOptions = ref();
     const cpo_kpbn = avg_cpo;
+    const products = ref();
 
     // Function
+
+    onMounted(() => {
+        // loadProduct()
+        loadData()
+    })
     const loadProduct = () => {
         const labels = cpo_kpbn.map(item => item.tgl);
         const datas = cpo_kpbn.map(item => item.avg_cpo);
         chartData.value = setChartData(datas, labels);
         chartOptions.value = setChartOptions();
+    }
+
+    const loadData = async () => {
+        try {
+            const list = []
+            // const dateString = '2024-03-01';
+            const dateString = date;
+            const response = await KpbnCpo.getByDate({tanggal: dateString})
+            const load = response.data;
+            const data = load.data;
+            for (let a = 0; a < data.length; a++) {
+                list.push({
+                    id:data[a].id,
+                    tanggal:moment(data[a].tanggal).format('DD-MMM-YYYY'),
+                    avg:data[a].avg,
+                    // avg:formatCurrency(data[a].avg),
+                })
+            }
+            console.log(list)
+            const labels = list.map(item => item.tanggal);
+            const datas = list.map(item => item.avg);
+            chartData.value = setChartData(datas, labels);
+            chartOptions.value = setChartOptions();
+        } catch (error) {
+            chartData.value = []
+            chartOptions.value = []
+        }
+    }
+
+    const formatCurrency = (amount) => {
+        let parts = amount.toString().split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        return parts.join(',');
     }
 
     const setChartData = (data, label) => {
@@ -71,8 +125,6 @@
             }
         };
     };
-
-    loadProduct()
 </script>
 
 <template>

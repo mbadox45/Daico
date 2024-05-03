@@ -2,7 +2,9 @@
     // Vue Component
     import { ref, computed, onMounted } from 'vue';
     import { FilterMatchMode } from 'primevue/api';
-    import moment from 'moment';
+    import moment from 'moment-timezone';
+
+    moment.tz.setDefault('Asia/Jakarta');
 
     // API ========================================================================================================================================================
     import {cpo_kpbn} from '@/api/dummy/variable_form.js';
@@ -76,6 +78,14 @@
                 products.value.push({
                     id:data[a].id,
                     tanggal:moment(data[a].tanggal).format('DD-MMM-YYYY'),
+                    create_at:`<div class="flex flex-column gap-1">
+                            <span>${moment(data[a].created_at).format('DD-MMM-YYYY')}</span>
+                            <span>${moment(data[a].created_at).format('HH:mm:ss')}</span>
+                        </div>`,
+                    update_at:`<div class="flex flex-column gap-1">
+                        <span>${moment(data[a].updated_at).format('DD-MMM-YYYY')}</span>
+                        <span>${moment(data[a].updated_at).format('HH:mm:ss')}</span>
+                    </div>`,
                     avg:formatCurrency(data[a].avg),
                 })
             }
@@ -252,6 +262,16 @@
                     <div class="flex justify-content-end">
                         <span>{{ data.avg }}</span>
                     </div>
+                </template>
+            </Column>
+            <Column field="tanggal" header="Created At" style="min-width: 4rem;">
+                <template #body="{ data }">
+                    <div class="text-sm" v-html="data.create_at"></div>
+                </template>
+            </Column>
+            <Column field="tanggal" header="Updated At" style="min-width: 4rem;">
+                <template #body="{ data }">
+                    <div class="text-sm" v-html="data.update_at"></div>
                 </template>
             </Column>
             <Column header="" style="min-width: 10px;">

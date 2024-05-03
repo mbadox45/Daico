@@ -51,6 +51,16 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/target',
+                    name: 'target',
+                    component: () => import('@/views/finance/accounting/target/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+                {
                     path: '/cpo-kpbn',
                     name: 'cpo kpbn',
                     component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
@@ -64,6 +74,16 @@ const router = createRouter({
                     path: '/prop-cost',
                     name: 'proportion cost',
                     component: () => import('@/views/finance/accounting/propcost/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+                {
+                    path: '/cost-prod',
+                    name: 'cost production',
+                    component: () => import('@/views/finance/reporting/costprod/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         admin:true,

@@ -61,6 +61,7 @@
                 },
                 {
                     label: 'Cost Production',
+                    route:'cost-prod'
                     // icon: 'pi pi-server',
                 },
             ]

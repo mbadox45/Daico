@@ -98,7 +98,7 @@ const isOutsideClicked = (event) => {
 </script>
 
 <template>
-    <div class="layout-topbar bg-cyan-200 dark">
+    <div class="layout-topbar bg-gray-100 dark">
         <Dialog v-model:visible="displayConfirmation" :style="{ width: '350px' }" :modal="true" position="topright" :draggable="false">
             <template #header>
                 <h4>Sign Out</h4>

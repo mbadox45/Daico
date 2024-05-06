@@ -1,14 +1,22 @@
 <script setup>
 import { computed, watch, onMounted, ref } from 'vue';
-import AppTopbar from './AppTopbar.vue';
+// import AppTopbar from './AppTopbar.vue';
+// import FooterPage from '@/views/finance/dashboard/components/FooterPage.vue'
 import AppFooter from './AppFooter.vue';
 import AppSidebar from './AppSidebar.vue';
-import AppConfig from './AppConfig.vue';
+// import AppConfig from './AppConfig.vue';
+import HeaderPage from '@/views/finance/component/HeaderPage2.vue'
 import { useLayout } from '@/layout/composables/layout';
+import { useRouter, useRoute } from 'vue-router';
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
+const route = useRoute();
 const outsideClickListener = ref(null);
+const routname = ref(route.name)
+const userName = ref(JSON.parse(localStorage.getItem('payload')))
+
+const currentRouteName = computed(() => route.name);
 
 onMounted(() => {
     tokenChecker();
@@ -73,7 +81,7 @@ const tokenChecker = () => {
                 localStorage.removeItem('usertoken');
                 localStorage.removeItem('payload');
                 localStorage.removeItem('roles');
-                window.location.replace("http://192.168.1.223:8085/auth/login");
+                router.push('/auth/login');
                 // router.push('/auth/login');
                 console.log('expired');
             } else {
@@ -122,19 +130,31 @@ const parseJwt = (token) => {
 </script>
 
 <template>
-    <div class="layout-wrapper" :class="containerClass">
-        <app-topbar></app-topbar>
+    <div class="layout-wrapper bg-gray-100" :class="containerClass">
+        <header-page/>
+        <!-- <app-topbar></app-topbar> -->
         <div class="layout-sidebar">
             <app-sidebar></app-sidebar>
         </div>
-        <div class="layout-main-container">
-            <div class="layout-main">
+        <div class="layout-main-container bg-bluegray-50">
+            <div class="layout-main min-h-screen">
+                <div class="flex justify-content-between align-items-center border-1 border-gray-300 p-3 mb-5 border-round" v-if="currentRouteName != 'dashboard'">
+                    <div class="flex align-items-center gap-3 w-full">
+                        <Avatar icon="pi pi-user" size="xlarge" shape="circle" />
+                        <div class="flex flex-column gap-1">
+                            <span class="font-normal uppercase text-gray-500">{{userName.name}}</span>
+                            <small class="font-medium text-teal-500">{{userName.email}}</small>
+                        </div>
+                    </div>
+                    <strong class="text-4xl font-light uppercase text-bluegray-300 flex gap-3 align-items-center w-full justify-content-end"><i class="pi pi-ticket text-4xl"></i>{{ currentRouteName }}</strong>
+                </div>
                 <router-view></router-view>
             </div>
+            <!-- <footer-page/> -->
             <app-footer></app-footer>
         </div>
-        <app-config></app-config>
-        <div class="layout-mask"></div>
+        <!-- <app-config></app-config> -->
+        <!-- <div class="layout-mask"></div> -->
     </div>
 </template>
 

@@ -75,7 +75,6 @@
                     </div>
                 </div>
                 <strong class="text-4xl font-light uppercase text-bluegray-300 flex gap-3 align-items-center w-full justify-content-end"><i class="pi pi-ticket text-4xl"></i>{{ currentRouteName }}</strong>
-                <!-- <Image src="/images/inl.png" width="60"/> -->
             </div>
             <router-view/>
         </div>

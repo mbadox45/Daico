@@ -1,18 +1,19 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
 import RoomLayout from '@/views/finance/layout/Index.vue';
+import AppLayout from '@/layout/AppLayout.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
             path: '/',
-            component: RoomLayout,
+            component: AppLayout,
             redirect:'/dashboard',
             children: [
                 {
                     path: '/dashboard',
                     name: 'dashboard',
-                    component: () => import('@/views/finance/dashboard/Index.vue'),
+                    component: () => import('@/views/finance/dashboard/Index2.vue'),
                     meta:{
                         // guestOnly:true,
                         requiresAuth: true,
@@ -20,6 +21,52 @@ const router = createRouter({
                         user:true,
                     }
                 },
+
+                // Accounting
+                {
+                    path: '/target',
+                    name: 'target',
+                    component: () => import('@/views/finance/accounting/target/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+                {
+                    path: '/cpo',
+                    name: 'cpo kpbn',
+                    component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+                {
+                    path: '/prop-cost',
+                    name: 'proportion cost',
+                    component: () => import('@/views/finance/accounting/propcost/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+
+                // Reporting
+                {
+                    path: '/cost-prod',
+                    name: 'cost production',
+                    component: () => import('@/views/finance/reporting/costprod/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        admin:true,
+                        user:true,
+                    }
+                },
+
+                // Configuration
                 {
                     path: '/database',
                     name: 'database',
@@ -50,56 +97,57 @@ const router = createRouter({
                         user:true,
                     }
                 },
-                {
-                    path: '/target',
-                    name: 'target',
-                    component: () => import('@/views/finance/accounting/target/Index.vue'),
-                    meta:{
-                        requiresAuth: true,
-                        admin:true,
-                        user:true,
-                    }
-                },
-                {
-                    path: '/cpo-kpbn',
-                    name: 'cpo kpbn',
-                    component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
-                    meta:{
-                        requiresAuth: true,
-                        admin:true,
-                        user:true,
-                    }
-                },
-                {
-                    path: '/prop-cost',
-                    name: 'proportion cost',
-                    component: () => import('@/views/finance/accounting/propcost/Index.vue'),
-                    meta:{
-                        requiresAuth: true,
-                        admin:true,
-                        user:true,
-                    }
-                },
-                {
-                    path: '/cost-prod',
-                    name: 'cost production',
-                    component: () => import('@/views/finance/reporting/costprod/Index.vue'),
-                    meta:{
-                        requiresAuth: true,
-                        admin:true,
-                        user:true,
-                    }
-                },
             ]
         },
-        // {
-        //     path: '/',
-        //     name: 'dashboard',
-        //     component: () => import('@/views/finance/dashboard/Index.vue'),
-        //     meta:{
-        //         guestOnly:true,
-        //     }
-        // },
+        {
+            path: '/',
+            component: RoomLayout,
+            redirect:'/dashboard',
+            children: [
+                // {
+                //     path: '/database',
+                //     name: 'database',
+                //     component: () => import('@/views/finance/config/DatabasePage.vue'),
+                //     meta:{
+                //         requiresAuth: true,
+                //         admin:true,
+                //         user:true,
+                //     }
+                // },
+                // {
+                //     path: '/general-leager',
+                //     name: 'general leager',
+                //     component: () => import('@/views/finance/config/GlPage.vue'),
+                //     meta:{
+                //         requiresAuth: true,
+                //         admin:true,
+                //         user:true,
+                //     }
+                // },
+                // {
+                //     path: '/master-data',
+                //     name: 'master data',
+                //     component: () => import('@/views/finance/config/master/Index.vue'),
+                //     meta:{
+                //         requiresAuth: true,
+                //         admin:true,
+                //         user:true,
+                //     }
+                // },
+                
+                // {
+                //     path: '/cpo-kpbn',
+                //     name: 'cpo kpbn',
+                //     component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
+                //     meta:{
+                //         requiresAuth: true,
+                //         admin:true,
+                //         user:true,
+                //     }
+                // },
+                
+            ]
+        },
         {
             path: '/sign-out',
             name: 'signout',

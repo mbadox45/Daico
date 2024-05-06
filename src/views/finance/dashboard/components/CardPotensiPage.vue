@@ -37,7 +37,7 @@
 
 <template>
     <div class="flex flex-column gap-3 py-2">
-        <div class="p-3 border-1 border-round border-gray-300 flex flex-column gap-5 bg-white">
+        <div class="p-3 border-1 border-round border-gray-300 flex flex-column gap-5 shadow-3 bg-white">
             <span class="font-semibold text-xl text-center w-full border-bottom-1 pb-3 border-gray-300">Average CPO</span>
             <!-- Produk Kemasan -->
             <DataTable :value="list_potensi_margin" rowGroupMode="subheader" groupRowsBy="type" sortMode="single" sortField="type" :sortOrder="1">

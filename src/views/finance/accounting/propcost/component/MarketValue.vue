@@ -128,84 +128,208 @@
         </Dialog>
 
         <!-- Table -->
-        <DataTable v-model:filters="filters" :value="products" paginator :rows="10" showGridlines :rowsPerPageOptions="[5, 10, 20, 50]" dataKey="id" scrollable :globalFilterFields="['date']">
+        <DataTable v-model:filters="filters" :value="products" showGridlines  scrollHeight="600px" dataKey="id" scrollable :globalFilterFields="['date']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <ColumnGroup type="header">
                 <Row>
-                    <Column header="Date" :rowspan="2" />
-                    <Column :colspan="3">
+                    <Column header="Date" :rowspan="2" frozen sortable/>
+                    <!-- RBD O -->
+                    <Column header="Market Routers (USD)" sortable field="qty" headerStyle="background-color:#F9E79F; border-color:white;"/>
+                    <Column header="Levy + Duty" sortable field="harga" headerStyle="background-color:#F9E79F; border-color:white;"/>
+                    <Column header="Market Excld Levy & Duty (USD)" sortable field="value" headerStyle="background-color:#F9E79F; border-color:white;"/>
+                    <!-- RBD S -->
+                    <Column header="Market Routers (USD)" sortable field="qty" headerStyle="background-color:#D6EAF8; border-color:white;"/>
+                    <Column header="Levy + Duty" sortable field="harga" headerStyle="background-color:#D6EAF8; border-color:white;"/>
+                    <Column header="Market Excld Levy & Duty (USD)" sortable field="value" headerStyle="background-color:#D6EAF8; border-color:white;"/>
+                    <!-- PFAD -->
+                    <Column header="Market Routers (USD)" sortable field="qty" headerStyle="background-color:#FAE5D3; border-color:white;" />
+                    <Column header="Levy + Duty" sortable field="harga" headerStyle="background-color:#FAE5D3; border-color:white;" />
+                    <Column header="Market Excld Levy & Duty (USD)" sortable field="value" headerStyle="background-color:#FAE5D3; border-color:white;" />
+                    <!-- RBDPO -->
+                    <Column header="Market Routers (USD)" sortable field="qty" headerStyle="background-color:#F2D7D5; border-color:white;" />
+                    <Column header="Levy + Duty" sortable field="harga" headerStyle="background-color:#F2D7D5; border-color:white;" />
+                    <Column header="Market Excld Levy & Duty (USD)" sortable field="value" headerStyle="background-color:#F2D7D5; border-color:white;" />
+                    <Column header="Rate (Jisdor)" :rowspan="2"/>
+                    <Column :colspan="5">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>Market (IDR)</span>
+                            </div>
+                        </template>
+                    </Column>
+                </Row>
+                <Row>
+                    <Column :colspan="3" headerStyle="background-color:#F9E79F; border-color:white;">
                         <template #header>
                             <div class="text-center w-full flex justify-content-center">
                                 <span>RBD Olein</span>
                             </div>
                         </template>
                     </Column>
-                    <Column :colspan="3">
+                    <Column :colspan="3" headerStyle="background-color:#D6EAF8; border-color:white;">
                         <template #header>
                             <div class="text-center w-full flex justify-content-center">
                                 <span>RBD Stearin</span>
                             </div>
                         </template>
                     </Column>
-                    <!-- <Column :rowspan="2" /> -->
-                </Row>
-                <Row>
-                    <Column header="Market Routers (USD)" sortable field="qty" />
-                    <Column header="Levy + Duty" sortable field="harga" />
-                    <Column header="Market Excld Levy & Duty (USD)" sortable field="value" />
-                    <Column header="Market Routers (USD)" sortable field="qty" />
-                    <Column header="Levy + Duty" sortable field="harga" />
-                    <Column header="Market Excld Levy & Duty (USD)" sortable field="value" />
+                    <Column :colspan="3" headerStyle="background-color:#FAE5D3; border-color:white;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>PFAD</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column :colspan="3" headerStyle="background-color:#F2D7D5; border-color:white;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>RBDPO</span>
+                            </div>
+                        </template>
+                    </Column>
+
+                    <!-- Market IDR -->
+                    <Column headerStyle="background-color:#F9E79F;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>RBD Olein</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column headerStyle="background-color:#D6EAF8;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>RBD Stearin</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column headerStyle="background-color:#FAE5D3;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>PFAD</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column headerStyle="background-color:#F2D7D5;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>RBDPO</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column headerStyle="background-color:#D5D8DC;">
+                        <template #header>
+                            <div class="text-center w-full flex justify-content-center">
+                                <span>CPO KPBN</span>
+                            </div>
+                        </template>
+                    </Column>
                 </Row>
             </ColumnGroup>
             
-            <Column field="product">
+            <Column field="product" style="min-width: 150px;" frozen>
                 <template #body="{ data }">
                     <strong class="text-sm">{{ data.date }}</strong>
                 </template>
             </Column>
 
             <!-- RBD Olein -->
-            <Column field="qty">
+            <Column field="qty" style="min-width: 150px;">
                 <template #body="{ data }">
                     {{ data.qty }}
                 </template>
             </Column>
-            <Column field="harga">
+            <Column field="harga" style="min-width: 150px;">
                 <template #body="{ data }">
                     {{ data.harga }}
                 </template>
             </Column>
-            <Column field="value">
+            <Column field="value" style="min-width: 150px;">
                 <template #body="{ data }">
                     {{ data.value }}
                 </template>
             </Column>
             <!-- RBD Stearin -->
-            <Column field="qty">
+            <Column field="qty" style="min-width: 150px;">
                 <template #body="{ data }">
                     {{ data.qty }}
                 </template>
             </Column>
-            <Column field="harga">
+            <Column field="harga" style="min-width: 150px;">
                 <template #body="{ data }">
                     {{ data.harga }}
                 </template>
             </Column>
-            <Column field="value">
+            <Column field="value" style="min-width: 150px;">
                 <template #body="{ data }">
                     {{ data.value }}
                 </template>
             </Column>
-            <!-- <Column header="">
+            <!-- PFAD -->
+            <Column field="qty" style="min-width: 150px;">
                 <template #body="{ data }">
-                    <div class="flex gap-3">
-                        <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
-                        <button @click="formDatabase('delete', data)" class="bg-transparent text-sm border-none border-round text-pink-500"><i class="pi pi-trash"></i></button>
-                    </div>
+                    {{ data.qty }}
                 </template>
-            </Column> -->
+            </Column>
+            <Column field="harga" style="min-width: 150px;">
+                <template #body="{ data }">
+                    {{ data.harga }}
+                </template>
+            </Column>
+            <Column field="value" style="min-width: 150px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <!-- RBDPO -->
+            <Column field="qty" style="min-width: 150px;">
+                <template #body="{ data }">
+                    {{ data.qty }}
+                </template>
+            </Column>
+            <Column field="harga" style="min-width: 150px;">
+                <template #body="{ data }">
+                    {{ data.harga }}
+                </template>
+            </Column>
+            <Column field="value" style="min-width: 150px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <!-- Jisdor -->
+            <Column field="jisdor" style="min-width: 120px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <!-- Market -->
+            <Column field="jisdor" style="min-width: 120px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <Column field="jisdor" style="min-width: 120px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <Column field="jisdor" style="min-width: 120px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <Column field="jisdor" style="min-width: 120px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
+            <Column field="jisdor" style="min-width: 120px;">
+                <template #body="{ data }">
+                    {{ data.value }}
+                </template>
+            </Column>
         </DataTable>
     </div>
 </template>

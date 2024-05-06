@@ -37,17 +37,36 @@ const Menu = () => {
         model.value = [
             {
                 label: 'Home',
-                items: [{ label: 'Home', icon: 'pi pi-fw pi-home', to: '/home' }]
+                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-th-large', to: '/' }]
             },
             
             {
                 label: 'Management',
                 items: [
-                    { label: 'Users', icon: 'pi pi-fw pi-users', to: '/users',},
-                    // { label: 'Categories', icon: 'pi pi-fw pi-check-square', to: '/categories', },
-                    { label: 'Questions', icon: 'pi pi-fw pi-question-circle', to: '/questions', },
-                    { label: 'Survey', icon: 'pi pi-fw pi-comments', to: '/survey', },
-                    // { label: 'Response', icon: 'pi pi-fw pi-reply', to: '/respon', },
+                    { label: 'Accounting', icon: 'pi pi-fw pi-dollar', items:[
+                        { label: 'Target', icon: 'pi pi-fw pi-th-large', to: '/target' },
+                        { label: 'CPO', icon: 'pi pi-fw pi-th-large', to: '/cpo' },
+                        { label: 'Proportion Cost', icon: 'pi pi-fw pi-th-large', to: '/prop-cost' },
+                    ]},
+                    { label: 'Reporting', icon: 'pi pi-fw pi-book', items:[
+                        { label: 'Average Price', icon: 'pi pi-fw pi-th-large', },
+                        { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', },
+                        { label: 'Cost Production', icon: 'pi pi-fw pi-th-large', to: '/cost-prod' },
+                    ]},
+                    { label: 'Configuration', icon: 'pi pi-fw pi-cog', items:[
+                        { label: 'General Leager', icon: 'pi pi-fw pi-shield', to: '/general-leager' },
+                        { label: 'Database', icon: 'pi pi-fw pi-database', to: '/database' },
+                        { label: 'Master Data', icon: 'pi pi-fw pi-server', 
+                            to: '/master-data',
+                            // items:[
+                            //     { label: 'Allocation', to: '/target' },
+                            //     { label: 'Management Report', to: '/cpo' },
+                            //     { label: 'Cost Centre', to: '/cpo' },
+                            //     { label: 'Plant', to: '/cpo' },
+                            //     { label: 'Category', to: '/cpo' },
+                            // ]
+                        },
+                    ]},
                 ]
             },
         ]

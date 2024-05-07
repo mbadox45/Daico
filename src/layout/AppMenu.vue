@@ -53,20 +53,42 @@ const Menu = () => {
                         { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', },
                         { label: 'Cost Production', icon: 'pi pi-fw pi-th-large', to: '/cost-prod' },
                     ]},
-                    { label: 'Configuration', icon: 'pi pi-fw pi-cog', items:[
-                        { label: 'General Leager', icon: 'pi pi-fw pi-shield', to: '/general-leager' },
-                        { label: 'Database', icon: 'pi pi-fw pi-database', to: '/database' },
-                        { label: 'Master Data', icon: 'pi pi-fw pi-server', 
-                            to: '/master-data',
-                            // items:[
-                            //     { label: 'Allocation', to: '/target' },
-                            //     { label: 'Management Report', to: '/cpo' },
-                            //     { label: 'Cost Centre', to: '/cpo' },
-                            //     { label: 'Plant', to: '/cpo' },
-                            //     { label: 'Category', to: '/cpo' },
-                            // ]
-                        },
-                    ]},
+                    // { label: 'Configuration', icon: 'pi pi-fw pi-cog', items:[
+                    //     { label: 'General Leager', icon: 'pi pi-fw pi-shield', to: '/general-leager' },
+                    //     { label: 'Database', icon: 'pi pi-fw pi-database', to: '/database' },
+                    //     { label: 'Master Data', icon: 'pi pi-fw pi-server', 
+                    //         // to: '/master-data',
+                    //         items:[
+                    //             { label: 'Allocation', to: '/master-data/allocation' },
+                    //             { label: 'Management Report', to: '/master-data/m_report' },
+                    //             { label: 'Cost Centre', to: '/master-data/cost_centre' },
+                    //             { label: 'Plant', to: '/master-data/plant' },
+                    //             { label: 'Category', to: '/master-data/category' },
+                    //             { label: 'Bulky', to: '/master-data/bulky' },
+                    //         ]
+                    //     },
+                    // ]},
+                ]
+            },
+
+            {
+                label: 'Configuration',
+                items: [
+                    { label: 'General Leager', icon: 'pi pi-fw pi-shield', to: '/general-leager' },
+                    { label: 'Database', icon: 'pi pi-fw pi-database', to: '/database' },
+                    { label: 'Master Data', icon: 'pi pi-fw pi-server', 
+                        // to: '/master-data',
+                        items:[
+                            { label: 'Allocation', to: '/master-data/allocation' },
+                            { label: 'Management Report', to: '/master-data/m_report' },
+                            { label: 'Cost Centre', to: '/master-data/cost_centre' },
+                            { label: 'Plant', to: '/master-data/plant' },
+                            { label: 'Category', to: '/master-data/category' },
+                            { label: 'Bulky', to: '/master-data/bulky' },
+                        ]
+                    },
+                    // { label: 'Configuration', icon: 'pi pi-fw pi-cog', items:[
+                    // ]},
                 ]
             },
         ]

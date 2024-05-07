@@ -17,8 +17,12 @@ const router = createRouter({
                     meta:{
                         // guestOnly:true,
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        produksi:true,
+                        logistik:true,
+                        marketing:true,
+                        sourcing:true,
+                        view:true,
                     }
                 },
 
@@ -29,8 +33,8 @@ const router = createRouter({
                     component: () => import('@/views/finance/accounting/target/Index.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
                     }
                 },
                 {
@@ -39,8 +43,8 @@ const router = createRouter({
                     component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
                     }
                 },
                 {
@@ -49,8 +53,8 @@ const router = createRouter({
                     component: () => import('@/views/finance/accounting/propcost/Index.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
                     }
                 },
 
@@ -61,8 +65,8 @@ const router = createRouter({
                     component: () => import('@/views/finance/reporting/costprod/Index.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
                     }
                 },
 
@@ -73,8 +77,8 @@ const router = createRouter({
                     component: () => import('@/views/finance/config/DatabasePage.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
                     }
                 },
                 {
@@ -83,69 +87,71 @@ const router = createRouter({
                     component: () => import('@/views/finance/config/GlPage.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                // Master Data 
+                {
+                    path: '/master-data/allocation',
+                    name: 'allocation',
+                    component: () => import('@/views/finance/config/master/components/AllocMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
                     }
                 },
                 {
-                    path: '/master-data',
-                    name: 'master data',
-                    component: () => import('@/views/finance/config/master/Index.vue'),
+                    path: '/master-data/m_report',
+                    name: 'management report',
+                    component: () => import('@/views/finance/config/master/components/ReportMaster.vue'),
                     meta:{
                         requiresAuth: true,
-                        admin:true,
-                        user:true,
+                        akunting:true,
+                        view:true,
                     }
                 },
-            ]
-        },
-        {
-            path: '/',
-            component: RoomLayout,
-            redirect:'/dashboard',
-            children: [
-                // {
-                //     path: '/database',
-                //     name: 'database',
-                //     component: () => import('@/views/finance/config/DatabasePage.vue'),
-                //     meta:{
-                //         requiresAuth: true,
-                //         admin:true,
-                //         user:true,
-                //     }
-                // },
-                // {
-                //     path: '/general-leager',
-                //     name: 'general leager',
-                //     component: () => import('@/views/finance/config/GlPage.vue'),
-                //     meta:{
-                //         requiresAuth: true,
-                //         admin:true,
-                //         user:true,
-                //     }
-                // },
-                // {
-                //     path: '/master-data',
-                //     name: 'master data',
-                //     component: () => import('@/views/finance/config/master/Index.vue'),
-                //     meta:{
-                //         requiresAuth: true,
-                //         admin:true,
-                //         user:true,
-                //     }
-                // },
-                
-                // {
-                //     path: '/cpo-kpbn',
-                //     name: 'cpo kpbn',
-                //     component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
-                //     meta:{
-                //         requiresAuth: true,
-                //         admin:true,
-                //         user:true,
-                //     }
-                // },
-                
+                {
+                    path: '/master-data/cost_centre',
+                    name: 'cost centre',
+                    component: () => import('@/views/finance/config/master/components/CentreMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/plant',
+                    name: 'plant',
+                    component: () => import('@/views/finance/config/master/components/PlantMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/category',
+                    name: 'category',
+                    component: () => import('@/views/finance/config/master/components/CategoryMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/bulky',
+                    name: 'Bulky',
+                    component: () => import('@/views/finance/config/master/components/BulkyMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
             ]
         },
         {
@@ -188,14 +194,38 @@ router.beforeEach((to, from, next) => {
 
     if (to.matched.some((route) => route.meta.requiresAuth)) {
         if (tokens) {
-            if (roles == 'admin') {
-                if (to.matched.some((route) => route.meta.admin)) {
+            if (roles == 'akunting') {
+                if (to.matched.some((route) => route.meta.akunting)) {
+                    next();
+                } else {
+                    next('/dashboard');
+                }
+            } else if (roles == 'produksi') {
+                if (to.matched.some((route) => route.meta.produksi)) {
+                    next();
+                } else {
+                    next('/dashboard');
+                }
+            } else if (roles == 'logistik') {
+                if (to.matched.some((route) => route.meta.logistik)) {
+                    next();
+                } else {
+                    next('/dashboard');
+                }
+            } else if (roles == 'marketing') {
+                if (to.matched.some((route) => route.meta.marketing)) {
+                    next();
+                } else {
+                    next('/dashboard');
+                }
+            } else if (roles == 'sourcing') {
+                if (to.matched.some((route) => route.meta.sourcing)) {
                     next();
                 } else {
                     next('/dashboard');
                 }
             } else {
-                if (to.matched.some((route) => route.meta.user)) {
+                if (to.matched.some((route) => route.meta.view)) {
                     next();
                 } else {
                     next('/dashboard');
@@ -206,7 +236,15 @@ router.beforeEach((to, from, next) => {
         }
     } else if (to.matched.some((route) => route.meta.guestOnly)) {
         if (tokens) {
-            if (roles == 'admin') {
+            if (roles == 'akunting') {
+                next('/dashboard');
+            } else if (roles == 'produksi') {
+                next('/dashboard');
+            } else if (roles == 'logistik') {
+                next('/dashboard');
+            } else if (roles == 'marketing') {
+                next('/dashboard');
+            } else if (roles == 'sourcing') {
                 next('/dashboard');
             } else {
                 next('/dashboard');

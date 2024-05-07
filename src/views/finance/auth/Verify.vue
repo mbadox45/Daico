@@ -58,10 +58,18 @@
                             window.location.replace(`${URL_WEB}`);
                         } else {
                             let roles;
-                            if (index.level_akses == 10) {
-                                roles = 'admin';
+                            if (index.level_akses >= 9) {
+                                roles = 'akunting';
+                            } else if (index.level_akses == 8) {
+                                roles = 'produksi';
+                            } else if (index.level_akses == 7) {
+                                roles = 'logistik';
+                            } else if (index.level_akses == 6) {
+                                roles = 'marketing';
+                            } else if (index.level_akses == 5) {
+                                roles = 'sourcing';
                             } else {
-                                roles = 'user';
+                                roles = 'view';
                             }
 
                             const pushdata = {

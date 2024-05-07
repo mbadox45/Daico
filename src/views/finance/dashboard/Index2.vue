@@ -110,7 +110,7 @@
                 <!-- Cards Update Date & View Avg Kurs -->
                 <div class="bg-white p-4 border-round shadow-3 flex justify-content-between w-full">
                     <div class="flex flex-column gap-2 w-auto">
-                        <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center">Hello, {{userName.name}}! <i class="pi pi-users text-2xl ml-3"></i></strong>
+                        <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Dashboard Trading <i class="pi pi-desktop text-2xl ml-3"></i></strong>
                         <span class="font-normal text-400">Update data s.d {{ moment().format('31 MMM YYYY') }} </span>
                         <Button label="Change Month" severity="info" size="small" class="mt-3"/>
                     </div>
@@ -132,12 +132,12 @@
     
                     <!-- Loading  -->
                     <div>
-                        <span class="font-medium text-yellow-600">Loading</span>
+                        <span class="font-medium text-yellow-600">Product</span>
                         <div class="flex flex-wrap md:flex-nowrap justify-content-between gap-3 mt-2">
                             <div v-for="(item, index) in kemasan" :key="index" class="w-full" :class="kemasan.length-1 != index ? 'border-right-1 border-gray-400' : ''">
                                 <div class="flex flex-column">
                                     <span class="uppercase font-semibold text-600 text-md">{{item.product}}</span>
-                                    <small class="text-400">Loading</small>
+                                    <small class="text-400">Product</small>
                                 </div>
                                 <span class="uppercase font-normal text-yellow-600 text-2xl">Rp {{item.money_rp}}</span>
                             </div>
@@ -146,12 +146,12 @@
     
                     <!-- Unloading -->
                     <div>
-                        <span class="font-medium text-yellow-600">Unloading</span>
+                        <span class="font-medium text-yellow-600">Bulk</span>
                         <div class="flex flex-wrap justify-content-between gap-3 mt-2">
                             <div v-for="(item, index) in product2" :key="index" class="w-full md:w-5 flex justify-content-between align-items-center pb-3 border-bottom-1 border-gray-300">
                                 <div class="flex flex-column">
                                     <span class="uppercase font-semibold text-600 text-md">{{item.product}}</span>
-                                    <small class="text-400">Unloading</small>
+                                    <small class="text-400">Bulk</small>
                                 </div>
                                 <div class="flex flex-column gap-2 w-auto">
                                     <span class="font-medium text-600 text-red-500 text-md flex justify-content-between gap-2 w-full">

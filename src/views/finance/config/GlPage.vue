@@ -6,6 +6,7 @@
 
     // API ========================================================================================================================================================
     import {gl} from '@/api/dummy/gl.js'
+    import GlConfig from '@/api/configuration/GlConfig.js';
 
     // VARIABLE
     const products = ref();
@@ -54,27 +55,34 @@
     }
 
     const loadData = async() => {
-        products.value = []
-        for (let i = 0; i < gl.length; i++) {
-            products.value.push({
-                coa: gl[i].coa,
-                no_transaksi: gl[i].no_transaksi,
-                uraian: gl[i].uraian,
-                debet: gl[i].debet < 1 ? '-' : formatCurrency(gl[i].debet),
-                kredit: gl[i].kredit < 1 ? '-' : formatCurrency(gl[i].kredit),
-                date: gl[i].date,
-                cat1: gl[i].cat1,
-                cat2: gl[i].cat2,
-                cat3: gl[i].cat3,
-                laporan_management: gl[i].laporan_management,
-                cost_centre: gl[i].cost_centre,
-                plan: gl[i].plan,
-                allocation: gl[i].allocation,
-                journal: gl[i].journal,
-                account: gl[i].account,
-                reference: gl[i].reference,
-            });
+        try {
+            const response = await GlConfig.getByDate({tanggal:"2024-04-01"})
+            const load = response.data;
+            console.log(load)
+        } catch (error) {
+            
         }
+        // products.value = []
+        // for (let i = 0; i < gl.length; i++) {
+        //     products.value.push({
+        //         coa: gl[i].coa,
+        //         no_transaksi: gl[i].no_transaksi,
+        //         uraian: gl[i].uraian,
+        //         debet: gl[i].debet < 1 ? '-' : formatCurrency(gl[i].debet),
+        //         kredit: gl[i].kredit < 1 ? '-' : formatCurrency(gl[i].kredit),
+        //         date: gl[i].date,
+        //         cat1: gl[i].cat1,
+        //         cat2: gl[i].cat2,
+        //         cat3: gl[i].cat3,
+        //         laporan_management: gl[i].laporan_management,
+        //         cost_centre: gl[i].cost_centre,
+        //         plan: gl[i].plan,
+        //         allocation: gl[i].allocation,
+        //         journal: gl[i].journal,
+        //         account: gl[i].account,
+        //         reference: gl[i].reference,
+        //     });
+        // }
         loadTahun();
         loadBulan();
     }

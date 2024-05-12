@@ -241,7 +241,7 @@
                     <Column :colspan="3">
                         <template #header>
                             <div class="text-center w-full flex justify-content-center">
-                                <span>Actual Incoming CPO</span>
+                                <span>Outstanding CPO Yang Belum Dikirim</span>
                             </div>
                         </template>
                     </Column>

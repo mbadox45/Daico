@@ -58,10 +58,11 @@
             const load = response.data;
             const data = load.allocation;
             const cat = list_category.value;
-            console.log(cat)
+            // console.log(cat)
+            let category2;
             for (let a = 0; a < data.length; a++) {
-                const category2 = cat.find(item => item.id2 == data[a].cat3.id_category2 && item.id3 == data[a].cat3.id)
-                console.log(category2)
+                category2 = cat.find(item =>item.id3 == data[a].cat3.id)
+                // console.log(category2)
                 products.value.push({
                     id:data[a].id,
                     id_allocation:data[a].id_allocation,
@@ -70,15 +71,16 @@
                     id_m_report:data[a].id_m_report,
                     id_plant:data[a].id_plant,
                     coa:data[a].coa,
-                    allocation:data[a].allocation.nama,
+                    allocation:data[a].allocation == null ? '-' : data[a].allocation.nama,
                     c_centre:data[a].c_centre.nama,
                     m_report:data[a].m_report.nama,
-                    plant:data[a].plant.nama,
+                    plant:data[a].plant == null ? '-' : data[a].plant.nama,
                     category3: data[a].cat3.nama,
                     category2: category2.name2,
                     category1: category2.name1,
                 })
             }
+            // console.log(products.value)
             loadingTable.value = false
         } catch (error) {
             products.value = []
@@ -176,7 +178,7 @@
                     }
                 }
             }
-            console.log(list_category.value)
+            // console.log(list_category.value)
         } catch (error) {
             list_category.value = []
         }
@@ -360,27 +362,27 @@
                     </div>
                 </template>
             </Column> -->
-            <Column field="category1" header="Category 1" style="min-width: 12rem">
+            <Column field="category1" header="Category 1" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                     {{ data.category1 }}
                 </template>
             </Column>
-            <Column field="category2" header="Category 2" style="min-width: 12rem">
+            <Column field="category2" header="Category 2" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                     {{ data.category2 }}
                 </template>
             </Column>
-            <Column field="category3" header="Category 3" style="min-width: 12rem">
+            <Column field="category3" header="Category 3" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                     {{ data.category3 }}
                 </template>
             </Column>
-            <Column field="man_report" header="Management Report" style="min-width: 18rem">
+            <Column field="man_report" header="Management Report" style="min-width: 18rem" sortable>
                 <template #body="{ data }">
                     {{ data.m_report }}
                 </template>
             </Column>
-            <Column field="cost_centre" header="Cost Centre" style="min-width: 12rem">
+            <Column field="cost_centre" header="Cost Centre" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                     {{ data.c_centre }}
                 </template>

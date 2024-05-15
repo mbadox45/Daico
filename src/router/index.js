@@ -7,12 +7,34 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: AppLayout,
+            component: RoomLayout,
             redirect:'/dashboard',
             children: [
                 {
                     path: '/dashboard',
                     name: 'dashboard',
+                    component: () => import('@/views/finance/dashboard/Index2.vue'),
+                    meta:{
+                        guestOnly:true,
+                        // requiresAuth: true,
+                        // akunting:true,
+                        // produksi:true,
+                        // logistik:true,
+                        // marketing:true,
+                        // sourcing:true,
+                        // view:true,
+                    }
+                },
+            ]
+        },
+        {
+            path: '/',
+            component: AppLayout,
+            redirect:'/home',
+            children: [
+                {
+                    path: '/home',
+                    name: 'home',
                     component: () => import('@/views/finance/dashboard/Index2.vue'),
                     meta:{
                         // guestOnly:true,
@@ -143,9 +165,19 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/master-data/bulky',
-                    name: 'Bulky',
-                    component: () => import('@/views/finance/config/master/components/BulkyMaster.vue'),
+                    path: '/master-data/bulky/market',
+                    name: 'Bulky Market',
+                    component: () => import('@/views/finance/config/master/components/BulkyMarketMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/bulky/produksi',
+                    name: 'Bulky Produksi',
+                    component: () => import('@/views/finance/config/master/components/BulkyProduksiMaster.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -198,37 +230,37 @@ router.beforeEach((to, from, next) => {
                 if (to.matched.some((route) => route.meta.akunting)) {
                     next();
                 } else {
-                    next('/dashboard');
+                    next('/home');
                 }
             } else if (roles == 'produksi') {
                 if (to.matched.some((route) => route.meta.produksi)) {
                     next();
                 } else {
-                    next('/dashboard');
+                    next('/home');
                 }
             } else if (roles == 'logistik') {
                 if (to.matched.some((route) => route.meta.logistik)) {
                     next();
                 } else {
-                    next('/dashboard');
+                    next('/home');
                 }
             } else if (roles == 'marketing') {
                 if (to.matched.some((route) => route.meta.marketing)) {
                     next();
                 } else {
-                    next('/dashboard');
+                    next('/home');
                 }
             } else if (roles == 'sourcing') {
                 if (to.matched.some((route) => route.meta.sourcing)) {
                     next();
                 } else {
-                    next('/dashboard');
+                    next('/home');
                 }
             } else {
                 if (to.matched.some((route) => route.meta.view)) {
                     next();
                 } else {
-                    next('/dashboard');
+                    next('/home');
                 }
             }
         } else {
@@ -237,17 +269,17 @@ router.beforeEach((to, from, next) => {
     } else if (to.matched.some((route) => route.meta.guestOnly)) {
         if (tokens) {
             if (roles == 'akunting') {
-                next('/dashboard');
+                next('/home');
             } else if (roles == 'produksi') {
-                next('/dashboard');
+                next('/home');
             } else if (roles == 'logistik') {
-                next('/dashboard');
+                next('/home');
             } else if (roles == 'marketing') {
-                next('/dashboard');
+                next('/home');
             } else if (roles == 'sourcing') {
-                next('/dashboard');
+                next('/home');
             } else {
-                next('/dashboard');
+                next('/home');
             }
         } else {
             next();

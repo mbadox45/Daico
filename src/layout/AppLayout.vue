@@ -81,12 +81,12 @@ const tokenChecker = () => {
                 localStorage.removeItem('usertoken');
                 localStorage.removeItem('payload');
                 localStorage.removeItem('roles');
-                router.push('/auth/login');
-                // router.push('/auth/login');
+                window.location.replace(URL_WEB);
                 console.log('expired');
             } else {
                 console.log('Token activated');
                 console.log(token);
+                console.log(localStorage.getItem('payload'));
                 // config.headers['Authorization'] = `Bearer ${token}`;
             }
         }
@@ -103,29 +103,6 @@ const parseJwt = (token) => {
     }).join(''));
 
     return JSON.parse(jsonPayload);
-
-// ============================================================================
-    // const base64Url = btoa(token); // Encode the token using Base64 URL-safe encoding
-    // const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    // const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    //     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    // }).join(''));
-
-    // return JSON.parse(jsonPayload);
-
-// ============================================================================
-    // // Convert the URL-safe Base64 to standard Base64
-    // const base64Url = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    // // Add padding if necessary
-    // const padding = base64Url.length % 4 === 2 ? '==' : base64Url.length % 4 === 1 ? '=' : '';
-    // const base64 = base64Url + padding;
-
-    // // Decode and parse JSON payload
-    // const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-    //     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    // }).join(''));
-
-    // return JSON.parse(jsonPayload);
 }
 </script>
 
@@ -137,24 +114,22 @@ const parseJwt = (token) => {
             <app-sidebar></app-sidebar>
         </div>
         <div class="layout-main-container bg-bluegray-50">
-            <div class="layout-main min-h-screen">
-                <div class="flex justify-content-between align-items-center border-1 border-gray-300 p-3 mb-5 border-round" v-if="currentRouteName != 'dashboard'">
+            <div class="layout-main ">
+                <!-- <div class="flex justify-content-between align-items-center border-1 border-gray-300 p-3 mb-5 border-round" v-if="currentRouteName != 'dashboard'">
                     <div class="flex align-items-center gap-3 w-full">
-                        <Avatar icon="pi pi-user" size="xlarge" shape="circle" />
+                        <Avatar icon="pi pi-user" size="large" shape="circle" />
                         <div class="flex flex-column gap-1">
-                            <span class="font-normal uppercase text-gray-500">{{userName.name}}</span>
-                            <small class="font-medium text-teal-500">{{userName.email}}</small>
+                            <span class="font-normal uppercase text-gray-500 text-xs">{{userName.name}}</span>
+                            <small class="font-medium text-teal-500 text-xs">{{userName.email}}</small>
                         </div>
                     </div>
-                    <strong class="text-4xl font-light uppercase text-bluegray-300 flex gap-3 align-items-center w-full justify-content-end"><i class="pi pi-ticket text-4xl"></i>{{ currentRouteName }}</strong>
-                </div>
+                    <strong class="text-xl font-light uppercase text-bluegray-300 flex gap-3 align-items-center w-full justify-content-end"><i class="pi pi-ticket text-xl mt-1"></i>{{ currentRouteName }}</strong>
+                </div> -->
                 <router-view></router-view>
             </div>
             <!-- <footer-page/> -->
-            <app-footer></app-footer>
+            <!-- <app-footer></app-footer> -->
         </div>
-        <!-- <app-config></app-config> -->
-        <!-- <div class="layout-mask"></div> -->
     </div>
 </template>
 

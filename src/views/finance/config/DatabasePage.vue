@@ -56,12 +56,12 @@
             products.value = []
             const response = await DebeConfig.getAll()
             const load = response.data;
-            const data = load.allocation;
+            const data = load.data;
             const cat = list_category.value;
             // console.log(cat)
             let category2;
             for (let a = 0; a < data.length; a++) {
-                category2 = cat.find(item =>item.id3 == data[a].cat3.id)
+                category2 = cat.find(item =>item.id3 == data[a].cat3.id && item.id2 == data[a].cat3.id_category2)
                 // console.log(category2)
                 products.value.push({
                     id:data[a].id,
@@ -80,7 +80,7 @@
                     category1: category2.name1,
                 })
             }
-            // console.log(products.value)
+            console.log(products.value)
             loadingTable.value = false
         } catch (error) {
             products.value = []
@@ -345,7 +345,7 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" showGridlines="" :rowsPerPageOptions="[5, 10, 20, 50]" dataKey="id" scrollable :globalFilterFields="['coa', 'category3', 'category2', 'category1', 'c_centre', 'm_report', 'plant', 'allocation']">
+        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" showGridlines=""  dataKey="id" scrollable scrollHeight="395px" :globalFilterFields="['coa', 'category3', 'category2', 'category1', 'c_centre', 'm_report', 'plant', 'allocation']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <Column field="coa" header="Chart of Account" sortable frozen style="min-width: 15rem">
@@ -364,37 +364,37 @@
             </Column> -->
             <Column field="category1" header="Category 1" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
-                    {{ data.category1 }}
+                    <small>{{ data.category1 }}</small>
                 </template>
             </Column>
             <Column field="category2" header="Category 2" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
-                    {{ data.category2 }}
+                    <small>{{ data.category2 }}</small>
                 </template>
             </Column>
             <Column field="category3" header="Category 3" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
-                    {{ data.category3 }}
+                    <small>{{ data.category3 }}</small>
                 </template>
             </Column>
             <Column field="man_report" header="Management Report" style="min-width: 18rem" sortable>
                 <template #body="{ data }">
-                    {{ data.m_report }}
+                    <small>{{ data.m_report }}</small>
                 </template>
             </Column>
             <Column field="cost_centre" header="Cost Centre" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
-                    {{ data.c_centre }}
+                    <small>{{ data.c_centre }}</small>
                 </template>
             </Column>
             <Column field="plant" header="Plant" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.plant }}
+                    <small>{{ data.plant }}</small>
                 </template>
             </Column>
             <Column field="allocation" header="Allocation" style="min-width: 6rem">
                 <template #body="{ data }">
-                    {{ data.allocation }}
+                    <small>{{ data.allocation }}</small>
                 </template>
             </Column>
         </DataTable>

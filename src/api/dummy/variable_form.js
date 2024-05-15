@@ -38,3 +38,27 @@ export const master = {
     id: null,
     nama: null,
 }
+
+export const m_router = [
+    {
+        cond: 'add',
+        id: null,
+        id_bulky: null,
+        name_bulk: null,
+        tanggal: moment().format('YYYY-MM-DD'),
+        currency_id: 2,
+        nilai: null
+    },
+]
+
+export const levy_duty = [
+    {
+        cond: 'add',
+        id: null,
+        id_bulky: null,
+        name_bulk: null,
+        tanggal: moment().format('YYYY-MM-DD'),
+        currency_id: 2,
+        nilai: null
+    },
+]

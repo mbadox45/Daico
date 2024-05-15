@@ -89,12 +89,11 @@
 </script>
 
 <template>
-    <div class="card shadow-3 flex flex-column gap-3 w-full">
-        <span class="font-medium text-xl ">Incoming CPO</span>
+    <div class="flex flex-column gap-3 w-full">
         <div class="flex justify-content-between align-items-center gap-5">
             <div class="w-full flex gap-2">
-                <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)"/>
-                <Button label="Select by Period" outlined severity="secondary" size="small" @click="opByPeriod"/>
+                <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)" class="h-2rem w-2rem"/>
+                <Button label="Select by Period" outlined severity="secondary" icon="pi pi-calendar" size="small" @click="opByPeriod" class="h-2rem px-3"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">
                     <div class="flex flex-column gap-3">
                         <span class="font-light text-sm">Please select a period</span>
@@ -128,7 +127,7 @@
         </Dialog>
 
         <!-- Table -->
-        <DataTable v-model:filters="filters" :value="products" paginator :rows="10" :rowsPerPageOptions="[5, 10, 20, 50]" dataKey="id" scrollable :globalFilterFields="['date']">
+        <DataTable v-model:filters="filters" :value="products" dataKey="id" scrollable scrollHeight="430px" :globalFilterFields="['date']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <ColumnGroup type="header">

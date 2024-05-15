@@ -19,11 +19,13 @@
             const persen_real = ((list_sales[a].real/list_sales[a].rkap)*100).toFixed(1);
             const persen_rkap = (100 - persen_real).toFixed(1);
             sales.value.push({
-                real: list_sales[a].real.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('Rp', 'Rp ').replace(/,00$/, ''),
-                rkap: list_sales[a].rkap.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('Rp', 'Rp ').replace(/,00$/, ''),
+                real: formatCurrency(list_sales[a].real),
+                rkap: formatCurrency(list_sales[a].rkap),
                 jenis: list_sales[a].jenis,
                 persen_real: persen_real,
-                chartData: setChartData(persen_real, persen_rkap),
+                name_real: list_sales[a].name_real,
+                name_rkap: list_sales[a].name_rkap,
+                chartData: setChartData(persen_real, persen_rkap , [list_sales[a].name_real, list_sales[a].name_rkap]),
                 chartOptions: setChartOptions(),
             })
         }
@@ -33,21 +35,23 @@
             const persen_real = ((list_produksi[a].real/list_produksi[a].rkap)*100).toFixed(1);
             const persen_rkap = (100 - persen_real).toFixed(1);
             produksi.value.push({
-                real: list_produksi[a].real.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('Rp', 'Rp ').replace(/,00$/, ''),
-                rkap: list_produksi[a].rkap.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace('Rp', 'Rp ').replace(/,00$/, ''),
+                real: formatCurrency(list_produksi[a].real),
+                rkap: formatCurrency(list_produksi[a].rkap),
                 jenis: list_produksi[a].jenis,
                 persen_real: persen_real,
-                chartData: setChartData(persen_real, persen_rkap),
+                name_real: list_produksi[a].name_real,
+                name_rkap: list_produksi[a].name_rkap,
+                chartData: setChartData(persen_real, persen_rkap, [list_produksi[a].name_real, list_produksi[a].name_rkap]),
                 chartOptions: setChartOptions(),
             })
         }
     }
 
-    const setChartData = (real, rkap) => {
+    const setChartData = (real, rkap, label) => {
         const documentStyle = getComputedStyle(document.body);
         
         return {
-            labels: ['Real', 'RKAP PMG-1'],
+            labels: label,
             datasets: [
                 {
                     data: [real, rkap],
@@ -95,6 +99,15 @@
         };
     };
 
+    function formatCurrency(amount) {
+        // Convert the number to a string and insert commas every three digits from the right
+        let parts = amount.toString().split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        // Combine the integer part with the decimal part (if any)
+        return parts.join(',');
+    }
+
     loadProduct()
 </script>
 
@@ -115,7 +128,7 @@
                     </div>
                     <div class="flex gap-3 justify-content-end w-full">
                         <div class="flex flex-column text-right w-4">
-                            <span class="text-xs font-bold text-blue-500">Real</span>
+                            <span class="text-xs font-bold text-blue-500">{{item.name_real}}</span>
                             <span class="text-md text-500 font-medium text-blue-500">{{item.real}}</span>
                         </div>
                         <div class="w-2 text-center">
@@ -123,7 +136,7 @@
                             <i class="pi pi-caret-right text-400"></i>
                         </div>
                         <div class="flex flex-column w-4">
-                            <span class="text-xs font-bold text-orange-500">RKAP PMG-1</span>
+                            <span class="text-xs font-bold text-orange-500">{{item.name_rkap}}</span>
                             <span class="text-md text-500 font-medium text-orange-500">{{item.rkap}}</span>
                         </div>
                     </div>
@@ -141,7 +154,7 @@
                     </div>
                     <div class="flex gap-3 justify-content-end w-full">
                         <div class="flex flex-column text-right w-4">
-                            <span class="text-xs font-bold text-blue-500">Real</span>
+                            <span class="text-xs font-bold text-blue-500">{{item.name_real}}</span>
                             <span class="text-md text-500 font-medium text-blue-500">{{item.real}}</span>
                         </div>
                         <div class="w-2 text-center">
@@ -149,7 +162,7 @@
                             <i class="pi pi-caret-right text-400"></i>
                         </div>
                         <div class="flex flex-column w-4">
-                            <span class="text-xs font-bold text-orange-500">RKAP PMG-1</span>
+                            <span class="text-xs font-bold text-orange-500">{{item.name_rkap}}</span>
                             <span class="text-md text-500 font-medium text-orange-500">{{item.rkap}}</span>
                         </div>
                     </div>

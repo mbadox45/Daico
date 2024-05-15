@@ -7,10 +7,16 @@
     // API ========================================================================================================================================================
     import {gl} from '@/api/dummy/gl.js'
     import GlConfig from '@/api/configuration/GlConfig.js';
+    import CategoryMaster from '@/api/master/CategoryMaster.js';
 
     // VARIABLE
     const products = ref();
+    const totalDebit = ref();
+    const totalCredit = ref();
+    const totalDifference = ref();
+    const list_category = ref([])
     const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
+    const loadingTable = ref(false)
     const bulan = ref(Number(moment().format('M')));
     const list_bulan = ref([]);
     const tahun = ref(Number(moment().format('yyyy')));
@@ -25,6 +31,7 @@
 
     // Function ===================================================================================================================================================
     onMounted(() => {
+        loadCategory()
         loadData()
     });
 
@@ -56,35 +63,81 @@
 
     const loadData = async() => {
         try {
-            const response = await GlConfig.getByDate({tanggal:"2024-04-01"})
+            loadingTable.value = true
+            const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+            const response = await GlConfig.getByDate({tanggal:dateString})
             const load = response.data;
-            console.log(load)
+            totalCredit.value = formatCurrency(load.totalCredit.toFixed(2));
+            totalDebit.value = formatCurrency(load.totalDebit.toFixed(2));
+            totalDifference.value = formatCurrency(load.totalDifference.toFixed(2));
+
+            // Data
+            const data = load.data;
+            products.value = []
+            const cat = list_category.value;
+            let category2;
+            for (let i = 0; i < data.length; i++) {
+                category2 = data[i].debe == null ? null :  data[i].debe.cat3 == null ? null : cat.find(item => item.id3 == data[i].debe.cat3.id && item.id2 == data[i].debe.cat3.id_category2)
+                products.value.push({
+                    coa: data[i].account_account == null ? '' : data[i].account_account.code,
+                    no_transaksi: data[i].move_name,
+                    uraian: data[i].name,
+                    debet: Number(data[i].debit) < 1 ? '-' : formatCurrency(Number(data[i].debit)),
+                    kredit: Number(data[i].credit) < 1 ? '-' : formatCurrency(Number(data[i].credit)),
+                    date: moment(data[i].date).format('DD MMM YYYY'),
+                    cat1: category2 == null ? '-': category2.name1,
+                    cat2: category2 == null ? '-': category2.name2,
+                    cat3: data[i].debe == null ? '' : data[i].debe.cat3 == null ? '-' :  data[i].debe.cat3.nama,
+                    laporan_management: data[i].debe == null ? '' : data[i].debe.m_report == null ? '-' : data[i].debe.m_report.nama,
+                    cost_centre: data[i].debe == null ? '' : data[i].debe.c_centre == null ? '-' : data[i].debe.c_centre.nama,
+                    plan: data[i].debe == null ? '' : data[i].debe.plant == null ? '-' : data[i].debe.plant.nama,
+                    allocation: data[i].debe == null ? '' : data[i].debe.allocation == null ? '-' : data[i].debe.allocation.nama,
+                    journal: data[i].move_name + " ("+ data[i].ref + ")",
+                    account: data[i].account_account == null ? '' : data[i].account_account.code + ' ' + data[i].account_account.name,
+                    reference: data[i].ref,
+                });
+            }
+            console.log(products.value)
+
+            loadingTable.value = false
+            loadTahun();
+            loadBulan();
         } catch (error) {
-            
+            loadingTable.value = false
+            products.value = []
+            totalCredit.value = formatCurrency(0);
+            totalDebit.value = formatCurrency(0);
+            totalDifference.value = formatCurrency(0);
         }
-        // products.value = []
-        // for (let i = 0; i < gl.length; i++) {
-        //     products.value.push({
-        //         coa: gl[i].coa,
-        //         no_transaksi: gl[i].no_transaksi,
-        //         uraian: gl[i].uraian,
-        //         debet: gl[i].debet < 1 ? '-' : formatCurrency(gl[i].debet),
-        //         kredit: gl[i].kredit < 1 ? '-' : formatCurrency(gl[i].kredit),
-        //         date: gl[i].date,
-        //         cat1: gl[i].cat1,
-        //         cat2: gl[i].cat2,
-        //         cat3: gl[i].cat3,
-        //         laporan_management: gl[i].laporan_management,
-        //         cost_centre: gl[i].cost_centre,
-        //         plan: gl[i].plan,
-        //         allocation: gl[i].allocation,
-        //         journal: gl[i].journal,
-        //         account: gl[i].account,
-        //         reference: gl[i].reference,
-        //     });
-        // }
-        loadTahun();
-        loadBulan();
+        
+    }
+
+    const loadCategory = async() => {
+        try {
+            list_category.value = [];
+            const response = await CategoryMaster.getAll()
+            const load = response.data;
+            const data = load.data;
+            for (let a = 0; a < data.length; a++) {
+                const cat2 = data[a].cat2;
+                for (let b = 0; b < cat2.length; b++) {
+                    const cat3 = cat2[b].cat3;
+                    for (let c = 0; c < cat3.length; c++) {
+                        list_category.value.push({
+                            id3:cat3[c].id,
+                            id2:cat2[b].id,
+                            id1:data[a].id,
+                            name3:cat3[c].nama,
+                            name2:cat2[b].nama,
+                            name1:data[a].nama,
+                        })
+                    }
+                }
+            }
+            // console.log(list_category.value)
+        } catch (error) {
+            list_category.value = []
+        }
     }
 
     const formDatabase = (cond, data) => {
@@ -99,6 +152,7 @@
 
     const loadByPeriod = () => {
         op.value.toggle();
+        loadData()
     }
 
     function formatCurrency(amount) {
@@ -107,38 +161,61 @@
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
         // Combine the integer part with the decimal part (if any)
-        return 'Rp ' + parts.join(',');
+        return 'Rp. ' + parts.join(',');
     }
 </script>
 
 <template>
     <div class="card shadow-3 flex flex-column gap-3">
         <div class="flex justify-content-between align-items-center gap-5">
-            <div class="w-3 flex gap-2">
-                <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)"/>
-                <Button label="Select by Period" outlined severity="secondary" size="small" @click="opByPeriod"/>
-                <OverlayPanel ref="op" :style="{ width: '25rem' }">
-                    <div class="flex flex-column gap-3">
-                        <span class="font-light text-sm">Please select a period</span>
-                        <div class="p-inputgroup p-fluid">
-                            <span class="p-inputgroup-addon bg-white">
-                                <i class="pi pi-calendar"></i>
-                            </span>
-                            <Dropdown v-model="tahun" :options="list_tahun" optionLabel="name" optionValue="id" placeholder="Tahun" @change="loadBulan" checkmark :highlightOnSelect="false" class="w-full" />
-                            <Dropdown v-model="bulan" :options="list_bulan" optionLabel="name" optionValue="id" placeholder="Bulan" checkmark :highlightOnSelect="false" class="w-full" />
-                        </div>
-                        <Button icon="pi pi-check" label="Submit" severity="success" class="w-auto" @click="loadByPeriod"/>
-                    </div>
-                </OverlayPanel>
-            </div>
             <div class="w-4">
+                <div class="p-inputgroup formgrid p-fluid">
+                    <Button icon="pi pi-calendar" severity="info" size="small" @click="opByPeriod"/>
+                    <OverlayPanel ref="op" :style="{ width: '25rem' }">
+                        <div class="flex flex-column gap-3">
+                            <span class="font-light text-sm">Please select a period</span>
+                            <div class="p-inputgroup p-fluid">
+                                <span class="p-inputgroup-addon bg-white">
+                                    <i class="pi pi-calendar"></i>
+                                </span>
+                                <Dropdown v-model="tahun" :options="list_tahun" optionLabel="name" optionValue="id" placeholder="Tahun" @change="loadBulan" checkmark :highlightOnSelect="false" class="w-full" />
+                                <Dropdown v-model="bulan" :options="list_bulan" optionLabel="name" optionValue="id" placeholder="Bulan" checkmark :highlightOnSelect="false" class="w-full" />
+                            </div>
+                            <Button icon="pi pi-check" label="Submit" severity="success" class="w-auto" @click="loadByPeriod"/>
+                        </div>
+                    </OverlayPanel>
+                    <InputText type="text" v-model="filters['global'].value" placeholder="Search" />
+                </div>
             </div>
-            <div class="w-3">
-                <div class="p-inputgroup p-fluid">
-                    <span class="p-inputgroup-addon bg-white">
-                        <i class="pi pi-search"></i>
-                    </span>
-                    <InputText v-model="filters['global'].value" placeholder="Search"/>
+            <div class="w-1">
+            </div>
+            <div class="w-full flex gap-3">
+                <div class="p-2 border-round border-1 border-gray-400 w-full flex flex-column gap-2">
+                    <small class="text-xs">Total Credit:</small>
+                    <div v-if="loadingTable == true" class="flex justify-content-start">
+                        <div>
+                            <ProgressSpinner v-if="loadingTable == true" style="width: 20px; height:20px;" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
+                        </div>
+                    </div>
+                    <strong v-else class="w-full text-right font-medium">{{totalCredit}}</strong>
+                </div>
+                <div class="p-2 border-round border-1 border-gray-400 w-full flex flex-column gap-2">
+                    <small class="text-xs">Total Debit:</small>
+                    <div v-if="loadingTable == true" class="flex justify-content-start">
+                        <div>
+                            <ProgressSpinner v-if="loadingTable == true" style="width: 20px; height:20px;" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
+                        </div>
+                    </div>
+                    <strong v-else class="w-full text-right font-medium">{{totalDebit}}</strong>
+                </div>
+                <div class="p-2 border-round border-1 border-gray-400 w-full flex flex-column gap-2">
+                    <small class="text-xs">Total Difference:</small>
+                    <div v-if="loadingTable == true" class="flex justify-content-start">
+                        <div>
+                            <ProgressSpinner v-if="loadingTable == true" style="width: 20px; height:20px;" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
+                        </div>
+                    </div>
+                    <strong v-else class="w-full text-right font-medium">{{totalDifference}}</strong>
                 </div>
             </div>
         </div>
@@ -228,95 +305,98 @@
         </Dialog>
 
         <!-- Table -->
-        <DataTable v-model:filters="filters" :value="products" paginator :rows="10" dataKey="id" scrollable :globalFilterFields="['name']">
+        <div v-if="loadingTable == true" class="flex flex-column-reverse justify-content-center align-items-center gap-3">
+            <div>
+                <span class="text-xl font-normal">Loading...</span>
+            </div>
+            <div>
+                <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
+            </div>
+        </div>
+        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" dataKey="id" scrollHeight="380px" scrollable :globalFilterFields="['coa','no_transaksi', 'uraian']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
-            <Column field="coa" header="COA" frozen>
+            <Column field="coa" header="COA" frozen style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                     <strong class="text-sm">{{ data.coa }}</strong>
                 </template>
             </Column>
-            <Column header="" frozen>
+            <Column field="no_transaksi" header="No. Transaksi" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
-                    <div class="flex gap-3">
-                        <button @click="formDatabase('edit', data)" class="p-2 text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
-                        <button @click="formDatabase('delete', data)" class="p-2 text-sm border-none border-round text-pink-500"><i class="pi pi-trash"></i></button>
-                    </div>
+                    <small v-tooltip.bottom="data.no_transaksi">{{ data.no_transaksi }}</small>
                 </template>
             </Column>
-            <Column field="no_transaksi" header="No. Transaksi" style="min-width: 12rem">
+            <Column field="uraian" header="Uraian" style="min-width: 13rem">
                 <template #body="{ data }">
-                    {{ data.no_transaksi }}
-                </template>
-            </Column>
-            <Column field="uraian" header="Uraian" style="min-width: 12rem">
-                <template #body="{ data }">
-                    {{ data.uraian }}
+                    <small v-tooltip.bottom="data.uraian">{{ data.uraian.substring(0, 20) }}<span v-if="data.uraian.length > 20">...</span></small>
                 </template>
             </Column>
             <Column field="debet" header="Debet" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.debet }}
+                    <div class="w-full justify-content-end flex"><small :title="data.debet">{{ data.debet }}</small></div>
                 </template>
             </Column>
             <Column field="kredit" header="Kredit" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.kredit }}
+                    <div class="w-full justify-content-end flex"><small :title="data.kredit">{{ data.kredit }}</small></div>
                 </template>
             </Column>
             <Column field="date" header="Date" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.date }}
+                    <small :title="data.date">{{ data.date }}</small>
                 </template>
             </Column>
             <Column field="cat1" header="Category 1" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.cat1 }}
+                    <small :title="data.cat1">{{ data.cat1 }}</small>
                 </template>
             </Column>
             <Column field="cat2" header="Category 2" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.cat2 }}
+                    <small :title="data.cat2">{{ data.cat2 }}</small>
                 </template>
             </Column>
             <Column field="cat3" header="Category 3" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.cat3 }}
+                    <small :title="data.cat3">{{ data.cat3 }}</small>
                 </template>
             </Column>
             <Column field="laporan_management" header="Laporan Management" style="min-width: 14rem">
                 <template #body="{ data }">
-                    {{ data.laporan_management }}
+                    <small :title="data.laporan_management">{{ data.laporan_management }}</small>
                 </template>
             </Column>
             <Column field="cost_centre" header="Cost Centre" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.cost_centre }}
+                    <small :title="data.cost_centre">{{ data.cost_centre }}</small>
                 </template>
             </Column>
             <Column field="plan" header="Plant" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.plan }}
+                    <small :title="data.plan">{{ data.plan }}</small>
                 </template>
             </Column>
             <Column field="allocation" header="Allocation" style="min-width: 6rem">
                 <template #body="{ data }">
-                    {{ data.allocation }}
+                    <small :title="data.allocation">{{ data.allocation }}</small>
                 </template>
             </Column>
-            <Column field="journal" header="Jurnal Entry" style="min-width: 6rem">
+            <Column field="journal" header="Jurnal Entry" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.journal }}
+                    <small v-tooltip.bottom="data.journal">{{ data.journal.substring(0, 20) }}<span v-if="data.journal.length > 20">...</span></small>
+                    <!-- <small :title="data.journal">{{ data.journal }}</small> -->
                 </template>
             </Column>
-            <Column field="account" header="Account" style="min-width: 6rem">
+            <Column field="account" header="Account" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.account }}
+                    <small v-tooltip.bottom="data.account">{{ data.account.substring(0, 20) }}<span v-if="data.account.length > 20">...</span></small>
+                    <!-- <small :title="data.account">{{ data.account }}</small> -->
                 </template>
             </Column>
-            <Column field="reference" header="Reference" style="min-width: 6rem">
+            <Column field="reference" header="Reference" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.reference }}
+                    <small v-tooltip.bottom="data.reference">{{ data.reference.substring(0, 20) }}<span v-if="data.reference.length > 20">...</span></small>
+                    <!-- <small :title="data.reference">{{ data.reference }}</small> -->
                 </template>
             </Column>
         </DataTable>

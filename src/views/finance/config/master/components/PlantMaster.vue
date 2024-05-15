@@ -9,13 +9,8 @@
     import PlantMaster from '@/api/master/PlantMaster.js';
 
     // VARIABLE
+    const searchKeyword = ref('');
     const products = ref([]);
-    const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
-    const bulan = ref(Number(moment().format('M')));
-    const list_bulan = ref([]);
-    const tahun = ref(Number(moment().format('yyyy')));
-    const list_tahun = ref([]);
-    const op = ref();
     const forms = ref({master})
     const loadingTable = ref(false)
     
@@ -32,6 +27,12 @@
     // Function ===================================================================================================================================================
     onMounted(() => {
         loadData()
+    });
+
+    const filteredList = computed(() => {
+        return products.value.filter(item =>
+            item.nama.toLowerCase().includes(searchKeyword.value.toLowerCase())
+        );
     });
 
     const loadData = async() => {
@@ -75,19 +76,6 @@
             id: null,
             nama: null,
         }
-    }
-
-    const formatCurrency = (amount) => {
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return 'Rp ' + parts.join(',');
-    }
-
-    const currencyToNumber = (money) => {
-        const numericString = money.replace(/[^\d,.]/g, ''); // Removes all non-numeric characters except ',' and '.'
-        const numericValue = parseFloat(numericString.replace('.', ''));
-        return numericValue;
     }
 
     const saveData = async () => {
@@ -149,7 +137,7 @@
                 <span class="p-inputgroup-addon bg-white">
                     <i class="pi pi-search"></i>
                 </span>
-                <InputText type="text" placeholder="Search" class="w-full" v-model="filters['global'].value"/>
+                <InputText type="text" placeholder="Search" class="w-full" v-model="searchKeyword"/>
             </div>
         </div>
         <!-- Dialog -->
@@ -176,21 +164,24 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" showGridlines :rowsPerPageOptions="[5, 10, 20, 50]" dataKey="id" scrollable :globalFilterFields="['nama']">
-            <template #empty> No customers found. </template>
-            <template #loading> Loading customers data. Please wait. </template>
-            <Column field="nama" header="Name" style="min-width: 8rem;">
-                <template #body="{ data }">
-                    <strong class="text-sm">{{ data.nama }}</strong>
-                </template>
-            </Column>
-            <Column header="" style="min-width: 10px;">
-                <template #body="{ data }">
-                    <div class="flex justify-content-end gap-3">
-                        <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
+        <DataView v-else :value="filteredList" :layout="'list'" :paginator="true" :rows="10">
+            <template #list="slotProps">
+                <div class="col-12">
+                    <div class="flex flex-column md:flex-row align-items-center p-3 w-full border-1 my-2 border-round border-gray-300">
+                        <img :src="'/images/water-filter.png'" :alt="slotProps.data.nama" class="my-4 md:my-0 w-6 md:w-4rem mr-5" />
+                        <div class="flex-1 text-center md:text-left">
+                            <div class="font-bold text-2xl">{{ slotProps.data.nama }}</div>
+                            <div class="flex align-items-center">
+                                <i class="pi pi-filter-fill mr-2 text-green-300"></i>
+                                <span class="font-normal text-gray-600">Plant</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
+                            <Button icon="pi pi-pencil" severity="warning" size="small" @click="formDatabase('edit',slotProps.data)"></Button>
+                        </div>
                     </div>
-                </template>
-            </Column>
-        </DataTable>
+                </div>
+            </template>
+        </DataView>
     </div>
 </template>

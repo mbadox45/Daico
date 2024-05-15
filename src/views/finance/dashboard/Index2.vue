@@ -111,7 +111,7 @@
                 <div class="bg-white p-4 border-round shadow-3 flex justify-content-between w-full">
                     <div class="flex flex-column gap-2 w-auto">
                         <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Dashboard Trading <i class="pi pi-desktop text-2xl ml-3"></i></strong>
-                        <span class="font-normal text-400">Update data s.d {{ moment().format('31 MMM YYYY') }} </span>
+                        <span class="font-normal text-400">Update data s.d {{ moment().format('MMM YYYY') }} </span>
                         <Button label="Change Month" severity="info" size="small" class="mt-3"/>
                     </div>
                     <div class="flex flex-column p-3 bg-bluegray-50 border-round">

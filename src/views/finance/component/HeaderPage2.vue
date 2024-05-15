@@ -14,9 +14,8 @@
     const route = useRoute();
     const router = useRouter();
     const menu = ref(true);
-    const routeName = computed(() => { 
-        route.name;
-    });
+    const currentRouteName = computed(() => route.name);
+
     const { layoutConfig, onMenuToggle } = useLayout();
 
     const items = ref([
@@ -123,9 +122,10 @@
                 <span class="text-xs font-semibold text-gray-400">Daily Inventory Costing</span>
             </div>
             <div class="flex gap-2 align-items-center justify-content-end w-full">
-                <div class="flex w-auto align-items-center gap-1">
-                    <i class="pi pi-calendar text-xl text-gray-400"></i>
-                    <span class="font-normal text-sm text-gray-400">{{moment().format(' DD MMM YYYY')}}</span>
+                <div class="flex w-auto align-items-center gap-2">
+                    <i class="pi pi-desktop text-lg text-gray-400 mt-1"></i>
+                    <span class="font-normal text-sm text-gray-400 uppercase">{{currentRouteName == 'home' ? 'dashboard' : currentRouteName}}</span>
+                    <!-- <span class="font-normal text-sm text-gray-400">{{moment().format(' DD MMM YYYY')}}</span> -->
                 </div>
                 <Divider layout="vertical" />
                 <button class="p-link layout-menu-button layout-topbar-button text-center text-teal-800 hover:text-teal-500 border-circle p-2 mr-4 w-auto" v-tooltip.bottom="'Menu'"  @click="onMenuToggle()">
@@ -135,15 +135,6 @@
                     <i class="pi pi-sign-out text-xl"></i>
                 </button>
             </div>
-            <!-- <div class="flex justify-content-end align-items-center w-3">
-                <a v-ripple @click="onSettingsClick">
-                    <div class="flex text-teal-800 align-items-center hover:bg-white gap-2 py-2 px-3 cursor-pointer border-round w-auto" >
-                        <span class="pi pi-sign-out font-bold" />
-                        <span class="font-bold">Sign Out</span>
-                    </div>
-                </a>
-            </div> -->
-            <!-- <sidebar-page :visible="visible" @close="toggleSidebar"/> -->
         </div>
     </div>
 </template>

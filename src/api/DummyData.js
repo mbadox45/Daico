@@ -1,14 +1,18 @@
 export const listProduct1 = [
-    {product:'rbdpo', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
-    {product:'pfad', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
-    {product:'rbd stearin', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
+    {product:'rbdpo', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'3001', money_usd:'186'}, image:"/images/liquid-drop.png"},
+    {product:'pfad', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'8785', money_usd:'546'}, image:"/images/liquid-drop.png"},
+    {product:'rbd stearin', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-56', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-57', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-58', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-60', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
 ]
 
 export const listProduct2 = [
-    {product:'rbd olein iv-56', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
-    {product:'rbd olein iv-57', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
-    {product:'rbd olein iv-58', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
-    {product:'rbd olein iv-60', money_rp:'12.887', money_usd: '819,59', image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-56', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-57', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-58', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
+    {product:'rbd olein iv-60', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'9559', money_usd:'594'}, image:"/images/liquid-drop.png"},
 ]
 
 export const listKemasan = [
@@ -16,6 +20,20 @@ export const listKemasan = [
     {product:'salvaco', money:'12.887', image:"/images/cooking-oil.png"},
     {product:'inl', money:'12.887', image:"/images/cooking-oil.png"},
     {product:'nusakita', money:'12.887', image:"/images/cooking-oil.png"},
+]
+
+export const listKemasan2 = [
+    {product:'Minyakita 1L', rp_kemasan:'13499', rp_box: '161983', rp_box_ppn: '179801', rp_box_dmo: '179801', image:"/images/cooking-oil.png"},
+    {product:'Minyakita 2L', rp_kemasan:'26997', rp_box: '161983', rp_box_ppn: '179801', rp_box_dmo: '179801', image:"/images/cooking-oil.png"},
+    {product:'INL 250ml', rp_kemasan:'3639', rp_box: '174689', rp_box_ppn: '193905', rp_box_dmo: '197007', image:"/images/cooking-oil.png"},
+    {product:'INL 450ml', rp_kemasan:'6551', rp_box: '157221', rp_box_ppn: '174515', rp_box_dmo: '177306', image:"/images/cooking-oil.png"},
+    {product:'INL 900ml - pp', rp_kemasan:'13102', rp_box: '157221', rp_box_ppn: '174515', rp_box_dmo: '177306', image:"/images/cooking-oil.png"},
+    {product:'INL 900ml - SP', rp_kemasan:'13102', rp_box: '157221', rp_box_ppn: '174515', rp_box_dmo: '177306', image:"/images/cooking-oil.png"},
+    {product:'INL 1800ml', rp_kemasan:'26203', rp_box: '157221', rp_box_ppn: '174515', rp_box_dmo: '177306', image:"/images/cooking-oil.png"},
+    {product:'Salvaco 1L', rp_kemasan: null, rp_box: null, rp_box_ppn: null, rp_box_dmo: '3101', image:"/images/cooking-oil.png"},
+    {product:'Salvaco 2L', rp_kemasan: null, rp_box: null, rp_box_ppn: null, rp_box_dmo: '3101', image:"/images/cooking-oil.png"},
+    {product:'Nusakita 1L', rp_kemasan: null, rp_box: null, rp_box_ppn: null, rp_box_dmo: '3101', image:"/images/cooking-oil.png"},
+    {product:'Nusakita 2L', rp_kemasan: null, rp_box: null, rp_box_ppn: null, rp_box_dmo: '3101', image:"/images/cooking-oil.png"},
 ]
 
 export const listRealisasiRkapSales = [

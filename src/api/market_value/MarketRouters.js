@@ -15,6 +15,6 @@ export default new class MarketRouters{
         return http.post(`market-router/add`, data);
     }
     updatePost(data, id){
-        return http.post(`market-router/update${id}`, data);
+        return http.post(`market-router/update/${id}`, data);
     }
 }

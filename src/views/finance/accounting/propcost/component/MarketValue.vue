@@ -17,8 +17,8 @@
     // VARIABLE
     const products = ref([]);
     const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
-    const bulan = ref(Number(moment().format('M')));
     const list_bulan = ref([]);
+    const bulan = ref(Number(moment().format('M')));
     const tahun = ref(Number(moment().format('yyyy')));
     const tgls = ref(moment().format('DD'))
     const list_tahun = ref([]);
@@ -96,8 +96,8 @@
                         days = Number(moment(dateString).format('D'));
                     }
                 } else {
-                    dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
-                    // dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(tgls.value)-1).toString().padStart(2, '0')}`;
+                    // dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
+                    dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(tgls.value)-1).toString().padStart(2, '0')}`;
                     days = Number(moment(dateString).format('D'));
                 }
             } else {
@@ -249,21 +249,22 @@
         } else {
             editForms(data)
         }
+        console.log(forms_levy.value)
     }
 
     const editForms = (data) => {
         const listLevy = [
-            {cond: data.pfad.levy.id == null ? 'add' : 'edit', id: data.pfad.levy.id, currency_id: data.pfad.levy.currency_id, id_bulky: data.pfad.levy.id_bulky, nilai: data.pfad.levy.nilai, tanggal: data.pfad.levy.tanggal},
-            {cond: data.rbdpo.levy.id == null ? 'add' : 'edit', id: data.rbdpo.levy.id, currency_id: data.rbdpo.levy.currency_id, id_bulky: data.rbdpo.levy.id_bulky, nilai: data.rbdpo.levy.nilai, tanggal: data.rbdpo.levy.tanggal},
-            {cond: data.rbdo.levy.id == null ? 'add' : 'edit', id: data.rbdo.levy.id, currency_id: data.rbdo.levy.currency_id, id_bulky: data.rbdo.levy.id_bulky, nilai: data.rbdo.levy.nilai, tanggal: data.rbdo.levy.tanggal},
-            {cond: data.rbds.levy.id == null ? 'add' : 'edit', id:data.rbds.levy.id, currency_id: data.rbds.levy.currency_id, id_bulky: data.rbds.levy.id_bulky, nilai: data.rbds.levy.nilai, tanggal: data.rbds.levy.tanggal},
+            {cond: data.pfad.levy.id == null ? 'add' : 'edit', id: data.pfad.levy.id, currency_id: 2, id_bulky: 2, nilai: data.pfad.levy.nilai == null ? null : Number(data.pfad.levy.nilai), tanggal: data.tanggal},
+            {cond: data.rbdpo.levy.id == null ? 'add' : 'edit', id: data.rbdpo.levy.id, currency_id: 2, id_bulky: 3, nilai: data.rbdpo.levy.nilai == null ? null : Number(data.rbdpo.levy.nilai), tanggal: data.tanggal},
+            {cond: data.rbdo.levy.id == null ? 'add' : 'edit', id: data.rbdo.levy.id, currency_id: 2, id_bulky: 4, nilai: data.rbdo.levy.nilai == null ? null : Number(data.rbdo.levy.nilai), tanggal: data.tanggal},
+            {cond: data.rbds.levy.id == null ? 'add' : 'edit', id:data.rbds.levy.id, currency_id: 2, id_bulky: 5, nilai: data.rbds.levy.nilai == null ? null : Number(data.rbds.levy.nilai), tanggal: data.tanggal},
         ]
         console.log(listLevy)
         const listRouters = [
-            {cond: data.pfad.routers.id == null ? 'add' : 'edit', id: data.pfad.routers.id, currency_id: data.pfad.routers.currency_id, id_bulky: data.pfad.routers.id_bulky, nilai: data.pfad.routers.nilai, tanggal: data.pfad.routers.tanggal},
-            {cond: data.rbdpo.routers.id == null ? 'add' : 'edit', id: data.rbdpo.routers.id, currency_id: data.rbdpo.routers.currency_id, id_bulky: data.rbdpo.routers.id_bulky, nilai: data.rbdpo.routers.nilai, tanggal: data.rbdpo.routers.tanggal},
-            {cond: data.rbdo.routers.id == null ? 'add' : 'edit', id: data.rbdo.routers.id, currency_id: data.rbdo.routers.currency_id, id_bulky: data.rbdo.routers.id_bulky, nilai: data.rbdo.routers.nilai, tanggal: data.rbdo.routers.tanggal},
-            {cond: data.rbds.routers.id == null ? 'add' : 'edit', id:data.rbds.routers.id, currency_id: data.rbds.routers.currency_id, id_bulky: data.rbds.routers.id_bulky, nilai: data.rbds.routers.nilai, tanggal: data.rbds.routers.tanggal},
+            {cond: data.pfad.routers.id == null ? 'add' : 'edit', id: data.pfad.routers.id, currency_id: 2, id_bulky: 2, nilai: data.pfad.routers.nilai == null ? null : Number(data.pfad.routers.nilai), tanggal: data.tanggal},
+            {cond: data.rbdpo.routers.id == null ? 'add' : 'edit', id: data.rbdpo.routers.id, currency_id: 2, id_bulky: 3, nilai: data.rbdpo.routers.nilai == null ? null : Number(data.rbdpo.routers.nilai), tanggal: data.tanggal},
+            {cond: data.rbdo.routers.id == null ? 'add' : 'edit', id: data.rbdo.routers.id, currency_id: 2, id_bulky: 4, nilai: data.rbdo.routers.nilai == null ? null : Number(data.rbdo.routers.nilai), tanggal: data.tanggal},
+            {cond: data.rbds.routers.id == null ? 'add' : 'edit', id:data.rbds.routers.id, currency_id: 2, id_bulky: 5, nilai: data.rbds.routers.nilai == null ? null : Number(data.rbds.routers.nilai), tanggal: data.tanggal},
         ]
         console.log(listRouters)
 
@@ -404,10 +405,16 @@
         return parts.join(',');
     }
 
-    const actionAddRouter = async(post) => {
+    const actionRouter = async(post) => {
         try {
-            const response = await MarketRouters.addPost(post)
-            const load = response.data
+            let load;
+            if (post.cond == 'add') {
+                const response = await MarketRouters.addPost(post)
+                load = response.data;
+            } else {
+                const response = await MarketRouters.updatePost(post, post.id)
+                load = response.data;
+            }
             const status = load.status
             return status
         } catch (error) {
@@ -415,10 +422,16 @@
         }
     }
 
-    const actionAddLevy = async(post) => {
+    const actionLevy = async(post) => {
         try {
-            const response = await LevyDuty.addPost(post)
-            const load = response.data
+            let load;
+            if (post.cond == 'add') {
+                const response = await LevyDuty.addPost(post)
+                load = response.data
+            } else {
+                const response = await updatePost.addPost(post, post.id)
+                load = response.data
+            }
             const status = load.status
             return status
         } catch (error) {
@@ -448,15 +461,15 @@
 
             if (count_levy >= levy.length && count_routers >= routers.length) {
                 for (let i = 0; i < routers.length; i++) {
-                    // const response = await actionAddRouter(routers[i])
-                    // console.log(response)
+                    const response = await actionRouter(routers[i])
+                    console.log(response)
                     console.log(routers[i].cond)
                 }
 
                 const levy = forms_levy.value
                 for (let i = 0; i < levy.length; i++) {
-                    // const response = await actionAddLevy(levy[i])
-                    // console.log(response)
+                    const response = await actionLevy(levy[i])
+                    console.log(response)
                     console.log(levy[i].cond)
                 }
                 messages.value = [

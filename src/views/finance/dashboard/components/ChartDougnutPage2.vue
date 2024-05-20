@@ -117,53 +117,47 @@
             <span class="font-medium text-xl">Statistics</span>
             <i class="pi pi-chart-pie text-xl"></i>
         </div>
-        <div>
-            <span class="font-medium text-teal-600">REALISASI VS RKAP SALES (Kg)</span>
-            <div class="flex flex-column justify-content-between gap-3 mt-2">
-                <div v-for="(item, index) in sales" :key="index" class="w-full md:w-full flex justify-content-between align-items-center gap-2 py-3">
-                    <Chart type="doughnut" :data="item.chartData" :options="item.chartOptions" class="w-1 p-1" />
-                    <div class="flex flex-column w-full">
-                        <span class="uppercase font-semibold text-600 text-xl">{{item.jenis}}</span>
-                        <small class="text-500">{{item.persen_real}}%</small>
-                    </div>
-                    <div class="flex gap-3 justify-content-end w-full">
-                        <div class="flex flex-column text-right w-4">
-                            <span class="text-xs font-bold text-blue-500">{{item.name_real}}</span>
-                            <span class="text-md text-500 font-medium text-blue-500">{{item.real}}</span>
+        <div class="flex gap-5">
+            <div class="w-9">
+                <span class="font-medium text-teal-600">REALISASI VS RKAP SALES (Kg)</span>
+                <div class="flex justify-content-between gap-3 mt-2">
+                    <div v-for="(item, index) in sales" :key="index" class="w-full md:w-full flex flex-column justify-content-center align-items-center bg-gray-200 gap-2 py-3 px-3">
+                        <div class="flex flex-column w-full align-items-center">
+                            <span class="uppercase font-semibold text-600 text-xl">{{item.jenis}}</span>
+                            <small class="text-500">{{item.persen_real}}%</small>
                         </div>
-                        <div class="w-2 text-center">
-                            <i class="pi pi-caret-left text-400"></i>
-                            <i class="pi pi-caret-right text-400"></i>
-                        </div>
-                        <div class="flex flex-column w-4">
-                            <span class="text-xs font-bold text-orange-500">{{item.name_rkap}}</span>
-                            <span class="text-md text-500 font-medium text-orange-500">{{item.rkap}}</span>
+                        <Chart type="doughnut" :data="item.chartData" :options="item.chartOptions" class="w-7" />
+                        <div class="flex gap-3 justify-content-center w-full">
+                            <div class="flex flex-column text-right w-4">
+                                <span class="text-xs font-bold text-blue-500">{{item.name_real}}</span>
+                                <span class="text-md text-500 font-medium text-blue-500">{{item.real}}</span>
+                            </div>
+                            <div class="flex flex-column w-4">
+                                <span class="text-xs font-bold text-orange-500">{{item.name_rkap}}</span>
+                                <span class="text-md text-500 font-medium text-orange-500">{{item.rkap}}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div>
-            <span class="font-medium text-teal-600">Kinerja Produksi</span>
-            <div class="flex flex-column justify-content-between gap-3 mt-2">
-                <div v-for="(item, index) in produksi" :key="index" class="w-full md:w-full flex justify-content-between align-items-center gap-2 py-3">
-                    <Chart type="doughnut" :data="item.chartData" :options="item.chartOptions" class="w-1 p-1" />
-                    <div class="flex flex-column w-full">
-                        <span class="uppercase font-semibold text-600 text-xl">{{item.jenis}}</span>
-                        <small class="text-500">{{item.persen_real}}%</small>
-                    </div>
-                    <div class="flex gap-3 justify-content-end w-full">
-                        <div class="flex flex-column text-right w-4">
-                            <span class="text-xs font-bold text-blue-500">{{item.name_real}}</span>
-                            <span class="text-md text-500 font-medium text-blue-500">{{item.real}}</span>
+            <div class="w-6">
+                <span class="font-medium text-teal-600">Kinerja Produksi</span>
+                <div class="flex justify-content-between gap-3 mt-2">
+                    <div v-for="(item, index) in produksi" :key="index" class="w-full md:w-full flex flex-column justify-content-center bg-gray-200 align-items-center gap-2 py-3 px-3">
+                        <div class="flex flex-column w-full align-items-center">
+                            <span class="uppercase font-semibold text-600 text-xl">{{item.jenis}}</span>
+                            <small class="text-500">{{item.persen_real}}%</small>
                         </div>
-                        <div class="w-2 text-center">
-                            <i class="pi pi-caret-left text-400"></i>
-                            <i class="pi pi-caret-right text-400"></i>
-                        </div>
-                        <div class="flex flex-column w-4">
-                            <span class="text-xs font-bold text-orange-500">{{item.name_rkap}}</span>
-                            <span class="text-md text-500 font-medium text-orange-500">{{item.rkap}}</span>
+                        <Chart type="doughnut" :data="item.chartData" :options="item.chartOptions" class="w-7" />
+                        <div class="flex gap-3 justify-content-center w-full">
+                            <div class="flex flex-column text-right w-4">
+                                <span class="text-xs font-bold text-blue-500">{{item.name_real}}</span>
+                                <span class="text-md text-500 font-medium text-blue-500">{{item.real}}</span>
+                            </div>
+                            <div class="flex flex-column w-4">
+                                <span class="text-xs font-bold text-orange-500">{{item.name_rkap}}</span>
+                                <span class="text-md text-500 font-medium text-orange-500">{{item.rkap}}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

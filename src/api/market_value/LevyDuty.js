@@ -15,6 +15,6 @@ export default new class LevyDuty{
         return http.post(`levy-duty/add`, data);
     }
     updatePost(data, id){
-        return http.post(`levy-duty/update${id}`, data);
+        return http.post(`levy-duty/update/${id}`, data);
     }
 }

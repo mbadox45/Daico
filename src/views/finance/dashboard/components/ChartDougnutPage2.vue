@@ -112,7 +112,7 @@
 </script>
 
 <template>
-    <div class="bg-white p-4 border-round shadow-3 flex flex-column gap-4 w-full">
+    <div class="bg-white p-4 border-round shadow-3 flex flex-column gap-4 w-full mt-4">
         <div class="flex justify-content-between border-bottom-1 border-gray-300 pb-3">
             <span class="font-medium text-xl">Statistics</span>
             <i class="pi pi-chart-pie text-xl"></i>
@@ -120,8 +120,8 @@
         <div class="flex gap-5">
             <div class="w-9">
                 <span class="font-medium text-teal-600">REALISASI VS RKAP SALES (Kg)</span>
-                <div class="flex justify-content-between gap-3 mt-2">
-                    <div v-for="(item, index) in sales" :key="index" class="w-full md:w-full flex flex-column justify-content-center align-items-center bg-gray-200 gap-2 py-3 px-3">
+                <div class="flex justify-content-between gap-3 mt-2 bg-gray-300 p-2 border-round">
+                    <div v-for="(item, index) in sales" :key="index" class="w-full md:w-full flex flex-column justify-content-center align-items-center gap-2 py-3 px-3">
                         <div class="flex flex-column w-full align-items-center">
                             <span class="uppercase font-semibold text-600 text-xl">{{item.jenis}}</span>
                             <small class="text-500">{{item.persen_real}}%</small>
@@ -142,8 +142,8 @@
             </div>
             <div class="w-6">
                 <span class="font-medium text-teal-600">Kinerja Produksi</span>
-                <div class="flex justify-content-between gap-3 mt-2">
-                    <div v-for="(item, index) in produksi" :key="index" class="w-full md:w-full flex flex-column justify-content-center bg-gray-200 align-items-center gap-2 py-3 px-3">
+                <div class="flex justify-content-between gap-3 mt-2 bg-gray-300 p-2 border-round">
+                    <div v-for="(item, index) in produksi" :key="index" class="w-full md:w-full flex flex-column justify-content-center align-items-center gap-2 py-3 px-3">
                         <div class="flex flex-column w-full align-items-center">
                             <span class="uppercase font-semibold text-600 text-xl">{{item.jenis}}</span>
                             <small class="text-500">{{item.persen_real}}%</small>

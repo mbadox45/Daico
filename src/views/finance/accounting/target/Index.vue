@@ -1,12 +1,21 @@
 <script setup>
     // Vue Component
-    import { ref, computed, onMounted } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { FilterMatchMode } from 'primevue/api';
     import moment from 'moment';
 
     // API ========================================================================================================================================================
     import {target} from '@/api/dummy/target.js'
     import ProductService from '@/service/ProductService';
+    import DailyDmoAPI from '@/api/target/DailyDmo.js';
+    import MonthlyDmoAPI from '@/api/target/MonthlyDmo.js';
+    import TargetReal from '@/api/target/TargetReal.js';
+    import TargetRkap from '@/api/target/TargetRkap.js';
+
+    // Components
+    import TargetRealRkap from '@/views/finance/accounting/target/components/TargetRealRkap.vue';
+    import DailyDmo from '@/views/finance/accounting/target/components/DailyDmo.vue';
+    import MonthlyDmo from '@/views/finance/accounting/target/components/MonthlyDmo.vue';
 
     // VARIABLE
     const layout = ref('list');
@@ -19,12 +28,19 @@
     const list_bulan = ref([]);
     const tahun = ref(Number(moment().format('yyyy')));
     const list_tahun = ref([]);
+    const tanggal = ref(`${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`)
     const op = ref();
     
     // Dialog Configure
     const visible = ref(false);
     const status_form = ref('add');
     const title_dialog = ref('');
+
+    const menu_add = ref([
+        { label: 'Daily', command: () => { formDatabase('add_daily', null) } },
+        { label: 'Monthly', command: () => { formDatabase('add_monthly', null) } },
+        { label: 'Target', command: () => { formDatabase('add_target', null) } },
+    ])
 
 
     // Function ===================================================================================================================================================
@@ -84,15 +100,71 @@
                 items: items,
             });
         }
-        console.log(products.value)
+
+        const dailyDMO = await loadDailyDmo();
+        console.log(dailyDMO)
+
+        const monthlyDMO = await loadMonthlyDmo();
+        console.log(monthlyDMO)
         loadTahun();
         loadBulan();
+    }
+
+    const loadDailyDmo = async() => {
+        try {
+            const response = await DailyDmoAPI.getByDate({tanggal:tanggal.value});
+            const load = response.data;
+            const data = load.data
+            return data;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    const loadMonthlyDmo = async() => {
+        try {
+            const response = await MonthlyDmoAPI.getByDate({tanggal:tanggal.value});
+            const load = response.data;
+            const data = load.data
+            return data;
+        } catch (error) {
+            return null;
+        }
     }
 
     const formDatabase = (cond, data) => {
         visible.value = true
         status_form.value = cond;
-        title_dialog.value = cond == 'add' ? 'Tambah Data' : cond == 'edit' ? 'Edit Data' : 'Hapus Data' ;
+        title_dialog.value = getTitleModal(cond);
+    }
+
+    const getTitleModal = (cond) => {
+        let title = ''
+        switch (cond) {
+            case 'add_daily':
+                title = 'Tambah Data - Daily DMO';
+                break;
+            case 'add_monthly':
+                title = 'Tambah Data - Monthly DMO';
+                break;
+            case 'add_target':
+                title = 'Tambah Data - Target';
+                break;
+            case 'edit_daily':
+                title = 'Edit Data - Daily DMO';
+                break;
+            case 'edit_monthly':
+                title = 'Edit Data - Monthly DMO';
+                break;
+            case 'edit_target':
+                title = 'Edit Data - Target';
+                break;
+            default:
+                title = 'Tambah Data - Daily DMO';
+                break;
+        }
+
+        return title;
     }
 
     const opByPeriod = (event) => {
@@ -134,14 +206,19 @@
         // Combine the integer part with the decimal part (if any)
         return parts.join(',');
     }
+
+    const postData = (ket) => {
+        console.log(ket)
+        visible.value = false;
+    }
 </script>
 
 <template>
     <div class="card shadow-3 flex flex-column gap-3">
         <div class="flex justify-content-between align-items-center gap-5">
-            <div class="w-3 flex gap-2">
-                <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)"/>
-                <Button label="Select by Period" outlined severity="secondary" size="small" @click="opByPeriod"/>
+            <div class="w-full flex align-items-center gap-2">
+                <SplitButton label="Add" icon="pi pi-plus" severity="info" size="small" class="py-2" :model="menu_add" />
+                <Button label="Select by Period" outlined severity="secondary" size="small" class="py-2" @click="opByPeriod"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">
                     <div class="flex flex-column gap-3">
                         <span class="font-light text-sm">Please select a period</span>
@@ -167,6 +244,12 @@
                 </div>
             </div>
         </div>
+
+        <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '75rem'}" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            <daily-dmo v-if="status_form == 'add_daily' || status_form == 'edit_daily' " :status_request="status_form" @submit="postData"/>
+            <monthly-dmo v-else-if="status_form == 'add_monthly' || status_form == 'edit_monthly'" @submit="postData"/>
+            <target-real-rkap v-else @submit="postData"/>
+        </Dialog>
 
         <!-- Table -->
 

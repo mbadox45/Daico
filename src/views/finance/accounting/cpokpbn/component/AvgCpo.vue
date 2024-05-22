@@ -223,7 +223,7 @@
             </transition-group>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="username" class="font-semibold w-6rem">Tanggal</label>
-                <InputText id="username" v-model="forms.tanggal" type="date" class="flex-auto" autocomplete="off" :max="moment().format('YYYY-MM-DD')" disabled/>
+                <InputText id="username" v-model="forms.tanggal" type="date" class="flex-auto" autocomplete="off" :max="moment().format('YYYY-MM-DD')"/>
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Avg CPO</label>

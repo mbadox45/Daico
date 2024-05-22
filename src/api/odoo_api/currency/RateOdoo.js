@@ -1,4 +1,4 @@
-import http from '../http-auth'
+import http from '../http-auth2'
 
 export default new class RateOdoo{
     getAll(){

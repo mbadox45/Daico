@@ -534,11 +534,11 @@
                         <Divider class="font-medium" align="center">{{ routers.name_bulk }}</Divider>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="date" class="font-semibold w-6rem">Date <small class="text-red-500">*</small></label>
-                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="routers.tanggal" disabled />
+                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="routers.tanggal" />
                         </div>
                         <div class="flex align-items-center gap-3 mb-5">
                             <label for="email" class="font-semibold w-6rem">Currency <small class="text-red-500">*</small></label>
-                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto" v-model="routers.currency_id" disabled></Dropdown>
+                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto" v-model="routers.currency_id"></Dropdown>
                         </div>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="value" class="font-semibold w-6rem">Value <small class="text-red-500">*</small></label>
@@ -554,11 +554,11 @@
                         <Divider class="font-medium" align="center">{{ item.name_bulk }}</Divider>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="date" class="font-semibold w-6rem">Date <small class="text-red-500">*</small></label>
-                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="item.tanggal" disabled/>
+                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="item.tanggal"/>
                         </div>
                         <div class="flex align-items-center gap-3 mb-5">
                             <label for="email" class="font-semibold w-6rem">Currency <small class="text-red-500">*</small></label>
-                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto"  v-model="item.currency_id" disabled></Dropdown>
+                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto"  v-model="item.currency_id"></Dropdown>
                         </div>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="value" class="font-semibold w-6rem">Value <small class="text-red-500">*</small></label>

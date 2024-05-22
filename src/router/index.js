@@ -80,11 +80,31 @@ const router = createRouter({
                     }
                 },
 
-                // Reporting
+                // Production
                 {
                     path: '/cost-prod',
                     name: 'cost production',
-                    component: () => import('@/views/finance/reporting/costprod/Index.vue'),
+                    component: () => import('@/views/finance/production/cost_prod/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/det-alloc',
+                    name: 'Detail Allocation',
+                    component: () => import('@/views/finance/production/det_alloc/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/form-det-alloc',
+                    name: 'Form Detail Allocation',
+                    component: () => import('@/views/finance/production/det_alloc/components/FormDetAlloc.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -155,9 +175,19 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/master-data/category',
-                    name: 'category',
+                    path: '/master-data/category/management',
+                    name: 'category - management',
                     component: () => import('@/views/finance/config/master/components/CategoryMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/category/produksi',
+                    name: 'category - production',
+                    component: () => import('@/views/finance/config/master/components/CategoryProdMaster.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -178,6 +208,16 @@ const router = createRouter({
                     path: '/master-data/bulky/produksi',
                     name: 'Bulky Produksi',
                     component: () => import('@/views/finance/config/master/components/BulkyProduksiMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/retail',
+                    name: 'Retail Produksi',
+                    component: () => import('@/views/finance/config/master/components/RetailProduksiMaster.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

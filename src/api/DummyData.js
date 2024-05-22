@@ -56,3 +56,8 @@ export const database = [
 
 export const uraianBebanProduksi = ['Bahan Baku', 'Gaji, Tunjangan & Biaya Sosial Karyawan Pimpinan', 'Gaji, Tunjangan & Biaya Sosial Karyawan Pelaksana', 'Bahan Bakar', 'Bahan Kimia & Bahan Pendukung Produksi', 'Biaya Analisa & Laboratorium', 'Biaya Listrik', 'Biaya Air', 'Biaya Assuransi Pabrik', 'Pengelolaan Limbah Pabrik Oleh Pihak Ketiga', 'Biaya Bengkel & Pemeliharaan', 'Biaya Pengepakan Retail :', 'Gaji & Tunjangan', 'Salvaco', 'Nusakita', 'INL', 'Minyakita', 'Bahan Kimia', 'Pengangkutan / Langsir', 'Bahan Pengepakan Lainnya', 'Biaya Asuransi Gudang & Filling', 'Depresiasi'
 ]
+
+export const list_product_type = [
+    {id: 'bulk', name: 'Bulk'},
+    {id: 'retail', name: 'Retail'},
+]

@@ -1,4 +1,5 @@
-import http from '../http-auth'
+import http from '../http-common'
+import http2 from '../http-auth'
 
 export default new class KpbnCpo{
     getAll(){
@@ -12,9 +13,9 @@ export default new class KpbnCpo{
     }
 
     addKpbn(data){
-        return http.post(`cpo-kpbn/add`, data);
+        return http2.post(`cpo-kpbn/add`, data);
     }
     updateKpbn(id,data){
-        return http.post(`cpo-kpbn/update/${id}`, data);
+        return http2.post(`cpo-kpbn/update/${id}`, data);
     }
 }

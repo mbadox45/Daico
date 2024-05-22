@@ -3,15 +3,14 @@ export const akuntansi = [
     {
         label: 'Management',
         items: [
-            { label: 'Data', icon: 'pi pi-fw pi-dollar', items:[
-                { label: 'Target', icon: 'pi pi-fw pi-th-large', to: '/target' },
-                { label: 'CPO', icon: 'pi pi-fw pi-th-large', to: '/cpo' },
-                { label: 'Market', icon: 'pi pi-fw pi-th-large', to: '/prop-cost' },
-            ]},
-            { label: 'Reporting', icon: 'pi pi-fw pi-book', items:[
-                { label: 'Average Price', icon: 'pi pi-fw pi-th-large', },
-                { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', },
-                { label: 'Cost Production', icon: 'pi pi-fw pi-th-large', to: '/cost-prod' },
+            // { label: 'Data', icon: 'pi pi-fw pi-dollar', items:[
+            // ]},
+            { label: 'Target', icon: 'pi pi-fw pi-chart-line', to: '/target' },
+            { label: 'CPO', icon: 'pi pi-fw pi-filter-fill', to: '/cpo' },
+            { label: 'Market', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
+            { label: 'Production', icon: 'pi pi-fw pi-building', items:[
+                { label: 'Cost Production', icon: 'pi pi-fw pi-dollar', to: '/cost-prod' },
+                { label: 'Detail Allocation', icon: 'pi pi-fw pi-sitemap', to: '/det-alloc' },
             ]},
         ]
     },
@@ -26,11 +25,15 @@ export const akuntansi = [
                     { label: 'Management Report', to: '/master-data/m_report' },
                     { label: 'Cost Centre', to: '/master-data/cost_centre' },
                     { label: 'Plant', to: '/master-data/plant' },
-                    { label: 'Category', to: '/master-data/category' },
+                    { label: 'Category', items:[
+                        {label: 'Management', to: '/master-data/category/management'},
+                        {label: 'Production', to: '/master-data/category/produksi'},
+                    ] },
                     { label: 'Bulky', items:[
                         {label: 'Market', to: '/master-data/bulky/market'},
                         {label: 'Produksi', to: '/master-data/bulky/produksi'},
                     ] },
+                    { label: 'Retail', to: '/master-data/retail' },
                 ]
             },
         ]

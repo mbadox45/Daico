@@ -3,6 +3,9 @@
     import { ref, computed, defineEmits, onMounted } from 'vue';
     import moment from 'moment';
 
+    // API
+    import RateOdoo from '@/api/odoo_api/currency/RateOdoo.js';
+
     // Variable
     const bulan = ref(Number(moment().format('M')) );
     const list_bulan = ref([]);
@@ -12,6 +15,11 @@
 
     const op = ref();
     const period = ref()
+    const avg_jisdor = ref();
+    const jisdor_lastday = ref();
+    const kurs_mandiri = ref();
+    const loadingData = ref(false)
+
     const tgls = ref(moment().format('DD'))
 
     // Emit
@@ -54,11 +62,40 @@
 
         period.value = dateString;
         emit('submit', dateString)
+        loadJisdor()
+    }
+
+    const loadJisdor = async() => {
+        loadingData.value = true
+        try {
+            const respose = await RateOdoo.postRate({tanggal: period.value, mata_uang:'USD'});
+            const load = respose.data;
+            const data = load.data
+    
+            // Avg Kurs Monthly
+            const get_avg = data;
+            let val_tot = 0;
+            for (let i = 0; i < get_avg.length; i++) {
+                val_tot = val_tot + Number(get_avg[i].rate)
+            }
+            const avg = val_tot / get_avg.length;
+    
+            const data_last = data.sort((a, b) => new Date(b.name) - new Date(a.name))
+
+            avg_jisdor.value = formatCurrency(avg.toFixed(0));
+            jisdor_lastday.value = formatCurrency(Number(data_last[0].rate))
+            kurs_mandiri.value = 0
+            loadingData.value = false
+        } catch (error) {
+            avg_jisdor.value = 0
+            jisdor_lastday.value = 0
+            kurs_mandiri.value = 0
+            loadingData.value = false
+        }
     }
 
     const opByPeriod = (event) => {
         op.value.toggle(event);
-
     }
 
     const loadByPeriod = () => {
@@ -92,6 +129,15 @@
         }
     }
 
+    const formatCurrency = (amount) =>  {
+        // Convert the number to a string and insert commas every three digits from the right
+        let parts = amount.toString().split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        // Combine the integer part with the decimal part (if any)
+        return parts.join(',');
+    }
+
 </script>
 <template>
     <div class="flex flex-column w-full gap-4">
@@ -116,10 +162,16 @@
                 </OverlayPanel>
             </div>
             <div class="w-full flex align-items-center gap-3 justify-content-end">
-                <div class="flex align-items-center gap-2 p-3 bg-yellow-600 text-white border-round h-full">
+                <div class="flex align-items-center gap-2 p-3 bg-yellow-600 text-white border-round h-full w-auto">
                     <i class="pi pi-dollar text-6xl font-bold"></i>
                     <div class="flex flex-column gap-3 border-left-1 pl-3 border-white">
-                        <span class="text-5xl flex gap-3 justify-content-between"><span>Rp</span> <span>15.711</span></span>
+                        <span class="text-5xl flex gap-3 justify-content-between">
+                            <span>Rp</span> 
+                            <div>
+                                <span v-if="loadingData == true">.....</span>
+                                <span v-else>{{avg_jisdor}}</span>
+                            </div>
+                        </span>
                         <div class="font-medium border-round flex gap-2 w-auto">
                             <small class="flex gap-2 text-xs"><i class="pi pi-caret-right"></i> Avg Kurs Jisdor</small>
                         </div>
@@ -128,7 +180,13 @@
                 <div class="flex align-items-center gap-2 p-3 bg-cyan-600 text-white border-round h-full">
                     <i class="pi pi-dollar text-6xl font-bold"></i>
                     <div class="flex flex-column gap-3 border-left-1 pl-3 border-white">
-                        <span class="text-5xl flex gap-3 justify-content-between"><span>Rp</span> <span>15.711</span></span>
+                        <span class="text-5xl flex gap-3 justify-content-between">
+                            <span>Rp</span>
+                            <div>
+                                <span v-if="loadingData == true">.....</span>
+                                <span v-else>{{jisdor_lastday}}</span>
+                            </div>
+                        </span>
                         <div class="font-medium border-round flex gap-2 w-auto">
                             <small class="flex gap-2 text-xs"><i class="pi pi-caret-right"></i> Kurs Jisdor Last Day</small>
                         </div>
@@ -137,7 +195,13 @@
                 <div class="flex align-items-center gap-2 p-3 bg-indigo-600 text-white border-round h-full">
                     <i class="pi pi-dollar text-6xl font-bold"></i>
                     <div class="flex flex-column gap-3 border-left-1 pl-3 border-white">
-                        <span class="text-5xl flex gap-3 justify-content-between"><span>Rp</span> <span>15.711</span></span>
+                        <span class="text-5xl flex gap-3 justify-content-between">
+                            <span>Rp</span>
+                            <div>
+                                <span v-if="loadingData == true">.....</span>
+                                <span v-else>{{kurs_mandiri}}</span>
+                            </div>
+                        </span>
                         <div class="font-medium border-round flex gap-2 w-auto">
                             <small class="flex gap-2 text-xs"><i class="pi pi-caret-right"></i> Kurs Transaksi Bank Mandiri</small>
                         </div>

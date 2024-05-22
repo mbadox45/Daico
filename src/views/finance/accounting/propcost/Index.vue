@@ -26,7 +26,7 @@
             <market-value/>
         </div>
         <div v-show="active == 1">
-            <prop-cost/>
+            <!-- <prop-cost/> -->
         </div>
     </div>
 </template>

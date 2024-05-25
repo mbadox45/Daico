@@ -3,45 +3,25 @@
     import { ref, onMounted } from 'vue';
     import { FilterMatchMode } from 'primevue/api';
     import moment from 'moment';
-
-    // API ========================================================================================================================================================
-    import {target} from '@/api/dummy/target.js'
-    import ProductService from '@/service/ProductService';
-    import DailyDmoAPI from '@/api/target/DailyDmo.js';
-    import MonthlyDmoAPI from '@/api/target/MonthlyDmo.js';
-    import TargetReal from '@/api/target/TargetReal.js';
-    import TargetRkap from '@/api/target/TargetRkap.js';
+    import { useRouter, useRoute } from 'vue-router';
 
     // Components
-    import TargetRealRkap from '@/views/finance/accounting/target/components/TargetRealRkap.vue';
-    import DailyDmo from '@/views/finance/accounting/target/components/DailyDmo.vue';
-    import MonthlyDmo from '@/views/finance/accounting/target/components/MonthlyDmo.vue';
+    import MainTarget from '@/views/finance/accounting/target/components/list/MainTarget.vue';
+    import DailyDmo from '@/views/finance/accounting/target/components/list/DailyDmo.vue';
+    import MonthlyDmo from '@/views/finance/accounting/target/components/list/MonthlyDmo.vue';
+    import TargetReal from '@/views/finance/accounting/target/components/list/TargetReal.vue';
 
     // VARIABLE
-    const layout = ref('list');
-    const expandedRowGroups = ref();
-    const products = ref();
-    const total_biaya_produksi = ref();
-    const total_cpo_olah = ref();
-    const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
+    const active = ref(0);
     const bulan = ref(Number(moment().format('M')));
     const list_bulan = ref([]);
     const tahun = ref(Number(moment().format('yyyy')));
     const list_tahun = ref([]);
     const tanggal = ref(`${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`)
+    const tgls = ref(moment().format('DD'))
     const op = ref();
-    
-    // Dialog Configure
-    const visible = ref(false);
-    const status_form = ref('add');
-    const title_dialog = ref('');
 
-    const menu_add = ref([
-        { label: 'Daily', command: () => { formDatabase('add_daily', null) } },
-        { label: 'Monthly', command: () => { formDatabase('add_monthly', null) } },
-        { label: 'Target', command: () => { formDatabase('add_target', null) } },
-    ])
-
+    const router = useRouter();
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -75,96 +55,10 @@
     }
 
     const loadData = async() => {
-        products.value = []
-        let tot_biaya_produksi = 0;
-        let tot_cpo_olah = 0;
-        for (let i = 0; i < target.length; i++) {
-            // tot_biaya_produksi = tot_biaya_produksi + target[i].real;
-            // tot_cpo_olah = tot_cpo_olah + target[i].rkap;
-            const item = target[i].items; 
-            const items = []
-            for (let a = 0; a < item.length; a++) {
-                items.push({
-                    type: item[a].type,
-                    diff: item[a].diff,
-                    real: item[a].real < 1 ? '' : formatCurrency(item[a].real.toFixed(2)),
-                    rkap: item[a].rkap < 1 ? '' : formatCurrency(item[a].rkap.toFixed(2)),
-                    diff_n: (item[a].real - item[a].rkap) < 0 ? `(${formatCurrency(((item[a].real - item[a].rkap)*-1).toFixed(0))})` : (item[a].real - item[a].rkap) == 0 ? '-': formatCurrency((item[a].real - item[a].rkap).toFixed(0)),
-                    diff_r: (item[a].real - item[a].rkap) < 0 ? ((item[a].real - item[a].rkap)) : (item[a].real - item[a].rkap) == 0 ? 0: (item[a].real - item[a].rkap),
-                    real_r: item[a].real,
-                    rkap_r: item[a].rkap,
-                })
-            }
-            products.value.push({
-                qty: target[i].qty,
-                items: items,
-            });
-        }
-
-        const dailyDMO = await loadDailyDmo();
-        console.log(dailyDMO)
-
-        const monthlyDMO = await loadMonthlyDmo();
-        console.log(monthlyDMO)
+        let dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
+        tanggal.value = dateString;
         loadTahun();
         loadBulan();
-    }
-
-    const loadDailyDmo = async() => {
-        try {
-            const response = await DailyDmoAPI.getByDate({tanggal:tanggal.value});
-            const load = response.data;
-            const data = load.data
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    const loadMonthlyDmo = async() => {
-        try {
-            const response = await MonthlyDmoAPI.getByDate({tanggal:tanggal.value});
-            const load = response.data;
-            const data = load.data
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    const formDatabase = (cond, data) => {
-        visible.value = true
-        status_form.value = cond;
-        title_dialog.value = getTitleModal(cond);
-    }
-
-    const getTitleModal = (cond) => {
-        let title = ''
-        switch (cond) {
-            case 'add_daily':
-                title = 'Tambah Data - Daily DMO';
-                break;
-            case 'add_monthly':
-                title = 'Tambah Data - Monthly DMO';
-                break;
-            case 'add_target':
-                title = 'Tambah Data - Target';
-                break;
-            case 'edit_daily':
-                title = 'Edit Data - Daily DMO';
-                break;
-            case 'edit_monthly':
-                title = 'Edit Data - Monthly DMO';
-                break;
-            case 'edit_target':
-                title = 'Edit Data - Target';
-                break;
-            default:
-                title = 'Tambah Data - Daily DMO';
-                break;
-        }
-
-        return title;
     }
 
     const opByPeriod = (event) => {
@@ -173,51 +67,14 @@
 
     const loadByPeriod = () => {
         op.value.toggle();
-    }
-
-    const calculateCustomerTotal = (name, type) => {
-        let total = 0;
-
-        const filteredBulkItems = products.value.flatMap(entry => {
-            // Filter the items array for each entry where type is "Bulk"
-            const bulkItems = entry.items.filter(item => item.type === name);
-            let count = 0;
-            for (let i = 0; i < bulkItems.length; i++) {
-                if (type == 'real') {
-                    count = count + bulkItems[i].real_r;
-                } else if (type == 'diff') {
-                    count = count + bulkItems[i].diff_r;
-                } else {
-                    count = count + bulkItems[i].rkap_r;
-                }
-            }
-            return count
-        });
-
-        return total = formatCurrency(filteredBulkItems[0].toFixed(0));
-        // console.log(filteredBulkItems)
-    };
-
-    function formatCurrency(amount) {
-        // Convert the number to a string and insert commas every three digits from the right
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        // Combine the integer part with the decimal part (if any)
-        return parts.join(',');
-    }
-
-    const postData = (ket) => {
-        console.log(ket)
-        visible.value = false;
+        loadData()
     }
 </script>
 
 <template>
     <div class="card shadow-3 flex flex-column gap-3">
         <div class="flex justify-content-between align-items-center gap-5">
-            <div class="w-full flex align-items-center gap-2">
-                <SplitButton label="Add" icon="pi pi-plus" severity="info" size="small" class="py-2" :model="menu_add" />
+            <div class="flex align-items-center gap-3">
                 <Button label="Select by Period" outlined severity="secondary" size="small" class="py-2" @click="opByPeriod"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">
                     <div class="flex flex-column gap-3">
@@ -232,132 +89,34 @@
                         <Button icon="pi pi-check" label="Submit" severity="success" class="w-auto" @click="loadByPeriod"/>
                     </div>
                 </OverlayPanel>
+                <span class="font-medium text-sm text-gray-400 uppercase">{{ active == 0 ? 'Target Report' : active == 1 ? 'Daily DMO' : active == 2 ? 'Monthly DMO' : active == 3 ? 'Target (Real)' : 'Target (RKAP)' }}</span>
             </div>
-            <div class="w-4">
-            </div>
-            <div class="w-3">
-                <div class="p-inputgroup p-fluid">
-                    <span class="p-inputgroup-addon bg-white">
-                        <i class="pi pi-search"></i>
-                    </span>
-                    <InputText v-model="filters['global'].value" placeholder="Search"/>
-                </div>
+            <div class="flex justify-content-end gap-1 p-2 border-1 border-gray-500 border-round">
+                <Button label="Report" @click="active = 0" class="py-2 text-xs" severity="secondary" :text="active !== 0" size="small"/>
+                <Button label="Daily DMO" @click="active = 1" class="py-2 text-xs" severity="secondary" :text="active !== 1" size="small"/>
+                <Button label="Mothly DMO" @click="active = 2" class="py-2 text-xs" severity="secondary" :text="active !== 2" size="small"/>
+                <Button label="Target (Real)" @click="active = 3" class="py-2 text-xs" severity="secondary" :text="active !== 3" size="small"/>
+                <Button label="Target (RKAP)" @click="active = 4" class="py-2 text-xs" severity="secondary" :text="active !== 4" size="small"/>
             </div>
         </div>
 
-        <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '75rem'}" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <daily-dmo v-if="status_form == 'add_daily' || status_form == 'edit_daily' " :status_request="status_form" @submit="postData"/>
-            <monthly-dmo v-else-if="status_form == 'add_monthly' || status_form == 'edit_monthly'" @submit="postData"/>
-            <target-real-rkap v-else @submit="postData"/>
-        </Dialog>
-
         <!-- Table -->
-
-        <DataTable :value="products" rowGroupMode="subheader" groupRowsBy="qty" sortMode="single" sortField="qty" :sortOrder="1" tableStyle="min-width: 50rem">
-            <Column field="qty" style="min-width: 200px;">
-                <!-- <template #header>
-                    <div class="bg-green-500 text-white w-full border-round p-3 uppercase">
-                        <span>product</span>
-                    </div>
-                </template> -->
-            </Column>
-            <template #groupheader="slotProps">
-                <div class="flex flex-column gap-2 my-4">
-                    <span class="vertical-align-text-top font-bold line-height-3 uppercase text-xl font-italic">{{ slotProps.data.qty }}</span>
-                    <DataTable :value="slotProps.data.items" rowGroupMode="subheader" groupRowsBy="type" sortMode="single" sortField="type" :sortOrder="1" tableStyle="min-width: 50rem">
-                        <Column field="type" style="width: 130px;"></Column>
-                        <Column field="diff">
-                            <template #header>
-                                <div class="uppercase">
-                                    <span>Product</span>
-                                </div>
-                            </template>
-                            <template #body="{data}">
-                                <div class="flex w-full">
-                                    <span class="text-sm font-bold text-gray-500">{{data.diff}}</span>
-                                </div>
-                            </template>
-                        </Column>
-                        <Column field="real" style="min-width: 200px">
-                            <template #header>
-                                <div class="flex w-full justify-content-end uppercase">
-                                    <span>real</span>
-                                </div>
-                            </template>
-                            <template #body="{data}">
-                                <div class="flex w-full justify-content-end">
-                                    <span class="text-sm font-bold">{{data.real}}</span>
-                                </div>
-                            </template>
-                        </Column>
-                        <Column field="rkap" style="min-width: 200px">
-                            <template #header>
-                                <div class="flex w-full justify-content-end uppercase">
-                                    <span>rkap</span>
-                                </div>
-                            </template>
-                            <template #body="{data}">
-                                <div class="flex w-full justify-content-end">
-                                    <span class="text-sm font-bold">{{data.rkap}}</span>
-                                </div>
-                            </template>
-                        </Column>
-                        <Column field="diff_n" style="min-width: 200px">
-                            <template #header>
-                                <div class="flex w-full justify-content-end uppercase">
-                                    <span>diff</span>
-                                </div>
-                            </template>
-                            <template #body="{data}">
-                                <div class="flex w-full justify-content-end">
-                                    <span class="text-sm font-bold">{{data.diff_n}}</span>
-                                </div>
-                            </template>
-                        </Column>
-                        <template #groupheader="slotProps">
-                            <div class="font-italic font-medium mt-4" v-if="slotProps.data.type !='1' && slotProps.data.type !='2'">{{ slotProps.data.type }}</div>
-                        </template>
-                        <!-- <ColumnGroup type="footer">
-                            <Row>
-                                <Column footer="Totals:" footerStyle="text-align:right" />
-                                <Column :footer="calculateCustomerTotal(slotProps.data.type, 'real')" footerStyle="text-align:right"/>
-                                <Column :footer="calculateCustomerTotal(slotProps.data.type, 'rkap')" footerStyle="text-align:right"/>
-                                <Column :footer="calculateCustomerTotal(slotProps.data.type, 'diff')" footerStyle="text-align:right"/>
-                            </Row>
-                        </ColumnGroup> -->
-                        <template #groupfooter="slotProps">
-                            <div class="flex gap-3 align-items-center justify-content-between">
-                                <div class="flex flex-column gap-2">
-                                    <span class="text-xl font-bold">TOTALS</span>
-                                </div>
-                                <div class="flex flex-column gap-2">
-                                    <span>Real</span>
-                                    <span class="font-bold">{{ calculateCustomerTotal(slotProps.data.type, 'real') }}</span>
-                                </div>
-                                <div class="flex flex-column gap-2">
-                                    <span>RKAP</span>
-                                    <span class="font-bold">{{ calculateCustomerTotal(slotProps.data.type, 'rkap') }}</span>
-                                </div>
-                                <div class="flex flex-column gap-2">
-                                    <span>DIFF</span>
-                                    <span class="font-bold">{{ calculateCustomerTotal(slotProps.data.type, 'diff') }}</span>
-                                </div>
-
-                                <div class="flex flex-column gap-2">
-                                    <span>Real (%)</span>
-                                    <span class="font-bold">{{ calculateCustomerTotal(slotProps.data.type, 'diff') }}</span>
-                                </div>
-                                <div class="flex flex-column gap-2">
-                                    <span>Sisa Target (%)</span>
-                                    <span class="font-bold">{{ calculateCustomerTotal(slotProps.data.type, 'diff') }}</span>
-                                </div>
-                            </div>
-                        </template>
-                        <!-- <div class="flex justify-content-end font-bold w-full">Total: {{ slotProps.data.real_r }}</div> -->
-                    </DataTable>
-                </div>
-            </template>
-        </DataTable>
-        
+        <div v-show="active == 0">
+            <!-- <main-target/> -->
+            <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3>
+        </div>
+        <div v-show="active == 1">
+            <daily-dmo :tanggal="tanggal"/>
+        </div>
+        <div v-show="active == 2">
+            <monthly-dmo :tanggal="tanggal"/>
+        </div>
+        <div v-show="active == 3">
+            <target-real :tanggal="tanggal"/>
+            <!-- <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3> -->
+        </div>
+        <div v-show="active == 4">
+            <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3>
+        </div>
     </div>
 </template>

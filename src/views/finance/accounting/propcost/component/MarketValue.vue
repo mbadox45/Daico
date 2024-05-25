@@ -538,7 +538,7 @@
                         </div>
                         <div class="flex align-items-center gap-3 mb-5">
                             <label for="email" class="font-semibold w-6rem">Currency <small class="text-red-500">*</small></label>
-                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto" v-model="routers.currency_id"></Dropdown>
+                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto" v-model="routers.currency_id" ></Dropdown>
                         </div>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="value" class="font-semibold w-6rem">Value <small class="text-red-500">*</small></label>
@@ -558,7 +558,7 @@
                         </div>
                         <div class="flex align-items-center gap-3 mb-5">
                             <label for="email" class="font-semibold w-6rem">Currency <small class="text-red-500">*</small></label>
-                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto"  v-model="item.currency_id"></Dropdown>
+                            <Dropdown :options="list_currency" filter optionLabel="name" optionValue="id" placeholder="Select a Currency" class="flex-auto"  v-model="item.currency_id" ></Dropdown>
                         </div>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="value" class="font-semibold w-6rem">Value <small class="text-red-500">*</small></label>

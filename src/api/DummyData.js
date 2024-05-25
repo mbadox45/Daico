@@ -61,3 +61,32 @@ export const list_product_type = [
     {id: 'bulk', name: 'Bulk'},
     {id: 'retail', name: 'Retail'},
 ]
+
+export const getTitleModal = (cond) => {
+    let title = ''
+    switch (cond) {
+        case 'add_daily':
+            title = 'Tambah Data - Daily DMO';
+            break;
+        case 'add_monthly':
+            title = 'Tambah Data - Monthly DMO';
+            break;
+        case 'add_target':
+            title = 'Tambah Data - Target';
+            break;
+        case 'edit_daily':
+            title = 'Edit Data - Daily DMO';
+            break;
+        case 'edit_monthly':
+            title = 'Edit Data - Monthly DMO';
+            break;
+        case 'edit_target':
+            title = 'Edit Data - Target';
+            break;
+        default:
+            title = 'Tambah Data - Daily DMO';
+            break;
+    }
+
+    return title;
+}

@@ -4,7 +4,11 @@
     import moment from 'moment';
 
     // API
+    import {list_product_type} from '@/api/DummyData.js';
+    import TargetReal from '@/api/target/TargetReal.js';
     import MonthlyDmo from '@/api/target/MonthlyDmo.js';
+    import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
+    import RetailProdMaster from '@/api/master/RetailProdMaster.js';
 
     // Variable
     const props = defineProps({
@@ -17,29 +21,34 @@
     });
     const status = props.status_request
     const data_prop = props.data_dialog
+    const product_type = ref(list_product_type)
+    const list_product = ref([])
 
     const emit = defineEmits(['submit'])
 
     const forms = ref({
         id: null,
         tanggal: moment().format('YYYY-MM-DD'),
-        dmo: null,
-        cpo_olah_rkap: null,
-        kapasitas_utility: null,
-        pengali_kapasitas_utility: null,
+        value: null,
+        product_type: null,
+        productable_id: null,
     })
 
     const loadForms = async() => {
         if (status == 'add') {
             resetForm()
         } else {
+            if (data_prop.productable_type == 'bulk') {
+                list_product.value = await loadBulkProd();
+            } else {
+                list_product.value = await loadRetailProd();
+            }
             forms.value = {
                 id: data_prop.id,
                 tanggal: data_prop.tanggal,
-                dmo: data_prop.dmo,
-                cpo_olah_rkap: data_prop.cpo_olah_rkap,
-                kapasitas_utility: data_prop.kapasitas_utility,
-                pengali_kapasitas_utility: data_prop.pengali_kapasitas_utility,
+                value: data_prop.value,
+                product_type: data_prop.productable_type,
+                productable_id: data_prop.productable_id,
             }
         }
     }
@@ -52,19 +61,39 @@
         forms.value = {
             id: null,
             tanggal: moment().format('YYYY-MM-DD'),
-            dmo: null,
-            cpo_olah_rkap: null,
-            kapasitas_utility: null,
-            pengali_kapasitas_utility: null,
+            value: null,
+            product_type: null,
+            productable_id: null,
+        }
+    }
+
+    const loadRetailProd = async() => {
+        try {
+            const response = await RetailProdMaster.getAll()
+            const load = response.data;
+            const data = load.mBulky
+            return data;
+        } catch (error) {
+            return null;
+        }
+    }
+    const loadBulkProd = async() => {
+        try {
+            const response = await BulkyProdMaster.getAll()
+            const load = response.data;
+            const data = load.mBulky
+            return data;
+        } catch (error) {
+            return null;
         }
     }
 
     // Function
     const postData = async() => {
         try {
-            if (forms.value.tanggal != null && forms.value.dmo != null && forms.value.cpo_olah_rkap != null && forms.value.kapasitas_utility != null && forms.value.pengali_kapasitas_utility != null) {
+            if (forms.value.tanggal != null && forms.value.value != null && forms.value.product_type != null && forms.value.productable_id != null) {
                 if (status == 'add') {
-                    const response = await MonthlyDmo.addPost(forms.value);
+                    const response = await TargetReal.addPost(forms.value);
                     const load = response.data;
                     if (load.success == true) {
                         emit('submit','sukses');
@@ -73,7 +102,7 @@
                     }
                     
                 } else {
-                    const response = await MonthlyDmo.updatePost(forms.value.id,forms.value);
+                    const response = await TargetReal.updatePost(forms.value.id,forms.value);
                     const load = response.data;
                     if (load.success == true) {
                         emit('submit','sukses');
@@ -95,30 +124,21 @@
         <div class="flex gap-4">
             <div class="flex flex-column gap-3 w-full">
                 <label for="tanggal" class="font-semibold">Tanggal <small class="text-red-500">*</small></label>
-                <InputText id="tanggal" v-model="forms.tanggal" type="date" class="flex-auto" autocomplete="off" :max="moment().format('YYYY-MM-DD')"/>
+                <InputText id="tanggal" v-model="forms.tanggal" type="date" class="flex-auto" autocomplete="off" :max="moment().format('YYYY-MM-DD')" disabled/>
             </div>
         </div>
         <div class="flex gap-4">
             <div class="flex flex-column gap-3 w-full">
-                <label for="username" class="font-semibold">DMO <small class="text-red-500">*</small></label>
-                <InputNumber v-model="forms.dmo" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" />
+                <label for="username" class="font-semibold">Type <small class="text-red-500">*</small></label>
+                <Dropdown v-model="forms.product_type" :options="product_type" optionLabel="name" optionValue="id" placeholder="Select a Product Type" class="w-full" disabled/>
             </div>
             <div class="flex flex-column gap-3 w-full">
-                <label for="username" class="font-semibold">RKAP <small class="text-red-500">*</small></label>
-                <InputNumber v-model="forms.cpo_olah_rkap" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" />
+                <label for="username" class="font-semibold">Product <small class="text-red-500">*</small></label>
+                <Dropdown v-model="forms.productable_id" :options="list_product" optionLabel="name" optionValue="id" placeholder="Select a Product Name" class="w-full" disabled/>
             </div>
             <div class="flex flex-column gap-3 w-full">
-                <label for="username" class="font-semibold">Kapasitas Utility <small class="text-red-500">*</small></label>
-                <div class="flex flex-column">
-                    <div class="p-inputgroup p-fluid">
-                        <InputNumber v-model="forms.kapasitas_utility" :maxFractionDigits="2" inputId="locale-german" placeholder="Kapasitas Utility" locale="de-DE" class="w-full" />
-                        <span class="p-inputgroup-addon bg-gray-500 text-white align-items-center">
-                            <i class="pi pi-times"></i>
-                        </span>
-                        <InputNumber v-model="forms.pengali_kapasitas_utility" :maxFractionDigits="2" placeholder="Pengali" inputId="locale-german" locale="de-DE" class="w-6" />
-                    </div>
-                    <small class="text-red-400">Exp : (1.000 * 30)</small>
-                </div>
+                <label for="username" class="font-semibold">Value <small class="text-red-500">*</small></label>
+                <InputNumber v-model="forms.value" :maxFractionDigits="2" inputId="locale-german" placeholder="Value" locale="de-DE" class="w-full" />
             </div>
         </div>
         <div class="flex justify-content-end gap-3">

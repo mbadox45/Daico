@@ -97,6 +97,7 @@
     }
 
     const formDatabase = (cond, data) => {
+        messages.value = []
         visible.value = true
         status_form.value = cond;
         title_dialog.value = cond == 'add' ? 'CPO KPBN - Tambah Data' : cond == 'edit' ? 'CPO KPBN - Edit Data' : 'CPO KPBN - Hapus Data' ;
@@ -227,7 +228,7 @@
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Avg CPO</label>
-                <InputNumber v-model="forms.avg" inputId="avg" :minFractionDigits="1" :maxFractionDigits="2" class="flex-auto"/>
+                <InputNumber v-model="forms.avg" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" class="flex-auto"/>
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>

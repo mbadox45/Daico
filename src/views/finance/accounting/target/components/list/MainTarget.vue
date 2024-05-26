@@ -1,7 +1,6 @@
 <script setup>
     // Vue Component
-    import { ref, onMounted } from 'vue';
-    import { FilterMatchMode } from 'primevue/api';
+    import { ref, onMounted, computed, defineProps, watch } from 'vue';
     import moment from 'moment';
     import { useRouter, useRoute } from 'vue-router';
 
@@ -15,30 +14,15 @@
     import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
     import RetailProdMaster from '@/api/master/RetailProdMaster.js';
 
-    // Components
-    import TargetRealRkap from '@/views/finance/accounting/target/components/TargetRealRkap.vue';
-    import DailyDmo from '@/views/finance/accounting/target/components/DailyDmo.vue';
-    import MonthlyDmo from '@/views/finance/accounting/target/components/MonthlyDmo.vue';
+    const props = defineProps({
+        tanggal:{
+            type:String
+        }
+    });
 
     // VARIABLE
-    const layout = ref('list');
-    const expandedRowGroups = ref();
-    const total_biaya_produksi = ref();
-    const total_cpo_olah = ref();
     const products = ref();
     const products_cpo_olah = ref();
-    const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
-    const bulan = ref(Number(moment().format('M')));
-    const list_bulan = ref([]);
-    const tahun = ref(Number(moment().format('yyyy')));
-    const list_tahun = ref([]);
-    const tanggal = ref(`${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`)
-    const op = ref();
-    
-    // Dialog Configure
-    const visible = ref(false);
-    const status_form = ref('add');
-    const title_dialog = ref('');
 
     const router = useRouter();
 
@@ -48,64 +32,16 @@
         { label: 'Target', command: () => { router.push('/form-target') } },
     ])
 
-
+    watch(() => props.tanggal, (newVal) => {loadData(newVal)});
 
     // Function ===================================================================================================================================================
-    onMounted(() => {
-        loadData()
-    });
+    // onMounted(() => {
+    //     loadData(props.tanggal)
+    // });
 
-    const loadBulan = () => {
-        list_bulan.value = []
-        if (tahun.value >= Number(moment().format('yyyy'))) {
-            const month = Number(moment().format('M'))
-            for (let i = 1; i <= month; i++) {
-                const dateString = `2024-${i.toString().padStart(2, '0')}-01`;
-                const monthName = moment(dateString, 'YYYY-MM-DD').format('MMMM');
-                list_bulan.value.push({ id: i, name: monthName });
-            }
-        } else {
-            for (let i = 1; i <= 12; i++) {
-                const dateString = `2024-${i.toString().padStart(2, '0')}-01`;
-                const monthName = moment(dateString, 'YYYY-MM-DD').format('MMMM');
-                list_bulan.value.push({ id: i, name: monthName });
-            }
-        }
-    }
-
-    const loadTahun = () => {
-        const year = Number(moment().format('yyyy'))
-        list_tahun.value = []
-        for (let i = 2020; i <= year; i++) {
-            list_tahun.value.push({ id: i, name: i });
-        }
-    }
-
-    const loadData = async() => {
+    const loadData = async(tgl) => {
         products.value = []
         products_cpo_olah.value = []
-        // let tot_biaya_produksi = 0;
-        // let tot_cpo_olah = 0;
-        // for (let i = 0; i < target.length; i++) {
-        //     const item = target[i].items; 
-        //     const items = []
-        //     for (let a = 0; a < item.length; a++) {
-        //         items.push({
-        //             type: item[a].type,
-        //             diff: item[a].diff,
-        //             real: item[a].real < 1 ? '' : formatCurrency(item[a].real.toFixed(2)),
-        //             rkap: item[a].rkap < 1 ? '' : formatCurrency(item[a].rkap.toFixed(2)),
-        //             diff_n: (item[a].real - item[a].rkap) < 0 ? `(${formatCurrency(((item[a].real - item[a].rkap)*-1).toFixed(0))})` : (item[a].real - item[a].rkap) == 0 ? '-': formatCurrency((item[a].real - item[a].rkap).toFixed(0)),
-        //             diff_r: (item[a].real - item[a].rkap) < 0 ? ((item[a].real - item[a].rkap)) : (item[a].real - item[a].rkap) == 0 ? 0: (item[a].real - item[a].rkap),
-        //             real_r: item[a].real,
-        //             rkap_r: item[a].rkap,
-        //         })
-        //     }
-        //     products.value.push({
-        //         qty: target[i].qty,
-        //         items: items,
-        //     });
-        // }
         const bulk_master = await loadMasterBulkProd();
         for (let i = 0; i < bulk_master.length; i++) {
             products.value.push({
@@ -136,13 +72,39 @@
         })
 
         console.log(products.value)
-        const dailyDMO = await loadDailyDmo();
-        console.log(dailyDMO)
+        const data_target = await loadDataTarget(tgl);
+        console.log(data_target)
+        console.log(tgl)
 
-        const monthlyDMO = await loadMonthlyDmo();
-        console.log(monthlyDMO)
-        loadTahun();
-        loadBulan();
+        // const dailyDMO = await loadDailyDmo(tgl);
+        // console.log(dailyDMO)
+
+        // const monthlyDMO = await loadMonthlyDmo(tgl);
+        // console.log(monthlyDMO)
+    }
+
+    const loadDataTarget = async(tgl) => {
+        try {
+            const response = await TargetReal.getByDate({tanggal: tgl});
+            const load = response.data;
+            const data = load.data;
+            const list = [];
+            for (let a = 0; a < data.length; a++) {
+                const type = data[a].productable_type.split('\\').pop();
+
+                list[a] = {
+                    id:data[a].id,
+                    tanggal:data[a].tanggal,
+                    value:data[a].value,
+                    productable_id:data[a].productable_id,
+                    productable_type:type == 'MasterBulkProduksi' ? 'bulk' : 'retail',
+                    productable:data[a].productable != null ? data[a].productable.name : null,
+                };
+            }
+            return list;
+        } catch (error) {
+            return null;
+        }
     }
 
     const loadMasterBulkProd = async() => {
@@ -167,9 +129,9 @@
         }
     }
 
-    const loadDailyDmo = async() => {
+    const loadDailyDmo = async(tgl) => {
         try {
-            const response = await DailyDmoAPI.getByDate({tanggal:tanggal.value});
+            const response = await DailyDmoAPI.getByDate({tanggal:tgl});
             const load = response.data;
             const data = load.data
             return data;
@@ -178,66 +140,15 @@
         }
     }
 
-    const loadMonthlyDmo = async() => {
+    const loadMonthlyDmo = async(tgl) => {
         try {
-            const response = await MonthlyDmoAPI.getByDate({tanggal:tanggal.value});
+            const response = await MonthlyDmoAPI.getByDate({tanggal:tgl});
             const load = response.data;
             const data = load.data
             return data;
         } catch (error) {
             return null;
         }
-    }
-
-    const formDatabase = (cond, data) => {
-        visible.value = true
-        status_form.value = cond;
-        title_dialog.value = getTitleModal(cond);
-    }
-
-    const opByPeriod = (event) => {
-        op.value.toggle(event);
-    }
-
-    const loadByPeriod = () => {
-        op.value.toggle();
-    }
-
-    const calculateCustomerTotal = (name, type) => {
-        let total = 0;
-
-        const filteredBulkItems = products.value.flatMap(entry => {
-            // Filter the items array for each entry where type is "Bulk"
-            const bulkItems = entry.items.filter(item => item.type === name);
-            let count = 0;
-            for (let i = 0; i < bulkItems.length; i++) {
-                if (type == 'real') {
-                    count = count + bulkItems[i].real_r;
-                } else if (type == 'diff') {
-                    count = count + bulkItems[i].diff_r;
-                } else {
-                    count = count + bulkItems[i].rkap_r;
-                }
-            }
-            return count
-        });
-
-        return total = formatCurrency(filteredBulkItems[0].toFixed(0));
-        // console.log(filteredBulkItems)
-    };
-
-    function formatCurrency(amount) {
-        // Convert the number to a string and insert commas every three digits from the right
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        // Combine the integer part with the decimal part (if any)
-        return parts.join(',');
-    }
-
-    const postData = (ket) => {
-        console.log(ket)
-        visible.value = false;
     }
 </script>
 
@@ -250,6 +161,20 @@
                     <span class="font-medium font-italic text-sm">Qty Penjualan</span>
                     <span class="font-medium font-italic text-sm">% tage to Target</span>
                 </div>
+                <!-- <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Product</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(data, index) in products" :key="index">
+                            <td>{{ data.type }}</td>
+                            <td>{{ data.product }}</td>
+                        </tr>
+                    </tbody>
+                </table> -->
                 <DataTable :value="products" rowGroupMode="subheader" groupRowsBy="type" sortMode="single" sortField="type" :sortOrder="1" tableStyle="min-width: 50rem">
                     <Column field="type" header="Type"></Column>
                     <Column field="product" class="w-min-h" headerStyle="background-color:#28B463; color:white;">
@@ -310,7 +235,16 @@
                             <span class="uppercase font-bold capitalize font-italic underline">{{ data.type }}</span>
                         </div>
                     </template>
-                    <template #groupfooter="{data}">
+                    <!-- <ColumnGroup type="groupfooter">
+                        <Row>
+                            <Column>
+                                <template #footer>
+                                    <small class="font-medium uppercase">Period</small>
+                                </template>
+                            </Column>
+                        </Row>
+                    </ColumnGroup> -->
+                    <!-- <template #groupfooter="{data}">
                         <div class="flex justify-content-start align-items-center gap-2 font-bold  w-full">
                             <span class="w-full capitalize font-italic">Total {{ data.type }}</span>
                             <span class="w-full text-right text-xs">{{ data.diff }}</span>
@@ -320,84 +254,10 @@
                             <span class="w-full text-center text-xs">{{ data.diff }}</span>
                             <span class="w-full text-center text-xs">{{ data.diff }}</span>
                         </div>
-                    </template>
+                    </template> -->
                 </DataTable>
             </div>
         </div>
 
-        <!-- Table -->
-        <span class="font-medium font-italic mt-5 text-sm">Qty Produksi (VS RKAP)</span>
-        <DataTable :value="products_cpo_olah" tableStyle="min-width: 50rem">
-            <Column field="product" headerStyle="background-color:#28B463; color:white;">
-                <template #header>
-                    <span class="text-sm font-bold">Product</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.product}}</span>
-                </template>
-            </Column>
-            <Column field="real" headerStyle="background-color:#28B463; color:white">
-                <template #header>
-                    <span class="text-sm font-bold">Real</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.real}}</span>
-                </template>
-            </Column>
-            <Column field="rkap" headerStyle="background-color:#28B463; color:white">
-                <template #header>
-                    <span class="text-sm font-bold">RKAP PMG-1</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.rkap}}</span>
-                </template>
-            </Column>
-            <Column field="diff" headerStyle="background-color:#28B463; color:white">
-                <template #header>
-                    <span class="text-sm font-bold">Diff</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.diff}}</span>
-                </template>
-            </Column>
-            <template #footer> In total there are {{ products_cpo_olah ? products_cpo_olah.length : 0 }} products. </template>
-        </DataTable>
-
-        <span class="font-medium font-italic mt-5 text-sm">Qty Produksi (VS Utility)</span>
-        <DataTable :value="products_cpo_olah" tableStyle="min-width: 50rem">
-            <Column field="product" headerStyle="background-color:#28B463; color:white;">
-                <template #header>
-                    <span class="text-sm font-bold">Product</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.product}}</span>
-                </template>
-            </Column>
-            <Column field="real" headerStyle="background-color:#28B463; color:white">
-                <template #header>
-                    <span class="text-sm font-bold">Real</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.real}}</span>
-                </template>
-            </Column>
-            <Column field="rkap" headerStyle="background-color:#28B463; color:white">
-                <template #header>
-                    <span class="text-sm font-bold">RKAP PMG-1</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.rkap}}</span>
-                </template>
-            </Column>
-            <Column field="diff" headerStyle="background-color:#28B463; color:white">
-                <template #header>
-                    <span class="text-sm font-bold">Diff</span>
-                </template>
-                <template #body="{data}">
-                    <span class="text-xs font-medium">{{data.diff}}</span>
-                </template>
-            </Column>
-            <template #footer> In total there are {{ products_cpo_olah ? products_cpo_olah.length : 0 }} products. </template>
-        </DataTable>
     </div>
 </template>

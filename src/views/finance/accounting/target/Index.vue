@@ -10,8 +10,13 @@
     import DailyDmo from '@/views/finance/accounting/target/components/list/DailyDmo.vue';
     import MonthlyDmo from '@/views/finance/accounting/target/components/list/MonthlyDmo.vue';
     import TargetReal from '@/views/finance/accounting/target/components/list/TargetReal.vue';
+    import TargetRkap from '@/views/finance/accounting/target/components/list/TargetRkap.vue';
+    
+    const route = useRoute();
+    const router = useRouter();
 
     // VARIABLE
+    const type = ref(route.query.active);
     const active = ref(0);
     const bulan = ref(Number(moment().format('M')));
     const list_bulan = ref([]);
@@ -21,7 +26,6 @@
     const tgls = ref(moment().format('DD'))
     const op = ref();
 
-    const router = useRouter();
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -57,6 +61,11 @@
     const loadData = async() => {
         let dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
         tanggal.value = dateString;
+        if (type.value != null) {
+            active.value = Number(type.value);
+        } else {
+            active.value = 0
+        }
         loadTahun();
         loadBulan();
     }
@@ -89,7 +98,7 @@
                         <Button icon="pi pi-check" label="Submit" severity="success" class="w-auto" @click="loadByPeriod"/>
                     </div>
                 </OverlayPanel>
-                <span class="font-medium text-sm text-gray-400 uppercase">{{ active == 0 ? 'Target Report' : active == 1 ? 'Daily DMO' : active == 2 ? 'Monthly DMO' : active == 3 ? 'Target (Real)' : 'Target (RKAP)' }}</span>
+                <span class="font-medium text-sm text-gray-400">{{ moment(tanggal).format('MMMM YYYY') }}</span>
             </div>
             <div class="flex justify-content-end gap-1 p-2 border-1 border-gray-500 border-round">
                 <Button label="Report" @click="active = 0" class="py-2 text-xs" severity="secondary" :text="active !== 0" size="small"/>
@@ -102,8 +111,8 @@
 
         <!-- Table -->
         <div v-show="active == 0">
-            <!-- <main-target/> -->
-            <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3>
+            <main-target :tanggal="tanggal"/>
+            <!-- <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3> -->
         </div>
         <div v-show="active == 1">
             <daily-dmo :tanggal="tanggal"/>
@@ -116,7 +125,8 @@
             <!-- <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3> -->
         </div>
         <div v-show="active == 4">
-            <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3>
+            <target-rkap :tanggal="tanggal"/>
+            <!-- <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3> -->
         </div>
     </div>
 </template>

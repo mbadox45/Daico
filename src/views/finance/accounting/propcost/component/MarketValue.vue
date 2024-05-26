@@ -97,7 +97,7 @@
                     }
                 } else {
                     // dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
-                    dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(tgls.value)-1).toString().padStart(2, '0')}`;
+                    dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(tgls.value)).toString().padStart(2, '0')}`;
                     days = Number(moment(dateString).format('D'));
                 }
             } else {
@@ -534,7 +534,7 @@
                         <Divider class="font-medium" align="center">{{ routers.name_bulk }}</Divider>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="date" class="font-semibold w-6rem">Date <small class="text-red-500">*</small></label>
-                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="routers.tanggal" />
+                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="routers.tanggal" :max="moment().format('YYYY-MM-DD')"/>
                         </div>
                         <div class="flex align-items-center gap-3 mb-5">
                             <label for="email" class="font-semibold w-6rem">Currency <small class="text-red-500">*</small></label>
@@ -542,7 +542,7 @@
                         </div>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="value" class="font-semibold w-6rem">Value <small class="text-red-500">*</small></label>
-                            <InputNumber inputId="value" v-model="routers.nilai" class="flex-auto" :maxFractionDigits="2" />
+                            <InputNumber v-model="routers.nilai" class="flex-auto" inputId="locale-german" locale="de-DE" :maxFractionDigits="2" />
                         </div>
                     </div>
                 </div>
@@ -554,7 +554,7 @@
                         <Divider class="font-medium" align="center">{{ item.name_bulk }}</Divider>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="date" class="font-semibold w-6rem">Date <small class="text-red-500">*</small></label>
-                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="item.tanggal"/>
+                            <InputText id="date" type="date" class="flex-auto" autocomplete="off" v-model="item.tanggal" :max="moment().format('YYYY-MM-DD')"/>
                         </div>
                         <div class="flex align-items-center gap-3 mb-5">
                             <label for="email" class="font-semibold w-6rem">Currency <small class="text-red-500">*</small></label>
@@ -562,7 +562,7 @@
                         </div>
                         <div class="flex align-items-center gap-3 mb-3">
                             <label for="value" class="font-semibold w-6rem">Value <small class="text-red-500">*</small></label>
-                            <InputNumber inputId="value" v-model="item.nilai" class="flex-auto" :maxFractionDigits="2" />
+                            <InputNumber v-model="item.nilai" class="flex-auto" :maxFractionDigits="2" inputId="locale-german" locale="de-DE"/>
                         </div>
                     </div>
                 </div>

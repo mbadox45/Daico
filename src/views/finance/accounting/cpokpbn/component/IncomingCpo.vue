@@ -218,15 +218,15 @@
             </transition-group>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="username" class="font-semibold w-6rem">Tanggal</label>
-                <InputText id="username" v-model="forms.tanggal" type="date" class="flex-auto" autocomplete="off" />
+                <InputText id="username" v-model="forms.tanggal" type="date" class="flex-auto" autocomplete="off" :max="moment().format('YYYY-MM-DD')"/>
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Qty</label>
-                <InputNumber v-model="forms.qty" inputId="avg" :minFractionDigits="1" :maxFractionDigits="2" class="flex-auto"/>
+                <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" class="flex-auto"/>
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Harga (Rp)</label>
-                <InputNumber v-model="forms.harga" inputId="avg" :minFractionDigits="1" :maxFractionDigits="3" class="flex-auto"/>
+                <InputNumber v-model="forms.harga" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="3" class="flex-auto"/>
             </div>
             <div class="flex justify-content-end gap-2">
                 <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>

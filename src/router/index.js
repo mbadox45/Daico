@@ -62,7 +62,7 @@ const router = createRouter({
                 {
                     path: '/form-target',
                     name: 'form target',
-                    component: () => import('@/views/finance/accounting/target/components/FormTarget.vue'),
+                    component: () => import('@/views/finance/accounting/target/components/forms/FormTarget.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

@@ -1,7 +1,9 @@
 <script setup>
     // Vue Component
     import { ref, computed, onMounted, defineProps, watch } from 'vue';
+    import { FilterMatchMode } from 'primevue/api';
     import moment from 'moment';
+    import { useRouter, useRoute } from 'vue-router';
 
     // API ========================================================================================================================================================
     import TargetReal from '@/api/target/TargetReal.js';
@@ -11,10 +13,14 @@
             type:String
         }
     });
+    
+    const route = useRoute();
+    const router = useRouter();
 
     watch(() => props.tanggal, (newVal) => {loadData(newVal)});
 
     // VARIABLE
+    const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
     const products = ref([]);
     const loadingTable = ref(false)
     
@@ -45,11 +51,14 @@
             const data = load.data;
             const list = [];
             for (let a = 0; a < data.length; a++) {
+                const type = data[a].productable_type.split('\\').pop();
+
                 list[a] = {
                     id:data[a].id,
                     tanggal:data[a].tanggal,
                     value:data[a].value,
                     productable_id:data[a].productable_id,
+                    productable_type:type == 'MasterBulkProduksi' ? 'bulk' : 'retail',
                     productable:data[a].productable != null ? data[a].productable.name : null,
                 };
             }
@@ -62,7 +71,11 @@
     }
 
     const formDatabase = (cond, data) => {
-        visible.value = true;
+        if (cond == 'add') {
+            router.push('/form-target?type=real')
+        } else {
+            visible.value = true;
+        }
         messages.value = [];
         status_form.value = cond;
         console.log(cond)
@@ -110,6 +123,17 @@
 
 <template>
     <div class="flex-auto flex flex-column gap-3">
+        <div class="flex justify-content-between align-items-center gap-3">
+            <div class="w-full">
+                <Button label="Add" icon="pi pi-plus" class="py-2 text-xs" severity="info" size="small" @click="formDatabase('add', null)"/>
+            </div>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon bg-white">
+                    <i class="pi pi-search"></i>
+                </span>
+                <InputText type="text" placeholder="Search" class="flex-auto" v-model="filters['global'].value"/>
+            </div>
+        </div>
         <!-- Dialog -->
         <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '70rem' }">
             <transition-group name="p-message" tag="div">
@@ -127,55 +151,37 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else :value="products" paginator showGridlines :rows="5" dataKey="id" :globalFilterFields="['tanggal']">
+        <DataTable v-else v-model:filters="filters" :value="products" rowGroupMode="subheader" groupRowsBy="tanggal" sortMode="single" sortField="tanggal" scrollable scrollHeight="395px" :sortOrder="1" :rows="5" dataKey="id" :globalFilterFields="['tanggal', 'productable_type', 'productable', 'value']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
-            <ColumnGroup type="header">
-                <Row>
-                    <Column :rowspan="3" sortable>
-                        <template #header>
-                            <small class="font-medium uppercase">Period</small>
-                        </template>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column :colspan="2">
-                        <template #header>
-                            <small class="font-medium uppercase flex justify-content-center w-full">Produk</small>
-                        </template>
-                    </Column>
-                    <Column :rowspan="3">
-                        <template #header>
-                            <Button icon="pi pi-plus" label="Add" severity="info" class="py-2" size="small" @click="formDatabase('add', null)"/>
-                        </template>
-                    </Column>
-                </Row>
-                <Row>
-                    <Column>
-                        <template #header>
-                            <small class="font-medium uppercase flex justify-content-center w-full">Type</small>
-                        </template>
-                    </Column>
-                    <Column>
-                        <template #header>
-                            <small class="font-medium uppercase flex justify-content-center w-full">RKAP (Produksi)</small>
-                        </template>
-                    </Column>
-                </Row>
-            </ColumnGroup>
-            <Column field="tanggal" style="min-width: 8rem;" sortable>
+            <template #groupheader="{data}">
+                <div class="flex align-items-center gap-2">
+                    <span class="uppercase font-bold capitalize text-sm">{{ moment(data.tanggal).format('DD MMMM YYYY') }}</span>
+                </div>
+            </template>
+            <Column field="tanggal" style="min-width: 8rem;" sortable></Column>
+            <Column field="productable_type" style="min-width: 8rem;" sortable>
+                <template #header>
+                    <small class="font-medium uppercase">Type</small>
+                </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ moment(data.tanggal).format('DD MMMM YYYY') }}</small>
+                    <small class="font-medium capitalize">{{ data.productable_type }}</small>
                 </template>
             </Column>
-            <Column field="dmo" style="min-width: 8rem;" sortable>
+            <Column field="type" style="min-width: 8rem;" sortable>
+                <template #header>
+                    <small class="font-medium uppercase flex justify-content-center w-full">Product Name</small>
+                </template>
                 <template #body="{ data }">
-                    <small class="font-normal flex justify-content-end">{{ formatCurrency(Number(data.dmo).toFixed(2)) }}</small>
+                    <small class="font-normal">{{ data.productable }}</small>
                 </template>
             </Column>
-            <Column field="dmo" style="min-width: 8rem;" sortable>
+            <Column field="value" style="min-width: 8rem;" sortable>
+                <template #header>
+                            <small class="font-medium uppercase flex justify-content-center w-full">Value</small>
+                        </template>
                 <template #body="{ data }">
-                    <small class="font-normal flex justify-content-end">{{ formatCurrency(Number(data.cpo_olah_rkap).toFixed(2)) }}</small>
+                    <small class="font-normal flex justify-content-end">{{ formatCurrency(Number(data.value).toFixed(2)) }}</small>
                 </template>
             </Column>
             <Column field="value" style="width: 3rem;">

@@ -2,6 +2,7 @@
     // Vue Component
     import { ref, onMounted, defineProps, defineEmits } from 'vue';
     import moment from 'moment';
+    import { useRouter, useRoute } from 'vue-router';
 
     // API
     import {list_product_type} from '@/api/DummyData.js';
@@ -9,6 +10,9 @@
     import TargetRkap from '@/api/target/TargetRkap.js';
     import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
     import RetailProdMaster from '@/api/master/RetailProdMaster.js';
+
+    const route = useRoute();
+    const router = useRouter();
 
     const product_type = ref(list_product_type)
     const loadingTable = ref(false)
@@ -148,7 +152,7 @@
         <div class="flex justify-content-between align-items-center gap-2">
             <span class="font-medium text-xl uppercase">Form Target</span>
             <div class="flex gap-2">
-                <Button label="Back" icon="pi pi-times" size="small" class="px-3 py-2" severity="danger" outlined/>
+                <Button label="Back" icon="pi pi-times" size="small" class="px-3 py-2" severity="danger" outlined @click="()=>{route.query.type == 'real' ? router.push('/target?active=3') : router.push('/target?active=4')}"/>
                 <Button label="Save" icon="pi pi-save" size="small" class="px-3 py-2" severity="success"/>
             </div>
         </div>

@@ -67,8 +67,8 @@
         loadingTable.value = true
         try {
             products.value = []
-            // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
-            const dateString = `2024-03-01`;
+            const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+            // const dateString = `2024-03-01`;
             const response = await ActualCpo.getByDate({tanggal: dateString})
             const load = response.data;
             const data = load.data;

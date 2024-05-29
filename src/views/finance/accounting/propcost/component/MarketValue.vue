@@ -440,6 +440,7 @@
     }
 
     const postData = async() => {
+        loadingTable.value = true
         try {
             const routers = forms_router.value
             let count_routers = 0;
@@ -479,10 +480,12 @@
                     loadData()
                     visible.value = false
                 }, time.value);
+                loadingTable.value = false;
             } else {
                 messages.value = [
                     { severity: 'warn', content: 'Mohon data dilengkapi !', id: count.value++ }
                 ];
+                loadingTable.value = false;
             }
         } catch (error) {
             messages.value = [
@@ -492,6 +495,7 @@
                 loadData()
                 visible.value = false
             }, time.value);
+            loadingTable.value = false;
         }
     }
 </script>
@@ -570,7 +574,7 @@
             <template #footer>
                 <div class="flex justify-content-end gap-2 mt-3">
                     <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-                    <Button type="button" label="Save" @click="postData()"></Button>
+                    <Button type="button" label="Save" @click="postData()" :disabled="loadingTable == true ? true : false"></Button>
                 </div>
             </template>
         </Dialog>

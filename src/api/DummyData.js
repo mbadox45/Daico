@@ -54,7 +54,29 @@ export const database = [
     {id:4, code:'244wgerg2', name:'Bamboo Watch', status:"INSTOCK", price:'65.00'},
 ]
 
-export const uraianBebanProduksi = ['Bahan Baku', 'Gaji, Tunjangan & Biaya Sosial Karyawan Pimpinan', 'Gaji, Tunjangan & Biaya Sosial Karyawan Pelaksana', 'Bahan Bakar', 'Bahan Kimia & Bahan Pendukung Produksi', 'Biaya Analisa & Laboratorium', 'Biaya Listrik', 'Biaya Air', 'Biaya Assuransi Pabrik', 'Pengelolaan Limbah Pabrik Oleh Pihak Ketiga', 'Biaya Bengkel & Pemeliharaan', 'Biaya Pengepakan Retail :', 'Gaji & Tunjangan', 'Salvaco', 'Nusakita', 'INL', 'Minyakita', 'Bahan Kimia', 'Pengangkutan / Langsir', 'Bahan Pengepakan Lainnya', 'Biaya Asuransi Gudang & Filling', 'Depresiasi'
+export const uraianBebanProduksi = [
+    {set_name:'coa_bahan_baku', name:'Bahan Baku'}, 
+    {set_name:'coa_gaji_tunjangan_sosial_pimpinan', name:'Gaji, Tunjangan & Biaya Sosial Karyawan Pimpinan'}, 
+    {set_name:'coa_gaji_tunjangan_sosial_pelaksana', name:'Gaji, Tunjangan & Biaya Sosial Karyawan Pelaksana'},
+    {set_name:'coa_bahan_bakar', name:'Bahan Bakar'},
+    {set_name:'coa_bahan_kimia_pendukung_produksi', name:'Bahan Kimia & Bahan Pendukung Produksi'},
+    {set_name:'coa_analisa_lab', name:'Biaya Analisa & Laboratorium'},
+    {set_name:'coa_listrik', name:'Biaya Listrik'},
+    {set_name:'coa_air', name:'Biaya Air'},
+    {set_name:'coa_asuransi_pabrik', name:'Biaya Assuransi Pabrik'},
+    {set_name:'coa_limbah_pihak3', name:'Pengelolaan Limbah Pabrik Oleh Pihak Ketiga'},
+    {set_name:'coa_bengkel_pemeliharaan', name:'Biaya Bengkel & Pemeliharaan'},
+    {set_name:'coa', name:'Biaya Pengepakan Retail :'},
+    {set_name:'coa_gaji_tunjangan', name:'Gaji & Tunjangan'},
+    {set_name:'coa_salvaco', name:'Salvaco'},
+    {set_name:'coa_nusakita', name:'Nusakita'},
+    {set_name:'coa_inl', name:'INL'},
+    {set_name:'coa_minyakita', name:'Minyakita'},
+    {set_name:'coa_bahan_kimia', name:'Bahan Kimia'},
+    {set_name:'coa_pengangkutan_langsir', name:'Pengangkutan / Langsir'},
+    {set_name:'coa_pengepakan_lain', name:'Bahan Pengepakan Lainnya'},
+    {set_name:'coa_asuransi_gudang_filling', name:'Biaya Asuransi Gudang & Filling'},
+    {set_name:'coa_depresiasi', name:'Depresiasi'},
 ]
 
 export const list_product_type = [

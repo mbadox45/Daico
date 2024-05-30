@@ -9,6 +9,7 @@ export const akuntansi = [
             { label: 'CPO', icon: 'pi pi-fw pi-filter-fill', to: '/cpo' },
             { label: 'Market', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
             { label: 'Production', icon: 'pi pi-fw pi-building', items:[
+                { label: 'Costing HPP', icon: 'pi pi-fw pi-list', to: '/costing-hpp' },
                 { label: 'Cost Production', icon: 'pi pi-fw pi-dollar', to: '/cost-prod' },
                 { label: 'Detail Allocation', icon: 'pi pi-fw pi-sitemap', to: '/det-alloc' },
             ]},
@@ -24,6 +25,7 @@ export const akuntansi = [
                     { label: 'Allocation', to: '/master-data/allocation' },
                     { label: 'Management Report', to: '/master-data/m_report' },
                     { label: 'Cost Centre', to: '/master-data/cost_centre' },
+                    { label: 'Harga Satuan Prod.', to: '/master-data/harga_satuan' },
                     { label: 'Plant', to: '/master-data/plant' },
                     { label: 'Category', items:[
                         {label: 'Management', to: '/master-data/category/management'},

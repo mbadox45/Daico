@@ -102,6 +102,16 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/costing-hpp',
+                    name: 'Costing HPP',
+                    component: () => import('@/views/finance/production/costing_hpp/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
                     path: '/det-alloc',
                     name: 'Detail Allocation',
                     component: () => import('@/views/finance/production/det_alloc/Index.vue'),
@@ -148,6 +158,16 @@ const router = createRouter({
                     path: '/master-data/allocation',
                     name: 'allocation',
                     component: () => import('@/views/finance/config/master/components/AllocMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/harga_satuan',
+                    name: 'harga satuan produksi',
+                    component: () => import('@/views/finance/config/master/components/HargaSatuanProdMaster.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

@@ -5,6 +5,7 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
+    import {loadDataAll} from '@/views/load_data/cost_prod.js';
     import {cost_prod} from '@/api/dummy/cost_prod.js'
     import GlConfig from '@/api/configuration/GlConfig.js';
     import {uraianBebanProduksi} from '@/api/DummyData.js';
@@ -12,7 +13,7 @@
 
     // VARIABLE
     const list_gl = ref();
-    const products = ref();
+    const products = ref([]);
     const total_biaya_produksi = ref();
     const total_cpo_olah = ref();
     const list_category = ref([])
@@ -65,26 +66,6 @@
         }
     }
 
-    // const loadData = async() => {
-    //     products.value = []
-    //     let tot_biaya_produksi = 0;
-    //     let tot_cpo_olah = 0;
-    //     for (let i = 0; i < cost_prod.length; i++) {
-    //         tot_biaya_produksi = tot_biaya_produksi + cost_prod[i].biaya_produksi;
-    //         tot_cpo_olah = tot_cpo_olah + cost_prod[i].cpo_olah;
-    //         products.value.push({
-    //             uraian: cost_prod[i].uraian,
-    //             detail: cost_prod[i].detail,
-    //             biaya_produksi: cost_prod[i].biaya_produksi < 1 ? '-' : formatCurrency(cost_prod[i].biaya_produksi.toFixed(2)),
-    //             cpo_olah: cost_prod[i].cpo_olah < 1 ? '-' : formatCurrency(cost_prod[i].cpo_olah.toFixed(2)),
-    //         });
-    //     }
-    //     total_biaya_produksi.value = formatCurrency(tot_biaya_produksi.toFixed(2));
-    //     total_cpo_olah.value = formatCurrency(tot_cpo_olah.toFixed(2));
-    //     loadTahun();
-    //     loadBulan();
-    // }
-
     const loadDataGL = async() => {
         try {
             loadingTable.value = true
@@ -131,6 +112,17 @@
         
     }
 
+    // const loadData = async() => {
+    //     loadingTable.value = true
+    //     const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+    //     periods.value = `${moment(bulan.value.toString().padStart(2, '0')).format('MMM')} ${tahun.value}`
+    //     products.value = await loadDataAll(dateString)
+    //     loadingTable.value = false
+
+    //     loadTahun();
+    //     loadBulan();
+    // }
+
     const loadData = async() => {
         products.value = []
         let tot_biaya_produksi = 0;
@@ -142,7 +134,7 @@
         for (let i = 0; i < uraianBebanProduksi.length; i++) {
             
             // Find Data GL by Laporan Management
-            value_gl = gl.filter(item => item.laporan_management.toLowerCase() == uraianBebanProduksi[i].toLowerCase())
+            value_gl = gl.filter(item => item.laporan_management.toLowerCase() == uraianBebanProduksi[i].name.toLowerCase())
             console.log(value_gl)
             let debet = 0;
             let kredit = 0;
@@ -155,9 +147,9 @@
             
             // List DataTable
             if (i > 11 && i < 21) {
-                uraian = '- ' + uraianBebanProduksi[i]
+                uraian = '- ' + uraianBebanProduksi[i].name
             } else {
-                uraian = uraianBebanProduksi[i]
+                uraian = uraianBebanProduksi[i].name
             }
             products.value.push({
                 uraian: uraian,
@@ -208,7 +200,7 @@
 
     const loadByPeriod = () => {
         op.value.toggle();
-        loadDataGL()
+        loadData()
     }
 
     function formatCurrency(amount) {

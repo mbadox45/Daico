@@ -84,6 +84,7 @@
                         id_plant: items[j].id_plant,
                         id_uraian: items[j].id_uraian,
                         tanggal: items[j].tanggal,
+                        tgl: moment(items[j].tanggal).format('DD MMMM YYYY'),
                         plant: items[j].plant != null ? items[j].plant.nama : '-',
                         uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
                         uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
@@ -91,6 +92,8 @@
                         id_category: items[j].uraian != null ? items[j].uraian.id_category : null,
                         kategori: items[j].uraian != null ? items[j].uraian.kategori.nama : '-',
                         value: items[j].value,
+                        harga_satuan: items[j].harga_satuan == null ? 0 : items[j].harga_satuan.value,
+                        finalValue: items[j].finalValue,
                         totals: items[j].totals,
                     })
                 }
@@ -111,11 +114,11 @@
     }
 
     const formData = (cond, data) => {
-        // if (cond == 'add') {
-        //     router.push('/form-det-alloc')
-        // } else {
+        if (cond == 'add') {
+            router.push('/form-det-alloc')
+        } else {
             visible.value = true;
-        // }
+        }
         messages.value = [];
         status_form.value = cond;
         console.log(cond)
@@ -290,7 +293,7 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="list_production" showGridlines rowGroupMode="subheader" groupRowsBy="kategori" sortField="id_category" sortMode="single" :sortOrder="1" dataKey="id" :globalFilterFields="['uraian']">
+        <DataTable v-else v-model:filters="filters" :value="list_production" scrollable scrollHeight="450px" showGridlines rowGroupMode="subheader" groupRowsBy="kategori" sortField="id_category" sortMode="single" :sortOrder="1" dataKey="id" :globalFilterFields="['uraian', 'kategori', 'tgl', 'plant']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <Column field="kategori"></Column>
@@ -301,20 +304,32 @@
                     </div>
                 </template>
                 <template #body="{data}">
-                    <div class="w-full flex align-items-center justify-content-between gap-2 font-medium text-sm">
+                    <div class="w-full flex align-items-center justify-content-between gap-2 font-medium text-xs">
                         <span>{{data.uraian}}</span>
                         <Button icon="pi pi-pencil" size="small" severity="warning" class="p-1" text @click="formData('edit', data)"/>
+                    </div>
+                </template>
+            </Column>
+            <Column field="tanggal" style="min-width: 100px">
+                <template #header>
+                    <div class="w-full flex justify-content-center font-bold uppercase">
+                        <span class="text-sm">Tanggal</span>
+                    </div>
+                </template>
+                <template #body="{data}">
+                    <div class="w-full flex align-items-center justify-content-center gap-2 font-medium text-xs">
+                        <span>{{data.tgl}}</span>
                     </div>
                 </template>
             </Column>
             <Column field="satuan" style="min-width: 6rem;">
                 <template #header>
                     <div class="w-full flex justify-content-center font-bold">
-                        <span>UoM</span>
+                        <span class="text-sm">UoM</span>
                     </div>
                 </template>
                 <template #body="{data}">
-                    <div class="w-full flex justify-content-center font-medium text-sm">
+                    <div class="w-full flex justify-content-center font-medium text-xs">
                         <span>{{data.satuan}}</span>
                     </div>
                 </template>
@@ -322,24 +337,48 @@
             <Column field="test">
                 <template #header>
                     <div class="w-full flex justify-content-center font-bold uppercase">
-                        <span>Plant</span>
+                        <span class="text-sm">Plant</span>
                     </div>
                 </template>
                 <template #body="{data}">
-                    <div class="w-full flex justify-content-center font-medium text-sm">
+                    <div class="w-full flex justify-content-center font-medium text-xs">
                         <span>{{data.plant}}</span>
                     </div>
                 </template>
             </Column>
-            <Column field="test" style="min-width: 200px">
+            <Column field="test">
                 <template #header>
                     <div class="w-full flex justify-content-center font-bold uppercase">
-                        <span>Nilai</span>
+                        <span class="text-sm">Harga</span>
                     </div>
                 </template>
                 <template #body="{data}">
-                    <div class="w-full flex justify-content-end font-medium text-sm">
-                        <span>{{formatCurrency(Number(data.value).toFixed(2))}}</span>
+                    <div class="w-full flex justify-content-end font-medium text-xs">
+                        <span>Rp. {{formatCurrency(Number(data.harga_satuan).toFixed(2))}}</span>
+                    </div>
+                </template>
+            </Column>
+            <Column field="test">
+                <template #header>
+                    <div class="w-full flex justify-content-center font-bold uppercase">
+                        <span class="text-sm">Qty</span>
+                    </div>
+                </template>
+                <template #body="{data}">
+                    <div class="w-full flex justify-content-end font-medium text-xs">
+                        <span>{{Number(data.value) == 0 ? null : formatCurrency(Number(data.value).toFixed(2))}}</span>
+                    </div>
+                </template>
+            </Column>
+            <Column field="test" >
+                <template #header>
+                    <div class="w-full flex justify-content-center font-bold uppercase">
+                        <span class="text-sm">Total</span>
+                    </div>
+                </template>
+                <template #body="{data}">
+                    <div class="w-full flex justify-content-end font-medium text-xs">
+                        <span>{{Number(data.value) == 0 ? '-' : formatCurrency(Number(data.finalValue).toFixed(2))}}</span>
                     </div>
                 </template>
             </Column>

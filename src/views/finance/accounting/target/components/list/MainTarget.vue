@@ -27,9 +27,9 @@
     watch(() => props.tanggal, (newVal) => {loadData(newVal)});
 
     // Function ===================================================================================================================================================
-    onMounted(() => {
-        loadData(props.tanggal)
-    });
+    // onMounted(() => {
+    //     loadData(props.tanggal)
+    // });
 
     const loadData = async(tgl) => {
         loadingTable.value = true;
@@ -92,15 +92,25 @@
     const loadQtyProduksiRkap = async(tgl) => {
         const monthly = await loadMonthlyDmo(tgl);
         const nilai_monthly = monthly == null ? 0 : Number(monthly[0].cpo_olah_rkap);
-        const real = await loadDataProd(tgl) ;
+        const real = await loadDataProd(tgl);
+        const list = real.find(item => item.name == 'Refinery')
+        const items = list.items;
+        let total = 0;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].id_uraian == 1) {
+                total += Number(items[i].value);
+            } else {
+                continue;
+            }
+        }
         const data = [
             {
                 name: 'CPO Olah',
-                real: real,
+                real: total,
                 rkap: nilai_monthly,
-                diff: real - nilai_monthly,
-                real_persen: (real / nilai_monthly)*100,
-                sisa_target: (real / nilai_monthly)*100 >= 100 ? 0 : (100-((real / nilai_monthly)*100)),
+                diff: total - nilai_monthly,
+                real_persen: (total / nilai_monthly)*100,
+                sisa_target: (total / nilai_monthly)*100 >= 100 ? 0 : (100-((total / nilai_monthly)*100)),
             }
         ]
         return data;
@@ -110,14 +120,24 @@
         const monthly = await loadMonthlyDmo(tgl);
         const nilai_monthly = monthly == null ? 0 : (Number(monthly[0].kapasitas_utility) * Number(monthly[0].pengali_kapasitas_utility));
         const real = await loadDataProd(tgl);
+        const list = real.find(item => item.name == 'Refinery')
+        const items = list.items;
+        let total = 0;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].id_uraian == 1) {
+                total += Number(items[i].value);
+            } else {
+                continue;
+            }
+        }
         const data = [
             {
                 name: 'CPO Olah',
-                real: real,
+                real: total,
                 rkap: nilai_monthly,
-                diff: real - nilai_monthly,
-                real_persen: (real / nilai_monthly)*100,
-                sisa_target: (real / nilai_monthly)*100 >= 100 ? 0 : (100-((real / nilai_monthly)*100)),
+                diff: total - nilai_monthly,
+                real_persen: (total / nilai_monthly)*100,
+                sisa_target: (total / nilai_monthly)*100 >= 100 ? 0 : (100-((total / nilai_monthly)*100)),
             }
         ]
         return data;
@@ -533,7 +553,7 @@
                     </Column>
                     <Column field="rkap" headerStyle="background-color:#28B463; color:white; width:15%;">
                         <template #header>
-                            <span class="text-sm font-bold uppercase">RKAP PMG-1</span>
+                            <span class="text-sm font-bold uppercase">Kap. Terpasang</span>
                         </template>
                         <template #body="{data}">
                             <span class="text-xs font-medium flex justify-content-end">{{data.rkap == 0 ? null : formatCurrency(Number(data.rkap).toFixed(2))}}</span>

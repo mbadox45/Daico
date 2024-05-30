@@ -7,7 +7,7 @@ import RetailProdMaster from '@/api/master/RetailProdMaster.js';
 export const loadDataProd = async(tgl) => {
     const prod = await loadReportProduction(tgl);
     if (prod == null) {
-        return 0;
+        return null;
     } else {
         const loadProd = Object.entries(prod).map(([key, value]) => {
             const items = [];
@@ -27,13 +27,14 @@ export const loadDataProd = async(tgl) => {
                 items: items
             };
         });
-        const uraian = loadProd.find(item => item.name == 'Refinery')
-        const total_cpo_olah = uraian.items.find(item => item.id_uraian == 1)
-        if (total_cpo_olah == null) {
-            return 0;
-        } else {
-            return total_cpo_olah.totals[0].value;
-        }
+        // const uraian = loadProd.find(item => item.name == 'Refinery')
+        // const total_cpo_olah = uraian.items.find(item => item.id_uraian == 1)
+        // if (total_cpo_olah == null) {
+            return loadProd;
+        // } else {
+        //     return total_cpo_olah.totals[0].value;
+        // }
+        // console.log(loadProd)
     }
 
 }

@@ -6,24 +6,27 @@
     import moment from 'moment';
 
     // API
-    import CategoryProdMaster from '@/api/master/CategoryProdMaster.js';
-    import PlantMaster from '@/api/master/PlantMaster.js';
+    import {loadCategory, loadPlant} from '@/views/load_data/master_config.js'
     import Laporan_Produksi from '@/api/det_alloc/Laporan_Produksi.js';
 
     const router = useRouter();
     const route = useRoute();
+    const toast = useToast();
 
     // Variable
     const tgl_now = ref(moment().format('YYYY-MM'))
+    const form_category = ref(null)
+    const form_tgl = ref(moment().format('YYYY-MM-DD'))
     const forms = ref([{
         id: null,
         id_plant: null,
+        satuan: null,
         id_uraian: null,
-        tanggal: tgl_now.value,
         value: null,
     }])
     const list_category = ref([])
     const list_plant = ref([])
+    const list_uraian = ref([])
     const loadingTable = ref(false)
     const time = ref(3000)
 
@@ -36,45 +39,11 @@
         try {
             const category = await loadCategory();
             const plant = await loadPlant();
-            console.log(category, plant)
-            if (category != null && plant != null) {
-                let lc = []
-                for (let i = 0; i < category.length; i++) {
-                    const uraian = category[i].uraian;
-                    for (let u = 0; u < uraian.length; u++) {
-                        lc.push({
-                            id: uraian[u].id,
-                            nama: uraian[u].nama,
-                        })
-                    }
-                }
-                list_category.value = lc;
-                list_plant.value = plant;
-
-                // list Form
-                const list = [];
-                for (let i = 0; i < category.length; i++) {
-                    const uraian = category[i].uraian;
-                    for (let j = 0; j < uraian.length; j++) {
-                        for (let k = 0; k < plant.length; k++) {
-                            list.push({
-                                id: null,
-                                id_plant: plant[k].id,
-                                id_uraian: uraian[j].id,
-                                uraian: uraian[j].nama,
-                                satuan: uraian[j].satuan,
-                                id_category: category[i].id,
-                                category: category[i].nama,
-                                tanggal: tgl_now.value,
-                                value: null,
-                            })
-                        }
-                    }
-                }
-                console.log(list);
-                forms.value = list;
+            // console.log(category, plant)
+            if (category != null) {
+                list_category.value = category;
             } else {
-                
+                list_category.value = [];
             }
             loadingTable.value = false
         } catch (error) {
@@ -82,56 +51,139 @@
         }
     }
 
+    const loadFormList = async() => {
+        loadingTable.value = true;
+        list_uraian.value = await loadListCategory();
+        list_plant.value = await loadPlant();
+        const uraian = list_uraian.value;
+        const plant = list_plant.value;
+        forms.value = []
+        for (let i = 0; i < uraian.length; i++) {
+            if (uraian[i].id_category == 7 || uraian[i].id_category == 8 || uraian[i].id_category == 9 || uraian[i].id_category == 10 || uraian[i].satuan == 'Hari' ) {
+                forms.value.push({
+                    id: null,
+                    id_plant: null,
+                    id_uraian: uraian[i].id,
+                    value: null,
+                })
+            } else if (uraian[i].id == 47 || uraian[i].id == 48 || uraian[i].id == 51 || uraian[i].id == 55) {
+                forms.value.push({
+                    id: null,
+                    id_plant: null,
+                    id_uraian: uraian[i].id,
+                    value: null,
+                })
+            } else {
+                for (let j = 0; j < plant.length; j++) {
+                    forms.value.push({
+                        id: null,
+                        id_plant: plant[j].id,
+                        id_uraian: uraian[i].id,
+                        value: null,
+                    })
+                }
+            }
+        }
+        loadingTable.value = false;
+    }
+
     const loadListCategory = async() => {
-        const category = await loadCategory();
+        const load_category = await loadCategory();
         const list = []
-        for (let i = 0; i < category.length; i++) {
-            const uraian = category[i].uraian;
-            for (let u = 0; u < uraian.length; u++) {
+        console.log(form_category.value)
+        if (load_category != null && form_category.value != null) {
+            const load = load_category.find(item => item.id == form_category.value)
+            const uraian = load.uraian;
+            for (let i = 0; i < uraian.length; i++) {
                 list.push({
-                    id: uraian[u].id,
-                    nama: uraian[u].nama,
+                    id: uraian[i].id,
+                    nama: uraian[i].nama + ' - ' + uraian[i].satuan,
+                    satuan: uraian[i].satuan,
+                    id_category: uraian[i].id_category,
+                    category: load.nama,
                 })
             }
         }
         return list
     }
 
-    const loadCategory = async() => {
+    const postDetAlloc = async(form) => {
         try {
-            const response = await CategoryProdMaster.getAll();
+            const response = await Laporan_Produksi.addPost(form);
             const load = response.data;
-            const data = load.data;
-            return data;
+            const status = load.success;
+            const msg = 'data berhasil disimpan';
+            return {status: status, msg: msg}
         } catch (error) {
-            return null;
+            return {status: false, msg: 'error'}
         }
     }
-
-    const loadPlant = async() => {
-        try {
-            const response = await PlantMaster.getAll();
-            const load = response.data;
-            const data = load.Plant;
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
+    
     const postData = async() => {
-        console.log(tgl_now.value)
+        loadingTable.value = true;
+        if (forms.value.length <= 1) {
+            toast.add({ severity: 'warn', summary: 'Warning', detail: 'Mohon data di lengkapi terlebih dahulu', life: 3000 });
+        } else {
+            const form = forms.value;
+            let total = 0;
+            for (let i = 0; i < form.length; i++) {
+                if (form[i].value == null) {
+                    continue;
+                } else {
+                    total += 1;
+                }
+            }
+            if (total < form.length) {
+                toast.add({ severity: 'warn', summary: 'Warning', detail: 'Mohon data di lengkapi terlebih dahulu', life: 3000 });
+            } else {
+                let tot = 0;
+                for (let i = 0; i < form.length; i++) {
+                    let list;
+                    if (form[i].id_plant == null) {
+                        list = {
+                            id: null,
+                            // id_plant: form[i].id_plant,
+                            id_uraian: form[i].id_uraian,
+                            value: form[i].value,
+                            tanggal: form_tgl.value,
+                        }
+                    } else {
+                        list = {
+                            id: null,
+                            id_plant: form[i].id_plant,
+                            id_uraian: form[i].id_uraian,
+                            value: form[i].value,
+                            tanggal: form_tgl.value,
+                        }
+                    }
+                    const response = await postDetAlloc(list)
+                    console.log(response)
+                    if (response.status == true) {
+                        tot += 1
+                    } else {
+                        continue;
+                    }
+                }
+                if (tot <= form.length && tot > 0) {
+                    toast.add({ severity: 'success', summary: 'Success', detail: `${tot < form.length ? 'Data berhasil disimpan (total : '+tot+' )' : 'Data berhasil disimpan'}`, life: 3000 });
+                } else {
+                    toast.add({ severity: 'error', summary: 'Error', detail: `Terjadi kesalahan sistem, harap hubungi tim IT`, life: 3000 });
+                }
+            }
+        }
+        loadingTable.value = false;
     }
 
 </script>
 <template>
     <div class="card shadow-3 flex flex-column gap-3">
+        <Toast />
         <div class="flex justify-content-between align-items-center gap-5">
             <div class="flex justify-content-between align-items-center gap-2 w-full">
                 <span class="font-medium text-xl uppercase">Form Detail Allocation </span>
                 <div class="flex gap-2">
                     <Button label="Back" icon="pi pi-times" size="small" class="px-3 py-2" severity="danger" outlined @click="()=>{router.push('/det-alloc')}"/>
-                    <Button label="Save" icon="pi pi-save" size="small" class="px-3 py-2" severity="success" @click="postData"/>
+                    <Button label="Save" icon="pi pi-save" size="small" class="px-3 py-2" severity="success" @click="postData" :disabled="loadingTable == true ? true : false"/>
                 </div>
             </div>
         </div>
@@ -143,65 +195,38 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <form v-else class="flex flex-column gap-2">
+        <form v-else class="flex flex-column gap-5">
             <div class="flex justify-content-end gap-1">
                 <small class="font-medium">Note :</small>
                 <small class="text-red-500">Apabila tidak ada nilai, bisa masukan nilai <span class="font-bold">0</span></small>
             </div>
-            <DataTable :value="forms" rowGroupMode="subheader" groupRowsBy="category" sortMode="single" sortField="id_category" :sortOrder="1" tableStyle="min-width: 50rem">
-                <Column field="category" header="Type"></Column>
-                <template #groupheader="{data}">
-                    <div class="flex align-items-center justify-content-between gap-2">
-                        <span class="uppercase font-bold capitalize font-italic underline w-full">{{ data.category }}</span>
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon bg-white">
-                                Tanggal
-                            </span>
-                            <InputText id="tanggal" v-model="tgl_now" type="month" class="w-full" autocomplete="off" />
-                        </div>
+            <div class="flex justify-content-between gap-3">
+                <div class="flex flex-column gap-1 w-full">
+                    <label for="tanggal" class="font-semibold">Tanggal <small class="text-red-500">*</small></label>
+                    <InputText id="tanggal" v-model="form_tgl" type="date" class="flex-auto" autocomplete="off" :max="moment().format('YYYY-MM-DD')"/>
+                </div>
+                <div class="flex flex-column gap-1 w-full">
+                    <label for="username" class="font-semibold">Category <small class="text-red-500">*</small></label>
+                    <Dropdown v-model="form_category" showClear filter :options="list_category" optionLabel="nama" optionValue="id" placeholder="Select a Category" class="w-full" @change="loadFormList"/>
+                </div>
+            </div>
+            <div class="flex flex-column gap-4" v-if="form_category != null">
+                <div class="flex justify-content-between align-items-center gap-4" v-for="(data, index) in forms" :key="index">
+                    <span class="font-medium text-300 text-xl">{{ index+1 }}</span>
+                    <div class="flex flex-column gap-1 w-full">
+                        <label for="username" class="font-semibold">Uraian <small class="text-red-500">*</small></label>
+                        <Dropdown v-model="data.id_uraian" filter :options="list_uraian" optionLabel="nama" optionValue="id" placeholder="Select a Uraian" class="w-full" disabled/>
                     </div>
-                </template>
-                <Column field="id_uraian" class="">
-                    <template #header>
-                        <span class="text-sm font-bold">Uraian</span>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full">
-                            <Dropdown v-model="data.id_uraian" :options="list_category" optionLabel="nama" optionValue="id" placeholder="Select a Category" class="w-full" disabled/>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="id_plant" class="">
-                    <template #header>
-                        <span class="text-sm font-bold">Plant</span>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full">
-                            <Dropdown v-model="data.id_plant" :options="list_plant" optionLabel="nama" optionValue="id" placeholder="Select a Plant" class="w-full" disabled/>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="real" style="width: 8rem;">
-                    <template #header>
-                        <span class="text-sm font-bold">UoM</span>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full">
-                            <InputText id="tanggal" v-model="data.satuan" class="w-full" autocomplete="off" disabled />
-                        </div>
-                    </template>
-                </Column>
-                <Column field="real">
-                    <template #header>
-                        <span class="text-sm font-bold">Value</span>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full">
-                            <InputNumber id="dmo" v-model="data.value" class="w-full" placeholder="Value" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" />
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
+                    <div class="flex flex-column gap-1 w-full">
+                        <label class="font-semibold">Plant </label>
+                        <Dropdown v-model="data.id_plant" filter :options="list_plant" optionLabel="nama" optionValue="id" placeholder="Select a Plant" class="w-full" disabled/>
+                    </div>
+                    <div class="flex flex-column gap-1 w-full">
+                        <label for="username" class="font-semibold">Qty <small class="text-red-500">*</small></label>
+                        <InputNumber id="dmo" v-model="data.value" class="w-full" placeholder="Qty" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" />
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </template>

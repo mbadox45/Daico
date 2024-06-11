@@ -11,6 +11,7 @@
     import CardSellingPrice from '@/views/finance/dashboard/components/CardSellingPrice.vue'
     import ChartDougnutPage from '@/views/finance/dashboard/components/ChartDougnutPage2.vue'
     import CardCpoPage from '@/views/finance/dashboard/components/CardCPOPage.vue'
+    import CpoAndRoutersPage from '@/views/finance/dashboard/components/CpoAndRoutersPage.vue'
 
     // API
 
@@ -35,10 +36,11 @@
     <div class="flex flex-column gap-5 mt-5 md:mt-0 ">
         <div class="flex flex-column gap-4 w-full">
             <card-dash-avg @submit="onSubmit"/>
-            <card-selling-price :tanggal="tanggal"/>
+            <!-- <card-selling-price :tanggal="tanggal"/> -->
             <card-cpo-page :tanggal="tanggal"/>
             <!-- Cards Statistics -->
-            <chart-dougnut-page/>
+            <cpo-and-routers-page :tanggal="tanggal"/>
+            <chart-dougnut-page :tanggal="tanggal"/>
         </div>
         <!-- <card-potensi-page/> -->
     </div>

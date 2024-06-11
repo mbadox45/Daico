@@ -1,4 +1,4 @@
-import http from '../http-auth'
+import http from '../http-common'
 
 export default new class GlConfig{
     getByDate(data){

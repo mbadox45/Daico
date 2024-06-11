@@ -79,23 +79,47 @@
             for (let i = 0; i < loadProd.length; i++) {
                 const items = loadProd[i].items;
                 for (let j = 0; j < items.length; j++) {
-                    list_prod.push({
-                        id: items[j].id,
-                        id_plant: items[j].id_plant,
-                        id_uraian: items[j].id_uraian,
-                        tanggal: items[j].tanggal,
-                        tgl: moment(items[j].tanggal).format('DD MMMM YYYY'),
-                        plant: items[j].plant != null ? items[j].plant.nama : '-',
-                        uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
-                        uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
-                        satuan: items[j].uraian != null ? items[j].uraian.satuan : '-',
-                        id_category: items[j].uraian != null ? items[j].uraian.id_category : null,
-                        kategori: items[j].uraian != null ? items[j].uraian.kategori.nama : '-',
-                        value: items[j].value,
-                        harga_satuan: items[j].harga_satuan == null ? 0 : items[j].harga_satuan.value,
-                        finalValue: items[j].finalValue,
-                        totals: items[j].totals,
-                    })
+                    if (items[j].plant != null ) {
+                        if (items[j].id_plant == 1 || items[j].id_plant == 3) {
+                            list_prod.push({
+                                id: items[j].id,
+                                id_plant: items[j].id_plant,
+                                id_uraian: items[j].id_uraian,
+                                tanggal: items[j].tanggal,
+                                tgl: moment(items[j].tanggal).format('DD MMMM YYYY'),
+                                plant: items[j].plant != null ? items[j].plant.nama : '-',
+                                uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
+                                uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
+                                satuan: items[j].uraian != null ? items[j].uraian.satuan : '-',
+                                id_category: items[j].uraian != null ? items[j].uraian.id_category : null,
+                                kategori: items[j].uraian != null ? items[j].uraian.kategori.nama : '-',
+                                value: items[j].value,
+                                harga_satuan: items[j].harga_satuan == null ? 0 : items[j].harga_satuan.value,
+                                finalValue: items[j].finalValue,
+                                totals: items[j].totals,
+                            })
+                        } else {
+                            continue ;
+                        }
+                    } else {
+                        list_prod.push({
+                            id: items[j].id,
+                            id_plant: items[j].id_plant,
+                            id_uraian: items[j].id_uraian,
+                            tanggal: items[j].tanggal,
+                            tgl: moment(items[j].tanggal).format('DD MMMM YYYY'),
+                            plant: items[j].plant != null ? items[j].plant.nama : '-',
+                            uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
+                            uraian: items[j].uraian != null ? items[j].uraian.nama : '-',
+                            satuan: items[j].uraian != null ? items[j].uraian.satuan : '-',
+                            id_category: items[j].uraian != null ? items[j].uraian.id_category : null,
+                            kategori: items[j].uraian != null ? items[j].uraian.kategori.nama : '-',
+                            value: items[j].value,
+                            harga_satuan: items[j].harga_satuan == null ? 0 : items[j].harga_satuan.value,
+                            finalValue: items[j].finalValue,
+                            totals: items[j].totals,
+                        })
+                    }
                 }
             }
 
@@ -297,7 +321,7 @@
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <Column field="kategori"></Column>
-            <Column field="nama" style="min-width: 200px">
+            <Column field="nama" style="min-width: 200px" sortable>
                 <template #header>
                     <div class="w-full flex justify-content-center font-bold uppercase">
                         <span class="text-sm">Uraian</span>
@@ -310,7 +334,7 @@
                     </div>
                 </template>
             </Column>
-            <Column field="tanggal" style="min-width: 100px">
+            <Column field="tanggal" style="min-width: 100px" sortable>
                 <template #header>
                     <div class="w-full flex justify-content-center font-bold uppercase">
                         <span class="text-sm">Tanggal</span>

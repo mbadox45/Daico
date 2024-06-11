@@ -5,6 +5,7 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
+    import {formatCurrency} from '@/views/load_data/func_dummy.js'
     import {outstanding_cpo} from '@/api/dummy/variable_form.js';
     import OutstandingCpo from '@/api/cpo/OutstandingCpo.js';
 
@@ -56,9 +57,10 @@
                     id:data[a].id,
                     kontrak: data[a].kontrak,
                     supplier: data[a].supplier,
-                    harga:formatCurrency(data[a].harga),
+                    harga:data[a].harga,
                     qty: data[a].qty,
-                    value: formatCurrency(data[a].value),
+                    qty_out: data[a].qty_out,
+                    value: data[a].value,
                 })
             }
             loadingTable.value = false
@@ -71,6 +73,7 @@
     const formDatabase = (cond, data) => {
         visible.value = true
         status_form.value = cond;
+        messages.value = []
         title_dialog.value = cond == 'add' ? 'Outstanding CPO - Tambah Data' : cond == 'edit' ? 'Outstanding CPO - Edit Data' : 'Outstanding CPO - Hapus Data' ;
         if (cond == 'add') {
             resetForm()
@@ -80,8 +83,9 @@
                 id: data.id,
                 kontrak: data.kontrak,
                 supplier: data.supplier,
-                harga: currencyToNumber(data.harga),
+                harga: data.harga,
                 qty: data.qty,
+                qty_out: data.qty_out,
             }
         }
     }
@@ -92,6 +96,7 @@
             kontrak: null,
             supplier: null,
             qty: null,
+            qty_out: null,
             harga: null,
         }
     }
@@ -105,22 +110,9 @@
         loadData();
     }
 
-    const formatCurrency = (amount) => {
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return 'Rp ' + parts.join(',');
-    }
-
-    const currencyToNumber = (money) => {
-        const numericString = money.replace(/[^\d,.]/g, ''); // Removes all non-numeric characters except ',' and '.'
-        const numericValue = parseFloat(numericString.replace('.', ''));
-        return numericValue;
-    }
-
     const saveData = async () => {
         status_form.value
-        if (forms.value.kontrak != null && forms.value.supplier != null && forms.value.harga != null && forms.value.qty != null) {
+        if (forms.value.kontrak != null && forms.value.supplier != null && forms.value.harga != null && forms.value.qty != null && forms.value.qty_out != null) {
             if (status_form.value == 'add') {
                 const response = await OutstandingCpo.addOutstanding(forms.value);
                 const load = response.data;
@@ -209,7 +201,10 @@
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Qty</label>
-                <InputNumber v-model="forms.qty" inputId="avg" :minFractionDigits="1" :maxFractionDigits="2" class="flex-auto"/>
+                <div class="flex-auto flex gap-3">
+                    <InputNumber v-model="forms.qty" inputId="avg" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Terima" class="w-full"/>
+                    <InputNumber v-model="forms.qty_out" inputId="avg" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Kirim" class="w-full"/>
+                </div>
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="harga" class="font-semibold w-6rem">Harga (Rp)</label>
@@ -238,27 +233,33 @@
                 <Row>
                     <Column header="Kontrak" field="kontrak" :rowspan="2" />
                     <Column header="Supplier" :rowspan="2" />
-                    <Column :colspan="3">
+                    <Column :colspan="4">
                         <template #header>
                             <div class="text-center w-full flex justify-content-center">
                                 <span>Outstanding CPO Yang Belum Dikirim</span>
                             </div>
                         </template>
                     </Column>
-                    <Column :rowspan="2" />
                 </Row>
                 <Row>
                     <Column sortable field="qty">
                         <template #header>
-                            <div class="flex">
-                                <span>Qty</span>
+                            <div class="flex justify-content-end w-full">
+                                <span>Qty Out</span>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column sortable field="qty">
+                        <template #header>
+                            <div class="flex justify-content-end w-full">
+                                <span>Qty In</span>
                             </div>
                         </template>
                     </Column>
                     <Column sortable field="harga">
                         <template #header>
                             <div class="flex justify-content-end w-full">
-                                <span>Harga</span>
+                                <span>Price</span>
                             </div>
                         </template>
                     </Column>
@@ -273,7 +274,10 @@
             </ColumnGroup>
             <Column field="kontrak">
                 <template #body="{ data }">
-                    <strong class="text-sm uppercase">{{ data.kontrak }}</strong>
+                    <div class="flex align-items-center justify-content-between">
+                        <strong class="text-sm uppercase">{{ data.kontrak }}</strong>
+                        <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
+                    </div>
                 </template>
             </Column>
             <Column field="supplier">
@@ -283,29 +287,29 @@
             </Column>
             <Column field="qty">
                 <template #body="{ data }">
-                    <div class="flex">
-                        <span>{{ data.qty }}</span>
+                    <div class="flex justify-content-end">
+                        <span>{{ formatCurrency(Number(data.qty_out).toFixed(2)) }}</span>
+                    </div>
+                </template>
+            </Column>
+            <Column field="qty">
+                <template #body="{ data }">
+                    <div class="flex justify-content-end">
+                        <span>{{ formatCurrency(Number(data.qty).toFixed(2)) }}</span>
                     </div>
                 </template>
             </Column>
             <Column field="harga">
                 <template #body="{ data }">
                     <div class="flex justify-content-end">
-                        <span>{{ data.harga }}</span>
+                        <span>Rp. {{ formatCurrency(Number(data.harga).toFixed(2)) }}</span>
                     </div>
                 </template>
             </Column>
             <Column field="value">
                 <template #body="{ data }">
                     <div class="flex justify-content-end">
-                        <span>{{ data.value }}</span>
-                    </div>
-                </template>
-            </Column>
-            <Column header="" style="max-width: 10px;">
-                <template #body="{ data }">
-                    <div class="flex justify-content-end gap-3">
-                        <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>
+                        <span>Rp. {{ formatCurrency(Number(data.value).toFixed(2)) }}</span>
                     </div>
                 </template>
             </Column>

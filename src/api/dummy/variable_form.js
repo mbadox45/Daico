@@ -12,6 +12,7 @@ export const actual_cpo = {
     id: null,
     tanggal: moment().format('YYYY-MM-DD'),
     qty: null,
+    qty_out: null,
     harga: null,
 }
 
@@ -20,6 +21,7 @@ export const outstanding_cpo = {
     kontrak: null,
     supplier: null,
     qty: null,
+    qty_out: null,
     harga: null,
 }
 

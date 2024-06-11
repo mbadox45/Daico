@@ -396,15 +396,6 @@
         return parts.join(',');
     }
 
-    const formatCurrencyUSD = (amount) =>  {
-        // Convert the number to a string and insert commas every three digits from the right
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        // Combine the integer part with the decimal part (if any)
-        return parts.join(',');
-    }
-
     const actionRouter = async(post) => {
         try {
             let load;
@@ -750,7 +741,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbdo.routers.nilai == null ? '-' : formatCurrencyUSD(data.rbdo.routers.nilai) }}</small>
+                        <small>{{ data.rbdo.routers.nilai == null ? '-' : formatCurrency(data.rbdo.routers.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -758,7 +749,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbdo.levy.nilai == null ? '-' : formatCurrencyUSD(data.rbdo.levy.nilai) }}</small>
+                        <small>{{ data.rbdo.levy.nilai == null ? '-' : formatCurrency(data.rbdo.levy.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -766,7 +757,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbdo.levy.nilai == null && data.rbdo.routers.nilai == null ? '-' : formatCurrencyUSD((Number(data.rbdo.routers.nilai) - Number(data.rbdo.levy.nilai)).toFixed(2)) }}</small>
+                        <small>{{ data.rbdo.levy.nilai == null && data.rbdo.routers.nilai == null ? '-' : formatCurrency((Number(data.rbdo.routers.nilai) - Number(data.rbdo.levy.nilai)).toFixed(2)) }}</small>
                     </div>
                 </template>
             </Column>
@@ -775,7 +766,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbds.routers.nilai == null ? '-' : formatCurrencyUSD(data.rbds.routers.nilai) }}</small>
+                        <small>{{ data.rbds.routers.nilai == null ? '-' : formatCurrency(data.rbds.routers.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -783,7 +774,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbds.levy.nilai == null ? '-' : formatCurrencyUSD(data.rbds.levy.nilai) }}</small>
+                        <small>{{ data.rbds.levy.nilai == null ? '-' : formatCurrency(data.rbds.levy.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -791,7 +782,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbds.levy.nilai == null && data.rbds.routers.nilai == null ? '-' : formatCurrencyUSD((Number(data.rbds.routers.nilai) - Number(data.rbds.levy.nilai)).toFixed(2)) }}</small>
+                        <small>{{ data.rbds.levy.nilai == null && data.rbds.routers.nilai == null ? '-' : formatCurrency((Number(data.rbds.routers.nilai) - Number(data.rbds.levy.nilai)).toFixed(2)) }}</small>
                     </div>
                 </template>
             </Column>
@@ -800,7 +791,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.pfad.routers.nilai == null ? '-' : formatCurrencyUSD(data.pfad.routers.nilai) }}</small>
+                        <small>{{ data.pfad.routers.nilai == null ? '-' : formatCurrency(data.pfad.routers.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -808,7 +799,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.pfad.levy.nilai == null ? '-' : formatCurrencyUSD(data.pfad.levy.nilai) }}</small>
+                        <small>{{ data.pfad.levy.nilai == null ? '-' : formatCurrency(data.pfad.levy.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -816,7 +807,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.pfad.levy.nilai == null && data.pfad.routers.nilai == null ? '-' : formatCurrencyUSD((Number(data.pfad.routers.nilai) - Number(data.pfad.levy.nilai)).toFixed(2)) }}</small>
+                        <small>{{ data.pfad.levy.nilai == null && data.pfad.routers.nilai == null ? '-' : formatCurrency((Number(data.pfad.routers.nilai) - Number(data.pfad.levy.nilai)).toFixed(2)) }}</small>
                     </div>
                 </template>
             </Column>
@@ -825,7 +816,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbdpo.routers.nilai == null ? '-' : formatCurrencyUSD(data.rbdpo.routers.nilai) }}</small>
+                        <small>{{ data.rbdpo.routers.nilai == null ? '-' : formatCurrency(data.rbdpo.routers.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -833,7 +824,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbdpo.levy.nilai == null ? '-' : formatCurrencyUSD(data.rbdpo.levy.nilai) }}</small>
+                        <small>{{ data.rbdpo.levy.nilai == null ? '-' : formatCurrency(data.rbdpo.levy.nilai) }}</small>
                     </div>
                 </template>
             </Column>
@@ -841,7 +832,7 @@
                 <template #body="{ data }">
                     <div class="flex justify-content-between">
                         <small>USD</small>
-                        <small>{{ data.rbdpo.levy.nilai != null && data.rbdpo.routers.nilai != null ? formatCurrencyUSD((Number(data.rbdpo.routers.nilai) - Number(data.rbdpo.levy.nilai)).toFixed(2)) : '-' }}</small>
+                        <small>{{ data.rbdpo.levy.nilai != null && data.rbdpo.routers.nilai != null ? formatCurrency((Number(data.rbdpo.routers.nilai) - Number(data.rbdpo.levy.nilai)).toFixed(2)) : '-' }}</small>
                     </div>
                 </template>
             </Column>

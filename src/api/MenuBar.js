@@ -3,15 +3,34 @@ export const akuntansi = [
     {
         label: 'Management',
         items: [
-            // { label: 'Data', icon: 'pi pi-fw pi-dollar', items:[
-            // ]},
-            { label: 'Target', icon: 'pi pi-fw pi-chart-line', to: '/target' },
-            { label: 'CPO', icon: 'pi pi-fw pi-filter-fill', to: '/cpo' },
-            { label: 'Market', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
+            { label: 'Accounting', icon: 'pi pi-fw pi-chart-pie', items:[
+                { label: 'Kurs Mandiri', icon: 'pi pi-fw pi-dollar', to: '/kurs-mandiri' },
+                { label: 'Cash', icon: 'pi pi-fw pi-money-bill', to: '/cash' },
+            ]},
+            { label: 'Retail', icon: 'pi pi-fw pi-shopping-cart', items:[
+                { label: 'Target', icon: 'pi pi-fw pi-chart-line', to: '/target' },
+                { label: 'CPO', icon: 'pi pi-fw pi-filter-fill', to: '/cpo' },
+                { label: 'Market', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
+                { label: 'Average Price', icon: 'pi pi-fw pi-dollar', to: '/avg-price' },
+                { label: 'Stock', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
+            ]},
             { label: 'Production', icon: 'pi pi-fw pi-building', items:[
-                { label: 'Costing HPP', icon: 'pi pi-fw pi-list', to: '/costing-hpp' },
                 { label: 'Cost Production', icon: 'pi pi-fw pi-dollar', to: '/cost-prod' },
                 { label: 'Detail Allocation', icon: 'pi pi-fw pi-sitemap', to: '/det-alloc' },
+            ]},
+        ]
+    },
+    {
+        label: 'Reporting',
+        items: [
+            { label: 'Retail', icon: 'pi pi-fw pi-shopping-cart', items:[
+                { label: 'Target', icon: 'pi pi-fw pi-chart-bar', to: '/target-report' },
+                { label: 'Average Price', icon: 'pi pi-fw pi-dollar', to: '/avg-price-report' },
+                { label: 'Market Routers', icon: 'pi pi-fw pi-chart-line', to: '/market-report' },
+            ]},
+            { label: 'Production', icon: 'pi pi-fw pi-building', items:[
+                { label: 'Costing HPP', icon: 'pi pi-fw pi-list', to: '/costing-hpp' },
+                { label: 'Allocation Cost', icon: 'pi pi-fw pi-table', to: '/alloc-cost' },
             ]},
         ]
     },

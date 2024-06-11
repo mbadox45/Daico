@@ -32,6 +32,8 @@ const router = createRouter({
             component: AppLayout,
             redirect:'/home',
             children: [
+
+                // Home
                 {
                     path: '/home',
                     name: 'home',
@@ -47,8 +49,29 @@ const router = createRouter({
                         view:true,
                     }
                 },
-
-                // Accounting
+                // Management ==============================================
+                // Accounting ====================================
+                // {
+                //     path: '/kurs-mandiri',
+                //     name: 'kurs mandiri',
+                //     component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
+                //     meta:{
+                //         requiresAuth: true,
+                //         akunting:true,
+                //         view:true,
+                //     }
+                // },
+                // {
+                //     path: '/cash',
+                //     name: 'cash',
+                //     component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
+                //     meta:{
+                //         requiresAuth: true,
+                //         akunting:true,
+                //         view:true,
+                //     }
+                // },
+                // Retail     ====================================
                 {
                     path: '/target',
                     name: 'target',
@@ -73,6 +96,16 @@ const router = createRouter({
                     path: '/cpo',
                     name: 'cpo kpbn',
                     component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/avg-price',
+                    name: 'average price',
+                    component: () => import('@/views/finance/accounting/avg_price/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -105,6 +138,16 @@ const router = createRouter({
                     path: '/costing-hpp',
                     name: 'Costing HPP',
                     component: () => import('@/views/finance/production/costing_hpp/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/alloc-cost',
+                    name: 'allocation cost',
+                    component: () => import('@/views/finance/production/allocation_cost/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

@@ -7,6 +7,7 @@
     // API ========================================================================================================================================================
     import {formatCurrency} from '@/views/load_data/func_dummy.js';
     import {loadCategory} from '@/views/load_data/master_config.js'
+    import {loadAllKursJisdor} from '@/views/load_data/load_from_odoo.js';
     import HargaSatuanProdMaster from '@/api/master/HargaSatuanProdMaster.js';
 
     // VARIABLE
@@ -18,6 +19,7 @@
         id_uraian_produksi: null,
         value: null,
     })
+    const kurs_jisdor = ref(0)
     const loadingTable = ref(false)
     const list_category = ref([]);
     const list_uraian = ref([])
@@ -51,13 +53,26 @@
             const load = response.data;
             // console.log(load)
             const data = load.data;
+            const category = await loadCategory();
+            const kurs = await loadKurs();
+            kurs_jisdor.value = kurs
             for (let a = 0; a < data.length; a++) {
                 const uraian = data[a].uraian
+                const kategori = category.find(item => item.id == data[a].uraian.id_category)
+                let value = 0;
+                if (kategori.id == 11) {
+                    value = kurs == 0 ? Number(data[a].value) : kurs * Number(data[a].value)
+                } else {
+                    value = Number(data[a].value)
+                }
                 products.value.push({
                     id:data[a].id,
                     nama:uraian == null ? '-' : uraian.nama,
                     satuan:uraian == null ? '-' : uraian.satuan,
-                    value:data[a].value,
+                    value:Number(data[a].value),
+                    value_convert_dollar_to_rp:value,
+                    ketegori:kategori.nama ,
+                    id_category:kategori.id ,
                     id_uraian_produksi:data[a].id_uraian_produksi,
                     updated_at:data[a].updated_at,
                     created_at:data[a].created_at,
@@ -92,6 +107,18 @@
         }
     }
 
+    const loadKurs = async() => {
+        const response = await loadAllKursJisdor();
+        if (response != null) {
+            response.sort((a, b) => b.id - a.id);
+            const load = response[0]
+            console.log(load)
+            return Number(load.rate)
+        } else {
+            return 0
+        }
+    }
+
     const loadListCategory = async() => {
         const load_category = await loadCategory();
         const list = []
@@ -121,7 +148,7 @@
 
     const saveData = async () => {
         status_form.value
-        if (forms.value.nama != null) {
+        if (forms.value.id_uraian_produksi != null && forms.value.value != null && forms.value.id_category != null ) {
             if (status_form.value == 'add') {
                 const response = await HargaSatuanProdMaster.addPost(forms.value);
                 const load = response.data;
@@ -197,7 +224,7 @@
                 </div>
                 <div class="flex flex-column gap-1 w-full">
                     <label for="username" class="font-semibold">Harga <small class="text-red-500">*</small></label>
-                    <InputNumber id="dmo" v-model="forms.value" class="w-full" placeholder="Qty" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" />
+                    <InputNumber id="dmo" v-model="forms.value" class="w-full" placeholder="" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" />
                 </div>
             </div>
             <div class="flex justify-content-end gap-2 mt-5">
@@ -215,14 +242,17 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" showGridlines :value="products" dataKey="id" scrollable scrollHeight="380px" :globalFilterFields="['nama','value']">
+        <DataTable v-else v-model:filters="filters" rowGroupMode="subheader" groupRowsBy="ketegori" sortMode="single"
+        sortField="id_category" showGridlines :value="products" dataKey="id" scrollable scrollHeight="380px" :globalFilterFields="['nama' ,'ketegori' ,'value']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <template #groupheader="{data}">
                 <div class="flex align-items-center gap-2">
-                    <span class="font-bold text-sm uppercase">{{ data.nama }}</span>
+                    <span class="font-bold text-sm uppercase">{{ data.ketegori }}</span>
                 </div>
             </template>
+            <Column field="ketegori" style="min-width: 8rem;">
+            </Column>
             <Column field="id_uraian_produksi" style="min-width: 8rem;">
                 <template #header>
                     <span class="text-sm font-bold uppercase">uraian</span>
@@ -236,7 +266,7 @@
                     <span class="text-sm font-bold uppercase flex justify-content-center w-full">Value</span>
                 </template>
                 <template #body="{ data }">
-                    <span class="font-medium text-sm flex justify-content-end gap-2">Rp. {{ formatCurrency(Number(data.value).toFixed(2)) }}</span>
+                    <span class="font-medium text-sm flex justify-content-end gap-2" :title="data.id_category == 11 ? `$ ${formatCurrency(Number(data.value).toFixed(2))} x Rp. ${formatCurrency(Number(kurs_jisdor))}` : Number(data.value).toFixed(0)">{{data.satuan == 'Hari' ? '' : 'Rp. '}}{{ data.satuan == 'Hari' ? formatCurrency(Number(data.value).toFixed(0)) : formatCurrency(Number(data.value_convert_dollar_to_rp).toFixed(2)) }}</span>
                 </template>
             </Column>
             <Column field="updated_at" style="min-width: 8rem;">

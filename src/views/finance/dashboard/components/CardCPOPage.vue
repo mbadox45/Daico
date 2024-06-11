@@ -24,6 +24,10 @@
     const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
     watch(() => props.tanggal, (newVal) => {loadProduct(newVal)});
 
+    onMounted(() => {
+        loadProduct(props.tanggal)
+    });
+
 
     const loadProduct = async(tanggal) => {
         loadingData.value = true

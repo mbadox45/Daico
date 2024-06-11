@@ -15,7 +15,7 @@ export const loadDataAll = async(tgl)=> {
     return data;
 }
 
-const loadCostProd = async(tgl,name) => {
+export const loadCostProd = async(tgl,name) => {
     try {
         const response = await CostProd.getAll({tanggal: tgl, setting_name: name});
         const load = response.data;

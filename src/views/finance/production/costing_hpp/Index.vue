@@ -18,6 +18,7 @@
     import FractIv57 from '@/views/finance/production/costing_hpp/components/FractIv57.vue'
     import FractIv56 from '@/views/finance/production/costing_hpp/components/FractIv56.vue'
     import RefineryCost from '@/views/finance/production/costing_hpp/components/RefineryCost.vue'
+    import ControlCost from '@/views/finance/production/costing_hpp/components/ControlCost.vue'
 
     // VARIABLE
     const type = ref(route.query.active);
@@ -146,7 +147,7 @@
                 <FractIv60 :datas="data_refinery"/>
             </div>
             <div v-show="active == 5">
-                <h3 class="text-center text-red-400 uppercase text-lg">- Mohon maaf, Sedang Dalam Pengembangan -</h3>
+                <control-cost :datas="data_refinery"/>
             </div>
         </div>
 

@@ -51,27 +51,47 @@ const router = createRouter({
                 },
                 // Management ==============================================
                 // Accounting ====================================
-                // {
-                //     path: '/kurs-mandiri',
-                //     name: 'kurs mandiri',
-                //     component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
-                //     meta:{
-                //         requiresAuth: true,
-                //         akunting:true,
-                //         view:true,
-                //     }
-                // },
-                // {
-                //     path: '/cash',
-                //     name: 'cash',
-                //     component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
-                //     meta:{
-                //         requiresAuth: true,
-                //         akunting:true,
-                //         view:true,
-                //     }
-                // },
+                {
+                    path: '/kurs-mandiri',
+                    name: 'kurs mandiri',
+                    component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/cash',
+                    name: 'cash',
+                    component: () => import('@/views/finance/accounting/cash/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/form-cash/',
+                    name: 'form cash',
+                    component: () => import('@/views/finance/accounting/cash/components/FormCash.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
                 // Retail     ====================================
+                {
+                    path: '/stock',
+                    name: 'stock',
+                    component: () => import('@/views/finance/accounting/stock/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
                 {
                     path: '/target',
                     name: 'target',
@@ -106,6 +126,16 @@ const router = createRouter({
                     path: '/avg-price',
                     name: 'average price',
                     component: () => import('@/views/finance/accounting/avg_price/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/form-avg-price/:status',
+                    name: 'form average price',
+                    component: () => import('@/views/finance/accounting/avg_price/components/FormPersediaanAwal.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -174,6 +204,8 @@ const router = createRouter({
                         view:true,
                     }
                 },
+
+                // REPORTING ==============================================
 
                 // Configuration
                 {

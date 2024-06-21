@@ -6,10 +6,10 @@
     import moment from 'moment';
 
     const route = useRoute();
+    const router = useRouter();
 
     // API
-    import {loadAvgPriceByDate} from '@/views/load_data/avg_price.js'
-    import {loadProduct, loadSubProduct} from '@/views/load_data/master_config.js'
+    import {forViewAvgPrice} from '@/views/load_data/avg_price.js'
 
     // Components
     import PersediaanAwal from '@/views/finance/accounting/avg_price/components/PersediaanAwal.vue'
@@ -27,6 +27,10 @@
     const op = ref();
 
     const data_refinery = ref([])
+    
+    const tombol_add = ref(false) 
+    const tombol_update = ref(false) 
+    const rute = ref({})
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -35,20 +39,20 @@
 
     const loadData = async() => {
         loadingTable.value = true
-        // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
-        const dateString = `2024-05-31`;
+        const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+        // const dateString = `2024-04-01`;
         tanggal.value = dateString;
-        const response = await loadAvgPriceByDate(dateString);
-        const response_product = await loadSubProduct()
-        console.log(response, response_product);
-        const list = [
-            {id: 0, categori_id: 0, category: 'RBDPO', product:'RBDPO', qty:0, rp:0, jumlah:0},
-            {id: 0, categori_id: 1, category: 'PFAD', product:'PFAD', qty:0, rp:0, jumlah:0},
-            {id: 0, categori_id: 3, category: 'RBD Olein (IV-56) :', product:'Bulk', qty:0, rp:0, jumlah:0},
-            {id: 1, categori_id: 3, category: 'RBD Olein (IV-56) :', product:'Kemasan (Minyakita)', qty:0, rp:0, jumlah:0},
-            {id: 0, categori_id: 4, category: 'RBD Olein (IV-57) :', product:'Bulk', qty:0, rp:0, jumlah:0},
-            {id: 1, categori_id: 4, category: 'RBD Olein (IV-57) :', product:'Kemasan (INL)', qty:0, rp:0, jumlah:0},
-        ]
+        const response = await forViewAvgPrice(dateString);
+        if (response != null) {
+            tombol_add.value = false
+            tombol_update.value = true
+            rute.value = {name:'form average price', query: { tgl: tanggal.value }, params:{status:'update', data:response}}
+        } else {
+            rute.value = {name:'form average price', params:{status:'add'}}
+            tombol_add.value = true
+            tombol_update.value = false
+        }
+        data_refinery.value = response
         periods.value = moment(dateString).format('MMMM YYYY')
         loadingTable.value = false
         loadBulan()
@@ -110,6 +114,10 @@
                     </div>
                 </OverlayPanel>
                 <span class="font-medium text-sm text-gray-400">{{ moment(tanggal).format('MMMM YYYY') }}</span>
+            </div>
+            <div class="flex gap-2">
+                <Button label="Tambah Data" v-show="tombol_add == true" severity="info" size="small" class="py-2" @click="()=>{router.push(rute)}"/>
+                <Button label="Update Data" v-show="tombol_update == true" severity="warning" size="small" class="py-2" @click="()=>{router.push(rute)}"/>
             </div>
         </div>
 

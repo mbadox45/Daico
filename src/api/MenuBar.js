@@ -12,7 +12,7 @@ export const akuntansi = [
                 { label: 'CPO', icon: 'pi pi-fw pi-filter-fill', to: '/cpo' },
                 { label: 'Market', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
                 { label: 'Average Price', icon: 'pi pi-fw pi-dollar', to: '/avg-price' },
-                { label: 'Stock', icon: 'pi pi-fw pi-shopping-cart', to: '/prop-cost' },
+                { label: 'Stock', icon: 'pi pi-fw pi-shopping-cart', to: '/stock' },
             ]},
             { label: 'Production', icon: 'pi pi-fw pi-building', items:[
                 { label: 'Cost Production', icon: 'pi pi-fw pi-dollar', to: '/cost-prod' },

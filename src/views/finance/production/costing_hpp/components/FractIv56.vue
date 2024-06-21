@@ -21,6 +21,14 @@
     // VARIABLE
     const loadingTable = ref(false)
     const load = ref({})
+    const proportion1 = ref({})
+    const proportion_packing = ref({})
+    const direct = ref({})
+    const in_direct = ref({})
+    const packaging = ref({})
+    const allocation = ref([])
+    const total = ref({})
+    const total_packaging = ref({})
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -34,7 +42,14 @@
             const refi = response.find(item => item.name == 'Fraksinasi (IV-56)')
             const data = await loadFrakIv56(refi)
             load.value = data
-            console.log(load.value)
+            proportion1.value = refi.proportion1
+            proportion_packing.value = refi.proportion_packing
+            direct.value = refi.direct
+            in_direct.value = refi.in_direct
+            packaging.value = refi.packaging
+            total.value = refi.total
+            total_packaging.value = refi.total_packaging
+            allocation.value = refi.allocation
             loadingTable.value = false
         } catch (error) {
             load.value = {}
@@ -115,47 +130,12 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr>
-                        <td>Bahan Baku</td>
-                        <td></td>
-                        <td></td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Bahan Bakar</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Others</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Analisa & Laboratorium</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Listrik</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Air</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
+                    <tr v-for="(items, index) in direct" :key="index">
+                        <td>{{items.name}}</td>
+                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
+                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
+                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -169,40 +149,12 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr>
-                        <td>Gaji, Tunjangan & Biaya Sosial Karyawan Pimpinan</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Gaji, Tunjangan & Biaya Sosial Karyawan Pelaksana</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Assuransi Pabrik</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Bengkel & Pemeliharaan</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Depresiasi</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
+                    <tr v-for="(items, index) in in_direct" :key="index">
+                        <td>{{items.name}}</td>
+                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
+                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
+                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -211,8 +163,8 @@
                     <tr >
                         <th class="underline font-italic text-left" style="width: 50%;">Total Cost Fractionation IV-56</th>
                         <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
+                        <th class="text-right" style="width: 15%;">{{total.cost == null ? null : Number(total.cost) >= 0 ? formatCurrency(Number(total.cost).toFixed(2)) : `(${formatCurrency((Number(total.cost)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right" style="width: 15%;">{{total.harga == null ? null : Number(total.harga) >= 0 ? formatCurrency(Number(total.harga).toFixed(2)) : `(${formatCurrency((Number(total.harga)*-1).toFixed(2))})`}}</th>
                     </tr>
                 </thead>
             </table>
@@ -226,105 +178,39 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr>
-                        <td>Gaji & Tunjangan</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Minyakita - 1L</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Minyakita - 2L</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Bahan Kimia</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Pengangkutan / Langsir</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Bahan Pengepakan Lainnya</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Asuransi Gudang & Filling</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
-                    </tr>
-                    <tr>
-                        <td>Depresiasi (Packaging)</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">0%</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right">-</td>
+                    <tr v-for="(items, index) in packaging" :key="index">
+                        <td>{{items.name}}</td>
+                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
+                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
+                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
                     </tr>
                 </tbody>
             </table>
             <table>
                 <thead class="text-sm font-medium bg-gray-300">
                     <tr>
-                        <th class="underline font-italic text-left" colspan="3" style="width: 50%;">Total Cost Fractionation IV-56 + Packaging</th>
+                        <th class="underline font-italic text-left" style="width: 50%;">Total Cost Fractionation IV-56 + Packaging</th>
                         <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
+                        <th class="text-right" style="width: 15%;">{{total_packaging.cost == null ? null : Number(total_packaging.cost) >= 0 ? formatCurrency(Number(total_packaging.cost).toFixed(2)) : `(${formatCurrency((Number(total_packaging.cost)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right" style="width: 15%;">{{total_packaging.harga == null ? null : Number(total_packaging.harga) >= 0 ? formatCurrency(Number(total_packaging.harga).toFixed(2)) : `(${formatCurrency((Number(total_packaging.harga)*-1).toFixed(2))})`}}</th>
                     </tr>
                 </thead>
             </table>
             <table>
                 <thead class="text-sm font-medium">
                     <tr>
-                        <th class="underline font-italic text-right font-normal" colspan="3" style="width: 50%;">Allocation Cost :</th>
+                        <th class="underline font-italic text-right font-normal" style="width: 50%;">Allocation Cost :</th>
                         <th class="" colspan="2"></th>
                         <th class="text-right" style="width: 15%;"></th>
                         <th class="text-right" style="width: 15%;"></th>
                     </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">RBD Olein IV-56</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">RBD Stearin</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">Minyakita - 1L</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">Minyakita - 2L</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
+                    <tr v-for="(items, index) in allocation" :key="index">
+                        <th class=" font-italic text-right" style="width: 50%;">{{items.name}}</th>
+                        <th class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</th>
+                        <th class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</th>
+                        <th class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</th>
                     </tr>
                 </thead>
             </table>

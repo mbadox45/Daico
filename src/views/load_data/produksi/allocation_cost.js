@@ -19,17 +19,21 @@ export const loadAllocationCost = async (tgl) => {
     const alloc_prod = await AllocProd(response)
     const alloc_gas = await allocGas(response, tgl)
     const alloc_gas_penalti = await allocGasPenalty(response, tgl)
-    const allocation_utility = [
-        {name: 'Utility - Steam / Gas', ref:{qty:allocation[1].tot_ref, persen: allocation[1].tot_alloc == 0 ? 0 : allocation[1].tot_ref / allocation[1].tot_alloc}, frak:{qty:allocation[1].tot_rak, persen: allocation[1].tot_alloc == 0 ? 0 : allocation[1].tot_rak / allocation[1].tot_alloc}},
-        {name: 'Utility - Air', ref:{qty:allocation[0].tot_ref, persen: allocation[0].tot_alloc == 0 ? 0 : allocation[0].tot_ref / allocation[0].tot_alloc}, frak:{qty:allocation[0].tot_rak, persen: allocation[0].tot_alloc == 0 ? 0 : allocation[0].tot_rak / allocation[0].tot_alloc}},
-        {name: 'Utility - Listrik', ref:{qty:allocation[2].tot_ref, persen: allocation[2].tot_alloc == 0 ? 0 : allocation[2].tot_ref / allocation[2].tot_alloc}, frak:{qty:allocation[2].tot_rak, persen: allocation[2].tot_alloc == 0 ? 0 : allocation[2].tot_rak / allocation[2].tot_alloc}},
-    ];
+    const allocation_utility = await AllocUtility(allocation);
     return [
         {name: 'Allocation', items: allocation},
         {name: 'Allocation Utility', items: allocation_utility},
         {name: 'Allocation Produksi', items: alloc_prod},
         {name: 'Allocation Gas', items: alloc_gas},
         {name: 'Allocation Gas Pinalty', items: alloc_gas_penalti},
+    ]
+}
+
+export const AllocUtility = async(allocation) => {
+    return [
+        {name: 'Utility - Steam / Gas', ref:{qty:allocation[1].tot_ref, persen: allocation[1].tot_alloc == 0 ? 0 : allocation[1].tot_ref / allocation[1].tot_alloc}, frak:{qty:allocation[1].tot_rak, persen: allocation[1].tot_alloc == 0 ? 0 : allocation[1].tot_rak / allocation[1].tot_alloc}},
+        {name: 'Utility - Air', ref:{qty:allocation[0].tot_ref, persen: allocation[0].tot_alloc == 0 ? 0 : allocation[0].tot_ref / allocation[0].tot_alloc}, frak:{qty:allocation[0].tot_rak, persen: allocation[0].tot_alloc == 0 ? 0 : allocation[0].tot_rak / allocation[0].tot_alloc}},
+        {name: 'Utility - Listrik', ref:{qty:allocation[2].tot_ref, persen: allocation[2].tot_alloc == 0 ? 0 : allocation[2].tot_ref / allocation[2].tot_alloc}, frak:{qty:allocation[2].tot_rak, persen: allocation[2].tot_alloc == 0 ? 0 : allocation[2].tot_rak / allocation[2].tot_alloc}},
     ]
 }
 

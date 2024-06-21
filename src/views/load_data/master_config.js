@@ -3,6 +3,8 @@ import PlantMaster from '@/api/master/PlantMaster.js';
 import BulkyMaster from '@/api/master/BulkyMaster.js';
 import ProductMaster from '@/api/master/ProductMaster.js';
 import SubProductMaster from '@/api/master/SubProductMaster.js';
+import TypeRekeningMaster from '@/api/master/TypeRekeningMaster.js';
+import TankMaster from '@/api/master/TankMaster.js';
 
 
 export const loadCategory = async() => {
@@ -59,6 +61,28 @@ export const loadProduct = async() => {
 export const loadSubProduct = async() => {
     try {
         const response = await SubProductMaster.getAll()
+        const load = response.data;
+        const data = load.data;
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const loadTypeRekening = async() => {
+    try {
+        const response = await TypeRekeningMaster.getAll()
+        const load = response.data;
+        const data = load.data;
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const loadTank = async() => {
+    try {
+        const response = await TankMaster.getAll()
         const load = response.data;
         const data = load.data;
         return data;

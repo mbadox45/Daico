@@ -5,9 +5,22 @@
     import moment from 'moment';
     import { useRouter, useRoute } from 'vue-router';
 
+    // API
+    import {loadRetail} from '@/views/load_data/stock.js'
+    import {loadProduct} from '@/views/load_data/master_config.js'
+
     const route = useRoute();
     const router = useRouter();
     const toast = useToast();
+
+    onMounted(() => {
+        loadData()
+    })
+
+    const loadData = async() => {
+        const produk = await loadProduct()
+        const retail = await loadRetail()
+    }
 
     const postData = async() => {
 

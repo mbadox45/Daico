@@ -46,8 +46,10 @@
 
 <template>
     <div class="w-full flex flex-column gap-5">
-        <div >
-            <p class="font-italic uppercase">Rekening Cash on Hand</p>
+        <div class="flex flex-column gap-3">
+            <div>
+                <Button label="Update Data" size="small" severity="warning"/>
+            </div>
             <DataTable :value="load" showGridlines class="text-sm" >
                 <Column field="nama">
                     <template #header>

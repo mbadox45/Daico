@@ -93,6 +93,16 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/form-retail-stock',
+                    name: 'form stock retail',
+                    component: () => import('@/views/finance/accounting/stock/components/FormRetailStock.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
                     path: '/target',
                     name: 'target',
                     component: () => import('@/views/finance/accounting/target/Index.vue'),
@@ -206,6 +216,16 @@ const router = createRouter({
                 },
 
                 // REPORTING ==============================================
+                {
+                    path: '/avg-price-report',
+                    name: 'average price report',
+                    component: () => import('@/views/finance/accounting/avg_price/Report.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
 
                 // Configuration
                 {

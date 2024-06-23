@@ -5,13 +5,17 @@
     import { useToast } from 'primevue/usetoast';
 
     // API
-    import {loadTank, loadProduct} from '@/views/load_data/master_config.js'
+    import {loadTank, loadProduct, loadLocation} from '@/views/load_data/master_config.js'
+    import {loadRetail} from '@/views/load_data/stock.js'
 
     // Components
     import BulkyStock from '@/views/finance/accounting/stock/components/BulkyStock.vue'
+    import RetailStock from '@/views/finance/accounting/stock/components/RetailStock.vue'
 
-    const active = ref(0);
+    const active = ref(1);
     const load_bulky = ref([])
+    const load_retail = ref([])
+    const loadingTable = ref(false);
 
     onMounted(() => {
         loadData()
@@ -19,9 +23,10 @@
 
     const loadData = async() => {
         // Bulky
+        loadingTable.value = true
         const response = await loadTank()
         const produk = await loadProduct()
-        console.log(produk)
+        const lokasi = await loadLocation()
         load_bulky.value = []
         for (let i = 0; i < response.length; i++) {
             load_bulky.value.push({
@@ -36,6 +41,9 @@
                 remarks: null,
             })
         }
+
+        load_retail.value = await loadRetail();
+        loadingTable.value = false
     }
 
 </script>
@@ -50,11 +58,21 @@
                 <Button @click="active = 1" label="Retail" severity="secondary" class="h-2rem px-2 p-0 text-sm" :text="active !== 1" />
             </div>
         </div>
-        <div v-show="active == 0">
-            <bulky-stock :datas="load_bulky"/>
+        <div v-if="loadingTable == true" class="flex flex-column-reverse justify-content-center align-items-center gap-3">
+            <div>
+                <span class="text-xl font-normal">Loading...</span>
+            </div>
+            <div>
+                <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
+            </div>
         </div>
-        <div v-show="active == 1">
-            <!-- <prop-cost/> -->
+        <div v-else>
+            <div v-show="active == 0">
+                <bulky-stock :datas="load_bulky"/>
+            </div>
+            <div v-show="active == 1">
+                <retail-stock :datas="load_retail"/>
+            </div>
         </div>
     </div>
 </template>

@@ -9,13 +9,10 @@
     const router = useRouter();
 
     // API
-    import {loadAllocationCost} from '@/views/load_data/produksi/allocation_cost.js'
+    import {forViewAvgPrice} from '@/views/load_data/avg_price.js'
 
     // Components
-    import AllocationCost from '@/views/finance/production/allocation_cost/components/AllocationCost.vue'
-    import AllocationUtility from '@/views/finance/production/allocation_cost/components/AllocationUtility.vue'
-    import AllocationProduksi from '@/views/finance/production/allocation_cost/components/AllocationProduksi.vue'
-    import AllocationGas from '@/views/finance/production/allocation_cost/components/AllocationGas.vue'
+    import PersediaanAwal from '@/views/finance/accounting/avg_price/components/PersediaanAwal.vue'
 
     // VARIABLE
     const type = ref(route.query.active);
@@ -41,8 +38,7 @@
         // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
         const dateString = `2024-05-31`;
         tanggal.value = dateString;
-        const response = await loadAllocationCost(dateString);
-        console.log(response);
+        const response = await forViewAvgPrice(dateString);
         data_refinery.value = response;
         periods.value = moment(dateString).format('MMMM YYYY')
         loadingTable.value = false
@@ -108,10 +104,10 @@
             </div>
             <div class="">
                 <div class="flex justify-content-end gap-1 p-2 border-1 border-gray-500 border-round">
-                    <Button label="Allocation Cost" @click="active = 0" class="py-2 text-xs" severity="secondary" :text="active !== 0" size="small"/>
-                    <Button label="Allocation Utility" @click="active = 1" class="py-2 text-xs" severity="secondary" :text="active !== 1" size="small"/>
-                    <Button label="Allocation Production" @click="active = 2" class="py-2 text-xs" severity="secondary" :text="active !== 2" size="small"/>
-                    <Button label="Allocation Gas" @click="active = 3" class="py-2 text-xs" severity="secondary" :text="active !== 3" size="small"/>
+                    <Button label="Persediaan Awal" @click="active = 0" class="py-2 text-xs" severity="secondary" :text="active !== 0" size="small"/>
+                    <Button label="Qty & Beban Produksi" @click="active = 1" class="py-2 text-xs" severity="secondary" :text="active !== 1" size="small"/>
+                    <Button label="Pengolahan" @click="active = 2" class="py-2 text-xs" severity="secondary" :text="active !== 2" size="small"/>
+                    <Button label="Stock Tersedia" @click="active = 3" class="py-2 text-xs" severity="secondary" :text="active !== 3" size="small"/>
                 </div>
             </div>
         </div>
@@ -127,16 +123,16 @@
         <div v-else>
             <!-- Table -->
             <div v-show="active == 0">
-                <allocation-cost :datas="data_refinery"/>
+                <persediaan-awal :datas="data_refinery"/>
             </div>
             <div v-show="active == 1">
-                <allocation-utility :datas="data_refinery"/>
+                <!-- <allocation-utility :datas="data_refinery"/> -->
             </div>
             <div v-show="active == 2">
-                <allocation-produksi :datas="data_refinery"/>
+                <!-- <allocation-produksi :datas="data_refinery"/> -->
             </div>
             <div v-show="active == 3">
-                <allocation-gas :datas="data_refinery"/>
+                <!-- <allocation-gas :datas="data_refinery"/> -->
             </div>
         </div>
 

@@ -5,6 +5,7 @@ import ProductMaster from '@/api/master/ProductMaster.js';
 import SubProductMaster from '@/api/master/SubProductMaster.js';
 import TypeRekeningMaster from '@/api/master/TypeRekeningMaster.js';
 import TankMaster from '@/api/master/TankMaster.js';
+import LocationMaster from '@/api/master/LocationMaster.js';
 
 
 export const loadCategory = async() => {
@@ -83,6 +84,17 @@ export const loadTypeRekening = async() => {
 export const loadTank = async() => {
     try {
         const response = await TankMaster.getAll()
+        const load = response.data;
+        const data = load.data;
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const loadLocation = async() => {
+    try {
+        const response = await LocationMaster.getAll()
         const load = response.data;
         const data = load.data;
         return data;

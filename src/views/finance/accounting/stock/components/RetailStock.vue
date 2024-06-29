@@ -38,7 +38,7 @@
         try {
             const response = props.datas;
             load.value = response
-            console.log(response)
+            // console.log(response)
             loadingTable.value = false
         } catch (error) {
             load.value = []
@@ -78,7 +78,7 @@
                             </template>
                             <template #body="{data}">
                                 <div class="w-full flex justify-content-end">
-                                    <small class="font-medium">{{ data.ctn == null ? '-' : formatCurrency(Number(data.ctn).toFixed(3)) }}</small>
+                                    <small class="font-medium">{{ data.ctn == null ? '-' : formatCurrency(Number(data.ctn).toFixed(1)) }}</small>
                                 </div>
                             </template>
                         </Column>
@@ -102,7 +102,7 @@
                             </template>
                             <template #body="{data}">
                                 <div class="w-full flex justify-content-end">
-                                    <small class="font-medium">{{ data.pallet == null ? '-' : formatCurrency(Number(data.pallet).toFixed(3)) }}</small>
+                                    <small class="font-medium">{{ data.pallet == null ? '-' : formatCurrency(Number(data.pallet).toFixed(1)) }}</small>
                                 </div>
                             </template>
                         </Column>

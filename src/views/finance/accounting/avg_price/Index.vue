@@ -39,24 +39,29 @@
 
     const loadData = async() => {
         loadingTable.value = true
-        const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
-        // const dateString = `2024-04-01`;
-        tanggal.value = dateString;
-        const response = await forViewAvgPrice(dateString);
-        if (response != null) {
-            tombol_add.value = false
-            tombol_update.value = true
-            rute.value = {name:'form average price', query: { tgl: tanggal.value }, params:{status:'update', data:response}}
-        } else {
-            rute.value = {name:'form average price', params:{status:'add'}}
-            tombol_add.value = true
-            tombol_update.value = false
-        }
-        data_refinery.value = response
-        periods.value = moment(dateString).format('MMMM YYYY')
-        loadingTable.value = false
         loadBulan()
         loadTahun()
+        const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+        try {
+            // const dateString = `2024-04-01`;
+            tanggal.value = dateString;
+            const response = await forViewAvgPrice(dateString);
+            if (response != null) {
+                tombol_add.value = false
+                tombol_update.value = true
+                rute.value = {name:'form average price', query: { tgl: tanggal.value }, params:{status:'update', data:response}}
+            } else {
+                rute.value = {name:'form average price', params:{status:'add'}}
+                tombol_add.value = true
+                tombol_update.value = false
+            }
+            data_refinery.value = response
+            periods.value = moment(dateString).format('MMMM YYYY')
+            loadingTable.value = false
+        } catch (error) {
+            data_refinery.value = []
+            loadingTable.value = false
+        }
     }
 
     const loadBulan = () => {

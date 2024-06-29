@@ -81,6 +81,50 @@ export const loadTypeRekening = async() => {
     }
 }
 
+// Lokasi Master
+export const loadLocation = async() => {
+    try {
+        const response = await LocationMaster.getAll()
+        const load = response.data;
+        const data = load.data;
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
+export const addLocation = async(data) => {
+    try {
+        const response = await LocationMaster.addPost(data);
+        const load = response.data;
+        return {
+            success: load.success,
+            message: load.message
+        }
+    } catch (error) {
+        return {
+            success: error.response.data.success,
+            message: error.response.data.message
+        };
+    }
+}
+
+export const updateLocation = async(id, data) => {
+    try {
+        const response = await LocationMaster.updatePost(id, data);
+        const load = response.data;
+        return {
+            success: load.success,
+            message: load.message
+        }
+    } catch (error) {
+        return {
+            success: error.response.data.success,
+            message: error.response.data.message
+        };
+    }
+}
+
+// Tanki Master
 export const loadTank = async() => {
     try {
         const response = await TankMaster.getAll()
@@ -92,13 +136,34 @@ export const loadTank = async() => {
     }
 }
 
-export const loadLocation = async() => {
+export const addTank = async(data) => {
     try {
-        const response = await LocationMaster.getAll()
+        const response = await TankMaster.addPost(data);
         const load = response.data;
-        const data = load.data;
-        return data;
+        return {
+            success: load.success,
+            message: load.message
+        }
     } catch (error) {
-        return null;
+        return {
+            success: error.response.data.success,
+            message: error.response.data.message
+        };
+    }
+}
+
+export const updateTank = async(id, data) => {
+    try {
+        const response = await TankMaster.updatePost(id, data);
+        const load = response.data;
+        return {
+            success: load.success,
+            message: load.message
+        }
+    } catch (error) {
+        return {
+            success: error.response.data.success,
+            message: error.response.data.message
+        };
     }
 }

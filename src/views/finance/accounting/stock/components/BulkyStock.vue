@@ -2,9 +2,14 @@
     // Vue Component
     import { ref, computed, onMounted, defineProps, watch } from 'vue';
     import moment from 'moment';
+    import { useRouter, useRoute } from 'vue-router';
 
     // API ========================================================================================================================================================
     import {formatCurrency} from '@/views/load_data/func_dummy.js'
+
+    // Components
+    import TankiMaster from '@/views/finance/config/master/components/TankiMaster.vue'
+    import LokasiMaster from '@/views/finance/config/master/components/LokasiMaster.vue'
 
     const props = defineProps({
         // tanggal:{
@@ -16,12 +21,49 @@
         }
     });
 
+    const route = useRoute();
+    const router = useRouter();
+
     // VARIABLE
     const loadingTable = ref(false)
     const load = ref([])
     const load_rekening_on_hand = ref([])
     const total_cash_inl = ref(0)
     const total_cash_on_hand = ref(0)
+
+    const visible = ref(false);
+    const header_dialog = ref('')
+    const status_dialog = ref('')
+    const menu = ref();
+    const items = ref([
+    {
+        label: 'Master Data',
+        items: [
+            {
+                label: 'Tanki',
+                icon: 'pi pi-database',
+                command: () => {
+                    visible.value = true;
+                    header_dialog.value = 'Master Tanki';
+                    status_dialog.value = 'tanki'
+                }
+            },
+            {
+                label: 'Lokasi',
+                icon: 'pi pi-map-marker',
+                command: () => {
+                    visible.value = true;
+                    header_dialog.value = 'Master Lokasi';
+                    status_dialog.value = 'lokasi'
+                }
+            }
+        ]
+    }
+    ]);
+
+    const toggle = (event) => {
+        menu.value.toggle(event);
+    };
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -47,8 +89,21 @@
 <template>
     <div class="w-full flex flex-column gap-5">
         <div class="flex flex-column gap-3">
-            <div>
-                <Button label="Update Data" size="small" severity="warning"/>
+            <Dialog v-model:visible="visible" modal :header="header_dialog" :style="{ width: '55rem' }">
+                <tanki-master v-if="status_dialog == 'tanki'"/>
+                <lokasi-master v-else/>
+                <template #footer>
+                    <div class="flex justify-content-end gap-2 mt-2">
+                        <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
+                    </div>
+                </template>
+            </Dialog>
+            <div class="flex justify-content-between gap-5">
+                <Button label="Update Data" severity="warning" size="small" class="h-2rem" @click="()=>{router.push('/form-bulky-stock')}"/>
+                <div>
+                    <Button type="button" icon="pi pi-cog" @click="toggle" aria-haspopup="true" severity="info" rounded aria-controls="overlay_menu"  class="h-2rem w-2rem"/>
+                    <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
+                </div>
             </div>
             <DataTable :value="load" showGridlines class="text-sm" >
                 <Column field="nama">
@@ -78,7 +133,7 @@
                         </div>
                     </template>
                     <template #body="{data}"> 
-                        <small class="font-medium">{{ data.name }}</small>
+                        <small class="font-medium">{{ data.product }}</small>
                     </template>
                 </Column>
                 <Column field="value">
@@ -101,7 +156,7 @@
                     </template>
                     <template #body="{data}">
                         <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.capacity).toFixed(0)) }}</small>
+                            <small class="font-medium">{{ formatCurrency(Number(data.stok_mt).toFixed(0)) }}</small>
                         </div>
                     </template>
                 </Column>
@@ -113,7 +168,7 @@
                     </template>
                     <template #body="{data}">
                         <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.capacity).toFixed(0)) }}</small>
+                            <small class="font-medium">{{ formatCurrency(Number(data.stok_exc_btm_mt).toFixed(0)) }}</small>
                         </div>
                     </template>
                 </Column>
@@ -125,7 +180,7 @@
                     </template>
                     <template #body="{data}">
                         <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.capacity).toFixed(0)) }}</small>
+                            <small class="font-medium">{{ formatCurrency(Number(data.space).toFixed(0)) }}</small>
                         </div>
                     </template>
                 </Column>
@@ -137,7 +192,7 @@
                     </template>
                     <template #body="{data}">
                         <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.capacity).toFixed(0)) }}</small>
+                            <small class="font-medium">{{ formatCurrency(Number(data.umur).toFixed(0)) }}</small>
                         </div>
                     </template>
                 </Column>
@@ -149,7 +204,7 @@
                     </template>
                     <template #body="{data}">
                         <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.capacity).toFixed(0)) }}</small>
+                            <small class="font-medium">{{ data.remarks }}</small>
                         </div>
                     </template>
                 </Column>

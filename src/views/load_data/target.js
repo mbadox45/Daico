@@ -33,15 +33,17 @@ const loadQtyPenjualan = async(tgl) => {
         })
     }
     const retail_master = await loadMasterRetailProd();
-    for (let i = 0; i < retail_master.length; i++) {
-        list_product.push({
-            product: retail_master[i].name,
-            product_id: retail_master[i].id,
-            type: 'retail',
-            real: 0,
-            rkap: 0,
-            diff: 0,
-        })
+    if (retail_master != null) {
+        for (let i = 0; i < retail_master.length; i++) {
+            list_product.push({
+                product: retail_master[i].name,
+                product_id: retail_master[i].id,
+                type: 'retail',
+                real: 0,
+                rkap: 0,
+                diff: 0,
+            })
+        }
     }
 
     const data_target_real = await loadSumTargetReal(tgl);

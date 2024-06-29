@@ -84,6 +84,18 @@ export const list_product_type = [
     {id: 'retail', name: 'Retail'},
 ]
 
+export const productable_type = [
+    {id: 'bulk', name: 'Bulk'},
+    {id: 'product', name: 'Product'},
+    {id: 'subproduct', name: 'Sub Product'},
+]
+
+export const list_type = [
+    {id: 'App\\Models\\MasterBulky', name: 'bulk'},
+    {id: 'App\\Models\\MasterProduct', name: 'product'},
+    {id: 'App\\Models\\MasterSubProduct', name: 'subproduct'},
+]
+
 export const getTitleModal = (cond) => {
     let title = ''
     switch (cond) {

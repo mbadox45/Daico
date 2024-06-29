@@ -6,7 +6,7 @@
     import { useRouter, useRoute } from 'vue-router';
 
     // API
-    import {loadRetail} from '@/views/load_data/stock.js'
+    import {loadRetail, addStockRetail, updateStockRetail} from '@/views/load_data/stock.js'
     import {loadLocation} from '@/views/load_data/master_config.js'
 
     const route = useRoute();
@@ -35,30 +35,80 @@
     }
     
     const loadDataRetail = async() => {
+        loadingTable.value = true
         const retail = await loadRetail()
         const list_retail = retail.find(item => item.location_id == location.value)
         const items = list_retail.items
+        forms.value = []
         for (let i = 0; i < items.length; i++) {
             forms.value.push({
+                id: items[i].id,
                 produk: `${items[i].produk}`,
                 productable_id: items[i].productable_id,
                 productable_type: items[i].productable_type,
                 tanggal: moment().format('YYYY-MM-DD'),
-                sub_product: items[j].sub_product,
-                product_type: 'produk',
+                sub_product: items[i].sub_product,
+                productable_type: items[i].product_type,
                 location_id: list_retail.location_id,
                 ctn: null,
             })
         }
-        console.log(list_retail)
+        loadingTable.value = false
     }
 
     const postData = async() => {
-
+        loadingTable.value = true
+        try {
+            let total = 0
+            const form = forms.value
+            for (let i = 0; i < form.length; i++) {
+                if (form[i].ctn != null ) {
+                    total += 1
+                }
+            }
+            if (total >= form.length) {
+                let berhasil = 0 , gagal = 0;
+                for (let i = 0; i < form.length; i++) {
+                    const list = {
+                        id: form[i].id,
+                        tanggal: form[i].tanggal,
+                        location_id: form[i].location_id,
+                        ctn: form[i].ctn,
+                        productable_type: form[i].productable_type,
+                        productable_id: form[i].productable_id,
+                    }
+                    let response;
+                    if (form[i].tanggal == moment('YYYY-MM-DD') && form[i].id != null) {
+                        response = await updateStockRetail(form[i].id, list);
+                    } else {
+                        response = await addStockRetail(list);
+                    }
+                    if (response.success == true) {
+                        berhasil += 1
+                    } else {
+                        gagal += 1
+                    }
+                }
+                if (berhasil >= form.length && gagal == 0) {
+                    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data berhasil di simpan', life: 3000 });
+                } else {
+                    toast.add({ severity: 'error', summary: 'Proses Input Error', detail: 'Data sudah ada', life: 3000 });
+                }
+                loadingTable.value = false
+                // toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data berhasil di simpan', life: 3000 });
+            } else {
+                loadingTable.value = false
+                toast.add({ severity: 'warn', summary: 'Perhatian', detail: 'Harap data diisi dengan lengkap.', life: 3000 });
+            }
+        } catch (error) {
+            loadingTable.value = false
+            toast.add({ severity: 'error', summary: 'Proses Input Error', detail: "error.response.data.message", life: 3000 });
+        }
     }
 
 </script>
 <template>
+    <Toast />
     <div class="card shadow-3 flex flex-column gap-3">
         <div class="flex justify-content-between align-items-center gap-2">
             <span class="font-medium text-xl uppercase">Form Stock Retail <span class="">{{ route.query.type }}</span></span>
@@ -77,9 +127,18 @@
         </div>
         <div v-else class="flex flex-column gap-5">
             <Dropdown v-model="location" :options="list_lokasi" optionLabel="name" optionValue="id" placeholder="Select a Location" class="w-full md:w-56" @change="loadDataRetail" />
-            <div >
-
-            </div>
+            <table>
+                <tbody>
+                    <tr v-for="(item, index) in forms" :key="index">
+                        <td width="50%">
+                            <label :for="item.produk" class="font-medium font-italic">{{ item.produk }}</label>
+                        </td>
+                        <td>
+                            <InputNumber :id="item.produk" v-model="item.ctn" class="w-full" placeholder="Ctn" :maxFractionDigits="5" inputId="locale-german" locale="de-DE" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>

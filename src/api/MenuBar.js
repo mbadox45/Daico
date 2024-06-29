@@ -23,11 +23,11 @@ export const akuntansi = [
     {
         label: 'Reporting',
         items: [
-            { label: 'Retail', icon: 'pi pi-fw pi-shopping-cart', items:[
-                { label: 'Target', icon: 'pi pi-fw pi-chart-bar', to: '/target-report' },
-                { label: 'Average Price', icon: 'pi pi-fw pi-dollar', to: '/avg-price-report' },
-                { label: 'Market Routers', icon: 'pi pi-fw pi-chart-line', to: '/market-report' },
-            ]},
+            // { label: 'Retail', icon: 'pi pi-fw pi-shopping-cart', items:[
+            //     { label: 'Target', icon: 'pi pi-fw pi-chart-bar', to: '/target-report' },
+            //     { label: 'Average Price', icon: 'pi pi-fw pi-dollar', to: '/avg-price-report' },
+            //     { label: 'Market Routers', icon: 'pi pi-fw pi-chart-line', to: '/market-report' },
+            // ]},
             { label: 'Production', icon: 'pi pi-fw pi-building', items:[
                 { label: 'Costing HPP', icon: 'pi pi-fw pi-list', to: '/costing-hpp' },
                 { label: 'Allocation Cost', icon: 'pi pi-fw pi-table', to: '/alloc-cost' },

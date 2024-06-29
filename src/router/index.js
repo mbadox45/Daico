@@ -16,13 +16,6 @@ const router = createRouter({
                     component: () => import('@/views/finance/dashboard/Index2.vue'),
                     meta:{
                         guestOnly:true,
-                        // requiresAuth: true,
-                        // akunting:true,
-                        // produksi:true,
-                        // logistik:true,
-                        // marketing:true,
-                        // sourcing:true,
-                        // view:true,
                     }
                 },
             ]
@@ -49,6 +42,8 @@ const router = createRouter({
                         view:true,
                     }
                 },
+
+
                 // Management ==============================================
                 // Accounting ====================================
                 {
@@ -81,6 +76,7 @@ const router = createRouter({
                         view:true,
                     }
                 },
+
                 // Retail     ====================================
                 {
                     path: '/stock',
@@ -96,6 +92,16 @@ const router = createRouter({
                     path: '/form-retail-stock',
                     name: 'form stock retail',
                     component: () => import('@/views/finance/accounting/stock/components/FormRetailStock.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/form-bulky-stock',
+                    name: 'form stock bulky',
+                    component: () => import('@/views/finance/accounting/stock/components/FormBulkyStock.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -163,21 +169,11 @@ const router = createRouter({
                     }
                 },
 
-                // Production
+                // Production     ====================================
                 {
                     path: '/cost-prod',
                     name: 'cost production',
                     component: () => import('@/views/finance/production/cost_prod/Index.vue'),
-                    meta:{
-                        requiresAuth: true,
-                        akunting:true,
-                        view:true,
-                    }
-                },
-                {
-                    path: '/costing-hpp',
-                    name: 'Costing HPP',
-                    component: () => import('@/views/finance/production/costing_hpp/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,
@@ -215,7 +211,9 @@ const router = createRouter({
                     }
                 },
 
+
                 // REPORTING ==============================================
+                // Retail         ====================================
                 {
                     path: '/avg-price-report',
                     name: 'average price report',
@@ -226,8 +224,19 @@ const router = createRouter({
                         view:true,
                     }
                 },
+                // Production     ====================================
+                {
+                    path: '/costing-hpp',
+                    name: 'Costing HPP',
+                    component: () => import('@/views/finance/production/costing_hpp/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
 
-                // Configuration
+                // CONFIGURATION ==============================================
                 {
                     path: '/database',
                     name: 'database',
@@ -248,7 +257,7 @@ const router = createRouter({
                         view:true,
                     }
                 },
-                // Master Data 
+                // Master Data     ====================================
                 {
                     path: '/master-data/allocation',
                     name: 'allocation',

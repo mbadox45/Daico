@@ -6,13 +6,13 @@
 
     // API
     import {loadTank, loadProduct, loadLocation} from '@/views/load_data/master_config.js'
-    import {loadRetail} from '@/views/load_data/stock.js'
+    import {loadRetail, loadDataBulky} from '@/views/load_data/stock.js'
 
     // Components
     import BulkyStock from '@/views/finance/accounting/stock/components/BulkyStock.vue'
     import RetailStock from '@/views/finance/accounting/stock/components/RetailStock.vue'
 
-    const active = ref(1);
+    const active = ref(0);
     const load_bulky = ref([])
     const load_retail = ref([])
     const loadingTable = ref(false);
@@ -24,23 +24,9 @@
     const loadData = async() => {
         // Bulky
         loadingTable.value = true
-        const response = await loadTank()
-        const produk = await loadProduct()
-        const lokasi = await loadLocation()
-        load_bulky.value = []
-        for (let i = 0; i < response.length; i++) {
-            load_bulky.value.push({
-                location: response[i].location.name,
-                location_id: response[i].location_id,
-                capacity: response[i].capacity,
-                name: response[i].name,
-                tank_id: response[i].tank_id,
-                stok_mt: null,
-                stok_exc_btm_mt: null,
-                umur: null, 
-                remarks: null,
-            })
-        }
+        const response = await loadDataBulky()
+        load_bulky.value = response
+        console.log(response)
 
         load_retail.value = await loadRetail();
         loadingTable.value = false

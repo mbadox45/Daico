@@ -309,6 +309,68 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/master-data/location',
+                    name: 'location',
+                    component: () => import('@/views/finance/config/master/components/LokasiMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/setting',
+                    name: 'setting',
+                    component: () => import('@/views/finance/config/master/components/SettingMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/tank',
+                    name: 'tank',
+                    component: () => import('@/views/finance/config/master/components/TankiMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                // Rekening
+                {
+                    path: '/master-data/rekening/rekening',
+                    name: 'rekening',
+                    component: () => import('@/views/finance/config/master/components/RekeningMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/rekening/jenis_rekening',
+                    name: 'jenis_rekening',
+                    component: () => import('@/views/finance/config/master/components/JenisRekeningMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/rekening/tipe_rekening',
+                    name: 'tipe_rekening',
+                    component: () => import('@/views/finance/config/master/components/TipeRekeningMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+
+                {
                     path: '/master-data/category/management',
                     name: 'category - management',
                     component: () => import('@/views/finance/config/master/components/CategoryMaster.vue'),
@@ -349,9 +411,39 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/master-data/retail',
+                    path: '/master-data/retail/produksi',
                     name: 'Retail Produksi',
                     component: () => import('@/views/finance/config/master/components/RetailProduksiMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/retail/market',
+                    name: 'Retail Market',
+                    component: () => import('@/views/finance/config/master/components/RetailMarketMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/produk/mainproduk',
+                    name: 'Main Product',
+                    component: () => import('@/views/finance/config/master/components/MainProductMaster.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/master-data/produk/subproduk',
+                    name: 'Sub Product',
+                    component: () => import('@/views/finance/config/master/components/SubProductMaster.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

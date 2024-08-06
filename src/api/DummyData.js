@@ -1,3 +1,6 @@
+export const cek_token = localStorage.getItem('usertoken');
+
+
 export const listProduct1 = [
     {product:'rbdpo', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'3001', money_usd:'186'}, image:"/images/liquid-drop.png"},
     {product:'pfad', money_rp:'12.887', money_usd: '819,59', dmo:{money_rp:'8785', money_usd:'546'}, image:"/images/liquid-drop.png"},

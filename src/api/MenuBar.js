@@ -42,19 +42,34 @@ export const akuntansi = [
             { label: 'Master Data', icon: 'pi pi-fw pi-server', 
                 items:[
                     { label: 'Allocation', to: '/master-data/allocation' },
+                    { label: 'Location', to: '/master-data/location' },
                     { label: 'Management Report', to: '/master-data/m_report' },
                     { label: 'Cost Centre', to: '/master-data/cost_centre' },
                     { label: 'Harga Satuan Prod.', to: '/master-data/harga_satuan' },
                     { label: 'Plant', to: '/master-data/plant' },
+                    { label: 'Setting', to: '/master-data/setting' },
+                    { label: 'Tank', to: '/master-data/tank' },
                     { label: 'Category', items:[
                         {label: 'Management', to: '/master-data/category/management'},
                         {label: 'Production', to: '/master-data/category/produksi'},
+                    ] },
+                    { label: 'Rekening', items:[
+                        {label: 'Rekening', to: '/master-data/rekening/rekening'},
+                        {label: 'Jenis Rekening', to: '/master-data/rekening/jenis_rekening'},
+                        {label: 'Tipe Rekening', to: '/master-data/rekening/tipe_rekening'},
                     ] },
                     { label: 'Bulky', items:[
                         {label: 'Market', to: '/master-data/bulky/market'},
                         {label: 'Produksi', to: '/master-data/bulky/produksi'},
                     ] },
-                    { label: 'Retail', to: '/master-data/retail' },
+                    { label: 'Retail', items:[
+                        {label: 'Market', to: '/master-data/retail/market'},
+                        {label: 'Produksi', to: '/master-data/retail/produksi'},
+                    ] },
+                    { label: 'Product', items:[
+                        {label: 'Main Product', to: '/master-data/produk/mainproduk'},
+                        {label: 'Sub Product', to: '/master-data/produk/subproduk'},
+                    ] },
                 ]
             },
         ]

@@ -5,15 +5,17 @@
     import moment from "moment";
 
     // API ========================================================================================================================================================
-    import { loadAll_TankMaster, add_TankMaster, update_TankMaster, } from "@/controller/master_data/TankController.js";
-    import { loadAll_LocationMaster } from "@/controller/master_data/LocationController.js";
-    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+    import { loadAll_BulkyMarketMaster } from "@/controller/master_data/BulkyMarketController.js";
+    import { loadAll_RetailMarketMaster } from "@/controller/master_data/RetailMarketController.js";
+    import { loadAll_MainProductMaster, add_MainProductMaster, update_MainProductMaster } from "@/controller/master_data/MainProductController.js";
+    // import { loadAll_SubProductMaster, add_SubProductMaster, update_SubProductMaster, } from "@/controller/master_data/SubProductController.js";
     import { cek_token } from "@/api/DataVariable.js";
 
     // VARIABLE
+    const expandedRows = ref([]);
     const products = ref([]);
     const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-    const forms = ref({ id: null, location_id: null, name: null, capacity: null });
+    const forms = ref({ id: null, nama: null, product_type: null, productable_id: null, product_id: null });
     const loadingTable = ref(false);
 
     // Dialog Configure
@@ -21,7 +23,9 @@
     const status_form = ref("add");
     const title_dialog = ref("");
     const loading_save = ref(false);
-    const load_lokasi = ref([]);
+    const load_master_bulk = ref([]);
+    const load_master_retail = ref([]);
+    const load_type = ref([{id:'bulk', nama:'Bulk'}, {id:'retail', nama:'Retail'}]);
 
     // Message Configure
     const messages = ref([]);
@@ -36,12 +40,12 @@
     const loadData = async () => {
         try {
             loadingTable.value = true;
-            const data = await loadAll_TankMaster();
+            const data = await loadAll_MainProductMaster();
             const list = [];
             if (data != null) {
-                // console.log(data.length)
                 for (let a = 0; a < data.length; a++) {
-                    list.push({ id: data[a].id, name: data[a].name, capacity: Number(data[a].capacity), location: data[a].location.name, location_id: data[a].location_id,});
+                    const type = data[a].productable_type == "App\\Models\\MasterBulky" ? "bulk" : "retail";
+                    list.push({ id: data[a].id, no: a+1, nama: data[a].nama, product: `${data[a].productable.name} (${data[a].nama})`, productable_id: data[a].productable_id, product_type: type, sub_product: data[a].sub_product });
                 }
             }
             products.value = list;
@@ -51,45 +55,50 @@
             loadingTable.value = false;
         }
     };
-    const loadDropdown = async () => {
-        try {
-            const data = await loadAll_LocationMaster();
-            const list = [];
-            if (data != null) {
-                for (let a = 0; a < data.length; a++) {
-                    list.push({ id: data[a].id, name: data[a].name });
-                }
-            }
-            load_lokasi.value = list;
-        } catch (error) {
-            load_lokasi.value = [];
+
+    const loadBulky = async() => {
+        // Product
+        const product = await loadAll_BulkyMarketMaster()
+        load_master_bulk.value = []
+        for (let a = 0; a < product.length; a++) {
+            load_master_bulk.value.push({id: product[a].id, name: product[a].name})
         }
-    };
+    }
+
+    const loadRetail = async() => {
+        // Product
+        const product = await loadAll_RetailMarketMaster()
+        load_master_retail.value = []
+        for (let a = 0; a < product.length; a++) {
+            load_master_retail.value.push({id: product[a].id, name: product[a].name})
+        }
+    }
 
     const formDatabase = (cond, data) => {
         messages.value = [];
         visible.value = true;
         status_form.value = cond;
         loading_save.value = false;
-        loadDropdown()
-        title_dialog.value = cond == "add" ? "Tank - Tambah Data" : cond == "edit" ? "Tank - Edit Data" : "Tank - Hapus Data";
+        title_dialog.value = cond == "add" ? "Product - Tambah Data" : cond == "edit" ? "Product - Edit Data" : "Product - Hapus Data";
+        loadBulky()
+        loadRetail()
         if (cond == "add") {
             resetForm();
         } else {
-            forms.value = { id: data.id, location_id: data.location_id, name: data.name, capacity: data.capacity };
+            forms.value = { id: data.id, nama: data.nama, product_type: data.product_type, productable_id: data.productable_id, product_id: data.product_id };
         }
     };
 
     const resetForm = () => {
-        forms.value = { id: null, location_id: null, name: null, capacity: null };
+        forms.value = { id: null, nama: null, product_type: null, productable_id: null, product_id: null };
     };
 
     const saveData = async () => {
         status_form.value;
-        if (forms.value.name != null && forms.value.name != "" && forms.value.location_id != null && forms.value.capacity != null) {
+        if (forms.value.nama != null && forms.value.nama != "" && forms.value.product_type != null && forms.value.productable_id != null) {
             loading_save.value = true;
             if (status_form.value == "add") {
-                const response = await add_TankMaster(forms.value);
+                const response = await add_MainProductMaster(forms.value);
                 if (response.status == true) {
                     messages.value = [{ severity: "success", content: response.msg, id: count.value++ }];
                     setTimeout(function () {
@@ -108,7 +117,7 @@
                     messages.value = [{ severity: severity, content: response.msg, id: count.value++ }];
                 }
             } else if (status_form.value == "edit") {
-                const response = await update_TankMaster(forms.value.id, forms.value);
+                const response = await update_MainProductMaster(forms.value.id, forms.value);
                 if (response.status == true) {
                     messages.value = [{ severity: "success", content: response.msg, id: count.value++ }];
                     setTimeout(function () {
@@ -137,7 +146,7 @@
 
 <template>
     <div class="flex-auto flex flex-column gap-3 p-3 bg-white shadow-3">
-        <span class="font-medium text-xl">Master Tank</span>
+        <span class="font-medium text-xl">Master Product</span>
         <div class="flex justify-content-between align-items-center gap-5">
             <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-auto gap-2">
                 <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)" />
@@ -154,26 +163,26 @@
             </transition-group>
             <div class="flex flex-column gap-3">
                 <div class="flex flex-column gap-1">
-                    <label for="name" class="font-semibold">Name <small class="text-red-500">*</small></label>
-                    <InputText id="name" v-model="forms.name" class="flex-auto" placeholder="100" autocomplete="off"/>
+                    <label for="username" class="font-semibold">Product Name<small class="text-red-500">*</small></label>
+                    <InputText id="username" v-model="forms.nama" class="flex-auto" autocomplete="off"/>
+                </div>
+                <!-- <div class="flex flex-column gap-1">
+                    <label for="product" class="font-semibold">Product <small class="text-red-500">*</small></label>
+                    <Dropdown v-model="forms.product_id" :options="load_produk" filter optionLabel="nama" optionValue="id" placeholder="Select a Location" class="flex-auto"></Dropdown>
+                </div> -->
+                <div class="flex flex-column gap-1">
+                    <label for="product" class="font-semibold">Product Type <small class="text-red-500">*</small></label>
+                    <Dropdown v-model="forms.product_type" :options="load_type" filter optionLabel="nama" optionValue="id" placeholder="Select a Location" class="flex-auto"></Dropdown>
                 </div>
                 <div class="flex flex-column gap-1">
-                    <label for="value" class="font-semibold">Capacity <small class="text-red-500">*</small></label>
-                    <InputNumber id="value" v-model="forms.capacity" inputId="locale-german" locale="de-DE" class="flex-auto" :minFractionDigits="2" placeholder="1.000,00"/>
-                    <!-- <InputText id="value" v-model="forms.setting_value" class="flex-auto" placeholder="contoh: 1000 atau 1000, 1000-SBY" autocomplete="off"/> -->
-                </div>
-                <div class="flex flex-column gap-1">
-                    <label for="lokasi" class="font-semibold">Location <small class="text-red-500">*</small></label>
-                    <Dropdown v-model="forms.location_id" :options="load_lokasi" filter optionLabel="name" optionValue="id" placeholder="Select a Location" class="flex-auto"></Dropdown>
-                    <!-- <InputText id="lokasi" v-model="forms.location_id" class="flex-auto" placeholder="contoh: 1000 atau 1000, 1000-SBY" autocomplete="off"/> -->
+                    <label for="product" class="font-semibold">Master - <span class="capitalize">{{ forms.product_type }}</span> <small class="text-red-500">*</small></label>
+                    <Dropdown v-model="forms.productable_id" :options="forms.product_type != null && forms.product_type != '' ? forms.product_type == 'bulk' ? load_master_bulk : load_master_retail : null" filter optionLabel="name" optionValue="id" placeholder="Select a Location" class="flex-auto"></Dropdown>
                 </div>
             </div>
-            <template #footer>
-                <div class="flex justify-content-end gap-2 mt-3">
-                    <Button type="button" label="Cancel" severity="secondary" @click="visible = false" ></Button>
-                    <Button type="button" :label="loading_save == true ? 'Saving...' : 'Save'" :disabled="loading_save" @click="saveData"></Button>
-                </div>
-            </template>
+            <div class="flex justify-content-end gap-2 mt-5">
+                <Button type="button" label="Cancel" severity="secondary" @click="visible = false" ></Button>
+                <Button type="button" :label="loading_save == true ? 'Saving...' : 'Save'" :disabled="loading_save" @click="saveData"></Button>
+            </div>
         </Dialog>
 
         <!-- Table -->
@@ -185,37 +194,38 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="products" dataKey="id" scrollable scrollHeight="480px" :globalFilterFields="['name', 'location', 'capacity']">
-            <template #empty> No tank found. </template>
-            <template #loading> Loading tank data. Please wait. </template>
-            <Column field="name">
+        <DataTable v-else v-model:expandedRows="expandedRows" v-model:filters="filters" :value="products" dataKey="id" scrollable scrollHeight="480px" :globalFilterFields="['nama', 'product', 'product_type']">
+            <template #empty> No product found. </template>
+            <template #loading> Loading product data. Please wait. </template>
+            <Column expander style="width: 5rem" />
+            <Column field="nama">
                 <template #header>
                     <div class="flex w-full font-italic uppercase">
-                        <small>Tank</small>
+                        <small>No</small>
                     </div>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ data.name }}</small>
+                    <small class="font-medium">{{ data.no }}</small>
                 </template>
             </Column>
-            <Column field="setting_name">
+            <Column field="nama">
                 <template #header>
                     <div class="flex w-full font-italic uppercase">
-                        <small>Location</small>
+                        <small>Product</small>
                     </div>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ data.location }}</small>
+                    <small class="font-medium">{{ data.product }}</small>
                 </template>
             </Column>
-            <Column field="setting_value">
+            <Column field="nama">
                 <template #header>
                     <div class="flex w-full font-italic uppercase">
-                        <small>Capacity</small>
+                        <small>Product Type</small>
                     </div>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ formatCurrency(data.capacity) }}</small>
+                    <small class="font-medium capitalize">{{ data.product_type }}</small>
                 </template>
             </Column>
             <Column field="nama">
@@ -225,6 +235,18 @@
                     </div>
                 </template>
             </Column>
+            <template #expansion="{ data }">
+                <DataTable :value="data.sub_product" class="p-datatable-sm" :globalFilterFields="['nama']" >
+                    <Column field="nama">
+                        <template #header>
+                            <span class="text-xs uppercase">Sub Product</span>
+                        </template>
+                        <template #body="{ data }">
+                            <span class="text-sm">{{ data.nama }}</span>
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
         </DataTable>
     </div>
 </template>

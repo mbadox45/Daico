@@ -5,15 +5,13 @@
     import moment from "moment";
 
     // API ========================================================================================================================================================
-    import { loadAll_TankMaster, add_TankMaster, update_TankMaster, } from "@/controller/master_data/TankController.js";
-    import { loadAll_LocationMaster } from "@/controller/master_data/LocationController.js";
-    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+    import { loadAll_SettingMaster, add_SettingMaster, update_SettingMaster, } from "@/controller/master_data/SettingController.js";
     import { cek_token } from "@/api/DataVariable.js";
 
     // VARIABLE
     const products = ref([]);
     const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-    const forms = ref({ id: null, location_id: null, name: null, capacity: null });
+    const forms = ref({ id: null, setting_value: null, setting_name: null });
     const loadingTable = ref(false);
 
     // Dialog Configure
@@ -21,7 +19,6 @@
     const status_form = ref("add");
     const title_dialog = ref("");
     const loading_save = ref(false);
-    const load_lokasi = ref([]);
 
     // Message Configure
     const messages = ref([]);
@@ -36,12 +33,11 @@
     const loadData = async () => {
         try {
             loadingTable.value = true;
-            const data = await loadAll_TankMaster();
+            const data = await loadAll_SettingMaster();
             const list = [];
             if (data != null) {
-                // console.log(data.length)
                 for (let a = 0; a < data.length; a++) {
-                    list.push({ id: data[a].id, name: data[a].name, capacity: Number(data[a].capacity), location: data[a].location.name, location_id: data[a].location_id,});
+                    list.push({ id: data[a].id, setting_name: data[a].setting_name, setting_value: data[a].setting_value  });
                 }
             }
             products.value = list;
@@ -51,45 +47,30 @@
             loadingTable.value = false;
         }
     };
-    const loadDropdown = async () => {
-        try {
-            const data = await loadAll_LocationMaster();
-            const list = [];
-            if (data != null) {
-                for (let a = 0; a < data.length; a++) {
-                    list.push({ id: data[a].id, name: data[a].name });
-                }
-            }
-            load_lokasi.value = list;
-        } catch (error) {
-            load_lokasi.value = [];
-        }
-    };
 
     const formDatabase = (cond, data) => {
         messages.value = [];
         visible.value = true;
         status_form.value = cond;
         loading_save.value = false;
-        loadDropdown()
-        title_dialog.value = cond == "add" ? "Tank - Tambah Data" : cond == "edit" ? "Tank - Edit Data" : "Tank - Hapus Data";
+        title_dialog.value = cond == "add" ? "Setting - Tambah Data" : cond == "edit" ? "Setting - Edit Data" : "Setting - Hapus Data";
         if (cond == "add") {
             resetForm();
         } else {
-            forms.value = { id: data.id, location_id: data.location_id, name: data.name, capacity: data.capacity };
+            forms.value = { id: data.id, setting_value: data.setting_value, setting_name: data.setting_name };
         }
     };
 
     const resetForm = () => {
-        forms.value = { id: null, location_id: null, name: null, capacity: null };
+        forms.value = { id: null, setting_value: null, setting_name: null };
     };
 
     const saveData = async () => {
         status_form.value;
-        if (forms.value.name != null && forms.value.name != "" && forms.value.location_id != null && forms.value.capacity != null) {
+        if (forms.value.setting_value != null && forms.value.setting_value != "" && forms.value.setting_name != null && forms.value.setting_name != "") {
             loading_save.value = true;
             if (status_form.value == "add") {
-                const response = await add_TankMaster(forms.value);
+                const response = await add_SettingMaster(forms.value);
                 if (response.status == true) {
                     messages.value = [{ severity: "success", content: response.msg, id: count.value++ }];
                     setTimeout(function () {
@@ -108,7 +89,7 @@
                     messages.value = [{ severity: severity, content: response.msg, id: count.value++ }];
                 }
             } else if (status_form.value == "edit") {
-                const response = await update_TankMaster(forms.value.id, forms.value);
+                const response = await update_SettingMaster(forms.value.id, {setting_value: forms.value.setting_value});
                 if (response.status == true) {
                     messages.value = [{ severity: "success", content: response.msg, id: count.value++ }];
                     setTimeout(function () {
@@ -137,7 +118,7 @@
 
 <template>
     <div class="flex-auto flex flex-column gap-3 p-3 bg-white shadow-3">
-        <span class="font-medium text-xl">Master Tank</span>
+        <span class="font-medium text-xl">Master Setting</span>
         <div class="flex justify-content-between align-items-center gap-5">
             <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-auto gap-2">
                 <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)" />
@@ -154,18 +135,12 @@
             </transition-group>
             <div class="flex flex-column gap-3">
                 <div class="flex flex-column gap-1">
-                    <label for="name" class="font-semibold">Name <small class="text-red-500">*</small></label>
-                    <InputText id="name" v-model="forms.name" class="flex-auto" placeholder="100" autocomplete="off"/>
+                    <label for="name" class="font-semibold">Setting Name <small class="text-red-500">*</small></label>
+                    <InputText id="name" v-model="forms.setting_name" :disabled="status_form == 'edit' ? true : false" class="flex-auto" placeholder="contoh: coa_bahan_baku" autocomplete="off"/>
                 </div>
                 <div class="flex flex-column gap-1">
-                    <label for="value" class="font-semibold">Capacity <small class="text-red-500">*</small></label>
-                    <InputNumber id="value" v-model="forms.capacity" inputId="locale-german" locale="de-DE" class="flex-auto" :minFractionDigits="2" placeholder="1.000,00"/>
-                    <!-- <InputText id="value" v-model="forms.setting_value" class="flex-auto" placeholder="contoh: 1000 atau 1000, 1000-SBY" autocomplete="off"/> -->
-                </div>
-                <div class="flex flex-column gap-1">
-                    <label for="lokasi" class="font-semibold">Location <small class="text-red-500">*</small></label>
-                    <Dropdown v-model="forms.location_id" :options="load_lokasi" filter optionLabel="name" optionValue="id" placeholder="Select a Location" class="flex-auto"></Dropdown>
-                    <!-- <InputText id="lokasi" v-model="forms.location_id" class="flex-auto" placeholder="contoh: 1000 atau 1000, 1000-SBY" autocomplete="off"/> -->
+                    <label for="value" class="font-semibold">Setting Value <small class="text-red-500">*</small></label>
+                    <InputText id="value" v-model="forms.setting_value" class="flex-auto" placeholder="contoh: 1000 atau 1000, 1000-SBY" autocomplete="off"/>
                 </div>
             </div>
             <template #footer>
@@ -185,37 +160,27 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="products" dataKey="id" scrollable scrollHeight="480px" :globalFilterFields="['name', 'location', 'capacity']">
-            <template #empty> No tank found. </template>
-            <template #loading> Loading tank data. Please wait. </template>
-            <Column field="name">
-                <template #header>
-                    <div class="flex w-full font-italic uppercase">
-                        <small>Tank</small>
-                    </div>
-                </template>
-                <template #body="{ data }">
-                    <small class="font-medium">{{ data.name }}</small>
-                </template>
-            </Column>
+        <DataTable v-else v-model:filters="filters" :value="products" dataKey="id" scrollable scrollHeight="480px" :globalFilterFields="['setting_name', 'setting_value']">
+            <template #empty> No setting found. </template>
+            <template #loading> Loading setting data. Please wait. </template>
             <Column field="setting_name">
                 <template #header>
                     <div class="flex w-full font-italic uppercase">
-                        <small>Location</small>
+                        <small>Setting Name</small>
                     </div>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ data.location }}</small>
+                    <small class="font-medium">{{ data.setting_name }}</small>
                 </template>
             </Column>
             <Column field="setting_value">
                 <template #header>
                     <div class="flex w-full font-italic uppercase">
-                        <small>Capacity</small>
+                        <small>Setting value</small>
                     </div>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ formatCurrency(data.capacity) }}</small>
+                    <small class="font-medium">{{ data.setting_value }}</small>
                 </template>
             </Column>
             <Column field="nama">

@@ -6,22 +6,23 @@ import moment from "moment";
 
 // API ========================================================================================================================================================
 import {
-  loadAll_AllocMaster,
-  add_AllocMaster,
-  update_AllocMaster,
-} from "@/controller/master_data/AllocController.js";
+  loadAll_RetailMarketMaster,
+  add_RetailMarketMaster,
+  update_RetailMarketMaster,
+} from "@/controller/master_data/RetailMarketController.js";
+import { cek_token } from "@/api/DataVariable.js";
 
 // VARIABLE
-const searchKeyword = ref("");
 const products = ref([]);
 const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
-const forms = ref({ id: null, nama: null });
+const forms = ref({ id: null, name: null });
 const loadingTable = ref(false);
 
 // Dialog Configure
 const visible = ref(false);
 const status_form = ref("add");
 const title_dialog = ref("");
+const loading_save = ref(false);
 
 // Message Configure
 const messages = ref([]);
@@ -36,11 +37,11 @@ onMounted(() => {
 const loadData = async () => {
   try {
     loadingTable.value = true;
-    const data = await loadAll_AllocMaster();
+    const data = await loadAll_RetailMarketMaster();
     const list = [];
     if (data != null) {
       for (let a = 0; a < data.length; a++) {
-        list.push({ id: data[a].id, nama: data[a].nama });
+        list.push({ id: data[a].id, name: data[a].name });
       }
     }
     products.value = list;
@@ -55,18 +56,14 @@ const formDatabase = (cond, data) => {
   messages.value = [];
   visible.value = true;
   status_form.value = cond;
-  title_dialog.value =
-    cond == "add"
-      ? "Allocation - Tambah Data"
-      : cond == "edit"
-      ? "Allocation - Edit Data"
-      : "Allocation - Hapus Data";
+  loading_save.value = false;
+  title_dialog.value = cond == "add" ? "Retail Market - Tambah Data" : cond == "edit" ? "Retail Market - Edit Data" : "Retail Market - Hapus Data";
   if (cond == "add") {
     resetForm();
   } else {
     forms.value = {
       id: data.id,
-      nama: data.nama,
+      name: data.name,
     };
   }
 };
@@ -77,14 +74,16 @@ const resetForm = () => {
 
 const saveData = async () => {
   status_form.value;
-  if (forms.value.nama != null) {
+  if (forms.value.name != null && forms.value.name != "") {
+    loading_save.value = true;
     if (status_form.value == "add") {
-      const response = await add_AllocMaster(forms.value);
+      const response = await add_RetailMarketMaster(forms.value);
       if (response.status == true) {
         messages.value = [
           { severity: "success", content: response.msg, id: count.value++ },
         ];
         setTimeout(function () {
+          loading_save.value = false;
           loadData();
           visible.value = false;
         }, time.value);
@@ -95,17 +94,19 @@ const saveData = async () => {
         } else {
           severity = "error";
         }
+        loading_save.value = false;
         messages.value = [
           { severity: severity, content: response.msg, id: count.value++ },
         ];
       }
     } else if (status_form.value == "edit") {
-      const response = await update_AllocMaster(forms.value.id, forms.value);
+      const response = await update_RetailMarketMaster(forms.value.id, forms.value);
       if (response.status == true) {
         messages.value = [
           { severity: "success", content: response.msg, id: count.value++ },
         ];
         setTimeout(function () {
+          loading_save.value = false;
           loadData();
           visible.value = false;
         }, time.value);
@@ -116,6 +117,7 @@ const saveData = async () => {
         } else {
           severity = "error";
         }
+        loading_save.value = false;
         messages.value = [
           { severity: severity, content: response.msg, id: count.value++ },
         ];
@@ -135,9 +137,9 @@ const saveData = async () => {
 
 <template>
   <div class="flex-auto flex flex-column gap-3 p-3 bg-white shadow-3">
-    <span class="font-medium text-xl">Data Allocation</span>
+    <span class="font-medium text-xl">Master Retail Market</span>
     <div class="flex justify-content-between align-items-center gap-5">
-      <div class="w-auto flex gap-2">
+      <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-auto gap-2">
         <Button
           icon="pi pi-plus"
           severity="info"
@@ -158,24 +160,17 @@ const saveData = async () => {
       </div>
     </div>
     <!-- Dialog -->
-    <Dialog
-      v-model:visible="visible"
-      modal
-      :header="title_dialog"
-      :style="{ width: '50rem' }"
-    >
+    <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '50rem' }">
       <transition-group name="p-message" tag="div">
         <Message v-for="msg of messages" :key="msg.id" :severity="msg.severity">{{
           msg.content
         }}</Message>
       </transition-group>
       <div class="flex flex-column gap-3">
-        <label for="username" class="font-semibold"
-          >Nama Allocation <small class="text-red-500">*</small></label
-        >
+        <label for="username" class="font-semibold">Nama <small class="text-red-500">*</small></label>
         <InputText
           id="username"
-          v-model="forms.nama"
+          v-model="forms.name"
           class="flex-auto"
           autocomplete="off"
         />
@@ -187,7 +182,12 @@ const saveData = async () => {
           severity="secondary"
           @click="visible = false"
         ></Button>
-        <Button type="button" label="Save" @click="saveData"></Button>
+        <Button
+          type="button"
+          :label="loading_save == true ? 'Saving...' : 'Save'"
+          :disabled="loading_save"
+          @click="saveData"
+        ></Button>
       </div>
     </Dialog>
 
@@ -208,46 +208,26 @@ const saveData = async () => {
         />
       </div>
     </div>
-    <DataTable
-      v-else
-      v-model:filters="filters"
-      :value="products"
-      dataKey="id"
-      scrollable
-      scrollHeight="450px"
-      :globalFilterFields="['nama', 'nama_category2']"
-    >
-      <template #empty> No allocation found. </template>
-      <template #loading> Loading allocation data. Please wait. </template>
+    <DataTable v-else v-model:filters="filters" :value="products" dataKey="id" scrollable scrollHeight="480px" :globalFilterFields="['name']">
+      <template #empty> No retail market found. </template>
+      <template #loading> Loading retail market data. Please wait. </template>
       <Column field="nama" style="min-width: 8rem">
         <template #body="{ data }">
           <div
             class="flex flex-column md:flex-row align-items-center p-3 w-full border-1 border-round border-gray-300"
           >
-            <img
-              :src="'/images/supply-chain.png'"
-              :alt="data.nama"
-              class="my-4 md:my-0 w-6 md:w-4rem mr-5"
-            />
+            <i class="pi pi-dollar text-3xl my-4 md:my-0 mr-5"></i>
             <div class="flex-1 text-center md:text-left">
-              <div class="font-bold text-2xl">{{ data.nama }}</div>
+              <div class="font-bold text-2xl">{{ data.name }}</div>
               <div class="flex align-items-center">
-                <i class="pi pi-shield mr-2 text-green-300"></i>
-                <span class="font-normal text-gray-600">Allocation</span>
+                <!-- <i class="pi pi-shield mr-2 text-green-300"></i> -->
+                <span class="font-normal text-gray-600">Retail Produksi</span>
               </div>
             </div>
-            <div
-              class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0"
-            >
-              <Button
-                icon="pi pi-pencil"
-                severity="warning"
-                size="small"
-                @click="formDatabase('edit', data)"
-              ></Button>
+            <div :class="cek_token == null ? 'hidden' : 'flex'" class="flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
+              <Button icon="pi pi-pencil" severity="warning" size="small" @click="formDatabase('edit', data)"></Button>
             </div>
           </div>
-          <!-- <strong class="text-sm">{{ data.nama }}</strong> -->
         </template>
       </Column>
     </DataTable>

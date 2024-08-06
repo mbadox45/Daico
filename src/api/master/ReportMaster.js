@@ -8,10 +8,10 @@ export default new class ReportMaster{
         return http.get(`mReport/get/${id}`);
     }
 
-    addReport(data){
+    addPost(data){
         return http.post(`mReport/add`, data);
     }
-    updateReport(id,data){
+    updatePost(id,data){
         return http.post(`mReport/update/${id}`, data);
     }
 }

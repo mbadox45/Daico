@@ -12,3 +12,5 @@ export const URL_API_Portal = 'https://portal-api.salvaco.id/api/';
 export const URL_API_Odoo = 'https://odoo-api.inl.co.id/api/';
 
 export const APP_ID = '22'
+
+export const cek_token = localStorage.getItem('usertoken');

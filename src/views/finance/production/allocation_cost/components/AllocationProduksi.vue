@@ -4,7 +4,7 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         // tanggal:{
@@ -31,17 +31,11 @@
         loadingTable.value = true
         try {
             const response = props.datas;
-            const refi = response.find(item => item.name == 'Allocation Produksi')
-            const items = refi.items
-            const data = [
-                {name: 'Refinery', prod: items.ref_prod, prod_all: items.ref_all_prod, iv_56: items.ref_rbd_iv56, iv_57: items.ref_rbd_iv57, iv_58: items.ref_rbd_iv58, iv_60: items.ref_rbd_iv60},
-                {name: 'Fraksinasi', prod: items.frak_prod, prod_all: items.frak_all_prod, iv_56: items.frak_rbd_iv56, iv_57: items.frak_rbd_iv57, iv_58: items.frak_rbd_iv58, iv_60: items.frak_rbd_iv60},
-                {name: 'Packaging', prod: items.pack_prod, prod_all: items.pack_all_prod, iv_56: items.pack_rbd_iv56, iv_57: items.pack_rbd_iv57, iv_58: items.pack_rbd_iv58, iv_60: items.frak_rbd_iv60},
-            ]
-            load.value = data;
-            tot_prod.value = items.tot_prod
-            tot_all_prod.value = items.tot_all_prod
-            console.log(load.value)
+            const data = response.find(item => item.name == 'list_alokasi_produksi')
+            const items = data.item
+            load.value = items;
+            tot_prod.value = data.total.total
+            tot_all_prod.value = data.total.persen
             loadingTable.value = false
         } catch (error) {
             load.value = {}

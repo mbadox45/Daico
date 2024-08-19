@@ -7,6 +7,7 @@
     import PlantMaster from '@/api/master/PlantMaster.js';
     import CategoryProdMaster from '@/api/master/CategoryProdMaster.js';
     import Laporan_Produksi from '@/api/det_alloc/Laporan_Produksi.js';
+    import { update_DetAllocController, add_DetAllocController } from '@/controller/production/DetAllocController.js'
 
     // Variable
     const props = defineProps({
@@ -107,7 +108,7 @@
     const postData = async() => {
         loadingTable.value = true;
         try {
-            if (forms.value.tanggal != null && forms.value.value != null && forms.value.id_plant != null && forms.value.id_uraian != null) {
+            if (forms.value.tanggal != null && forms.value.value != null && forms.value.id_uraian != null) {
                 if (status == 'add') {
                     const response = await Laporan_Produksi.addPost(forms.value);
                     const load = response.data;
@@ -118,9 +119,25 @@
                     }
                     loadingTable.value = false;
                 } else {
-                    const response = await Laporan_Produksi.updatePost(forms.value.id,forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    let list;
+                    if (forms.value.id_plant == null) {
+                        list = {
+                            id: forms.value.id,
+                            id_uraian: forms.value.id_uraian,
+                            tanggal: forms.value.tanggal,
+                            value: forms.value.value,
+                        }
+                    } else {
+                        list = {
+                            id: forms.value.id,
+                            id_plant: forms.value.id_plant,
+                            id_uraian: forms.value.id_uraian,
+                            tanggal: forms.value.tanggal,
+                            value: forms.value.value,
+                        }
+                    }
+                    const response = await update_DetAllocController(forms.value.id,list);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','error');
@@ -158,11 +175,11 @@
             <div class="flex gap-4">
                 <div class="flex flex-column gap-3 w-full">
                     <label for="username" class="font-semibold">Type <small class="text-red-500">*</small></label>
-                    <Dropdown v-model="forms.id_uraian" filter :options="list_category" optionLabel="nama" optionValue="id" placeholder="Select a Category" class="w-full"/>
+                    <Dropdown v-model="forms.id_uraian" filter :options="list_category" optionLabel="nama" optionValue="id" placeholder="Select a Category" disabled class="w-full"/>
                 </div>
                 <div class="flex flex-column gap-3 w-full">
                     <label for="username" class="font-semibold">Plant</label>
-                    <Dropdown v-model="forms.id_plant" :options="list_plant" optionLabel="nama" optionValue="id" placeholder="Select a Plant" class="w-full"/>
+                    <Dropdown v-model="forms.id_plant" :options="list_plant" optionLabel="nama" optionValue="id" placeholder="Select a Plant" disabled class="w-full"/>
                 </div>
                 <div class="flex flex-column gap-3 w-full">
                     <label for="username" class="font-semibold">Value <small class="text-red-500">*</small></label>

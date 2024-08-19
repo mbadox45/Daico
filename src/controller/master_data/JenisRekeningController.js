@@ -1,4 +1,5 @@
 import JenisRekeningMaster from '@/api/master/JenisRekeningMaster.js';
+import {msg_success, msg_warning, msg_error} from '@/controller/dummy/func_dummy.js';
 
 export const loadAll_JenisRekeningMaster = async() => {
     try {
@@ -16,24 +17,12 @@ export const add_JenisRekeningMaster = async(form) => {
         const response = await JenisRekeningMaster.addPost(form);
         const load = response.data;
         if (load.success == true) {
-            return {
-                status: true,
-                code: 200,
-                msg: 'Data berhasil di Tambahkan.'
-            }
+            return msg_success;
         } else {
-            return {
-                status: false,
-                code: 400,
-                msg: 'Proses Gagal, silahkan dicoba beberapa saat lagi.'
-            }
+            return msg_warning
         }
     } catch (error) {
-        return {
-            status: false,
-            code: 404,
-            msg: 'Proses Gagal, silahkan hubungi tim IT.'
-        };
+        return msg_error
     }
 }
 
@@ -42,23 +31,11 @@ export const update_JenisRekeningMaster = async(id,form) => {
         const response = await JenisRekeningMaster.updatePost(id,form);
         const load = response.data;
         if (load.success == true) {
-            return {
-                status: true,
-                code: 200,
-                msg: 'Data berhasil di Update.'
-            }
+            return msg_success;
         } else {
-            return {
-                status: false,
-                code: 400,
-                msg: 'Proses Gagal, silahkan dicoba beberapa saat lagi.'
-            }
+            return msg_warning
         }
     } catch (error) {
-        return {
-            status: false,
-            code: 404,
-            msg: 'Proses Gagal, silahkan hubungi tim IT.'
-        };
+        return msg_error
     }
 }

@@ -4,76 +4,77 @@
     import moment from 'moment';
 
     // API
-    import {loadCPOOutstanding} from '@/views/load_data/cpo.js'
-    import {loadUpdateOutstandingCPO} from '@/views/load_data/dashboard.js'
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     // Variable
     const props = defineProps({
         tanggal:{
             type:String
+        },
+        datas:{
+            type:Array,
+            default: () => {}
         }
     });
 
     const days = props.tanggal
     const list_market = ref([]);
+    const load_market = ref([]);
     const list_cpo = ref([]);
+    const tot_harga = ref(0)
+    const tot_qty = ref(0)
+    const tot_value = ref(0)
     const loadingData = ref(false)
     const loadingData2 = ref(false)
     const dates = ref(props.tanggal)
 
     // Function
     const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
-    watch(() => props.tanggal, (newVal) => {
+    watch(() => [props.tanggal, props.datas], (newVal) => {
         loadCpoAndRouters(newVal)
-        dates.value = newVal
+        dates.value = newVal[0]
     });
 
     onMounted(() => {
-        loadCpoAndRouters(props.tanggal)
+        loadCpoAndRouters([props.tanggal,props.datas])
     });
 
-    const loadCpoAndRouters = async(tgl) => {
-        loadingData.value = true
-        loadingData2.value = true
-        const load_cpo = await loadCPOOutstanding();
-        list_cpo.value = load_cpo
-        const load_market = await loadUpdateOutstandingCPO(tgl);
-        list_market.value = load_market
-        loadingData.value = false
-        loadingData2.value = false
+    const loadCpoAndRouters = async(value) => {
+        const response = value[1];
+        const outstanding = response.outstanding;
+        tot_harga.value = outstanding.tot_harga;
+        tot_qty.value = outstanding.tot_qty;
+        tot_value.value = outstanding.tot_value;
+        list_cpo.value = outstanding.list;
+
+        // Market
+        const market = response.market;
+        load_market.value = market
+        const market_value = market.find(item => item.tanggal == dates.value)
+        const list = [
+            {name: 'RBDPO', levy: market_value.rbdpo.levy, routers: market_value.rbdpo.routers, excid: market_value.rbdpo},
+            {name: 'PFAD', levy: market_value.pfad.levy, routers: market_value.pfad.routers, excid: market_value.pfad},
+            {name: 'RBD Olein', levy: market_value.rbdo.levy, routers: market_value.rbdo.routers, excid: market_value.rbdo},
+            {name: 'RBD Stearin', levy: market_value.rbds.levy, routers: market_value.rbds.routers, excid: market_value.rbds},
+        ]
+        list_market.value = list;
     }
 
-    const loadOutsandingCPO = async() => {
+    const loadRouters = async() => {
         loadingData2.value = true
-        const load_market = await loadUpdateOutstandingCPO(dates.value);
-        list_market.value = load_market
+        const market_value = load_market.value.find(item => item.tanggal == dates.value)
+        const list = [
+            {name: 'RBDPO', levy: market_value.rbdpo.levy, routers: market_value.rbdpo.routers, excid: market_value.rbdpo.excld},
+            {name: 'PFAD', levy: market_value.pfad.levy, routers: market_value.pfad.routers, excid: market_value.pfad.excld},
+            {name: 'RBD Olein', levy: market_value.rbdo.levy, routers: market_value.rbdo.routers, excid: market_value.rbdo.excld},
+            {name: 'RBD Stearin', levy: market_value.rbds.levy, routers: market_value.rbds.routers, excid: market_value.rbds.excld},
+        ]
+        list_market.value = list;
         loadingData2.value = false
-    }
-
-    const totalDataCPO = (ket) => {
-        const list = list_cpo.value
-        let total = 0;
-        if (list == null) {
-            total = 0
-        } else {
-            for (let i = 0; i < list.length; i++) {
-                if (ket == 'harga') {
-                    total += Number(list[i].harga);
-                } else if (ket == 'qty') {
-                    total += Number(list[i].qty);
-                } else if (ket == 'value') {
-                    total += Number(list[i].value);
-                } else {
-                    continue;
-                }
-            }
-        }
-        return formatCurrency(Number(total).toFixed(0));
     }
 </script>
 <template>
-    <div class="flex gap-5">
+    <div class="flex md:flex-row flex-column md:align-items-start align-items-center gap-5">
         <div class="flex flex-column w-full p-4 bg-white border-round shadow-3 border-1 border-gray-300 gap-3">
             <span class="font-bold w-full">Update Outstanding CPO :</span>
             <ProgressBar v-if="loadingData == true" mode="indeterminate" style="height: 6px"></ProgressBar>
@@ -97,7 +98,7 @@
                         <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(data.qty).toFixed(2))}}</span>
                     </template>
                     <template #footer>
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{totalDataCPO('qty')}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(tot_qty).toFixed(0))}}</span>
                     </template>
                 </Column>
                 <Column field="harga">
@@ -105,10 +106,10 @@
                         <span class="font-medium text-xs capitalize font-italic">harga</span>
                     </template>
                     <template #body="{data}">
-                        <span class="font-normal text-xs flex w-full justify-content-end">Rp. {{formatCurrency(Number(data.harga).toFixed(2))}}</span>
+                        <span class="font-normal text-xs flex w-full justify-content-end">{{formatCurrency(Number(data.harga).toFixed(2))}}</span>
                     </template>
                     <template #footer>
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{totalDataCPO('harga')}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(tot_harga).toFixed(2))}}</span>
                     </template>
                 </Column>
                 <Column field="value">
@@ -119,7 +120,7 @@
                         <span class="font-normal text-xs flex w-full justify-content-end">{{formatCurrency(Number(data.value).toFixed(2))}}</span>
                     </template>
                     <template #footer>
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{totalDataCPO('value')}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(tot_value).toFixed(0))}}</span>
                     </template>
                 </Column>
             </DataTable>
@@ -131,7 +132,7 @@
                     <span class="p-inputgroup-addon bg-white">
                         <i class="pi pi-search"></i>
                     </span>
-                    <InputText v-model="dates" type="date" :min="moment(props.tanggal).format('YYYY-MM-01')" :max="moment(props.tanggal).format('YYYY-MM-DD')" placeholder="Search by date" @change="loadOutsandingCPO"/>
+                    <InputText v-model="dates" type="date" :min="moment(props.tanggal).format('YYYY-MM-01')" :max="moment(props.tanggal).format('YYYY-MM-DD')" placeholder="Search by date" @change="loadRouters"/>
                 </div>
             </div>
             <ProgressBar v-if="loadingData2 == true" mode="indeterminate" style="height: 6px"></ProgressBar>

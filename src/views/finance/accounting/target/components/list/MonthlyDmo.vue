@@ -4,7 +4,9 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import MonthlyDmo from '@/api/target/MonthlyDmo.js';
+    import { loadMonthlyDmoByDate_TargetController } from '@/controller/retail/TargetController.js'
+    import { cek_token } from "@/api/DataVariable.js";
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         tanggal:{
@@ -40,21 +42,21 @@
     const loadData = async(tgl) => {
         loadingTable.value = true
         try {
-            const response = await MonthlyDmo.getByDate({tanggal: tgl});
-            const load = response.data;
-            const data = load.data;
+            const data = await loadMonthlyDmoByDate_TargetController(tgl);
             const list = [];
-            for (let a = 0; a < data.length; a++) {
-                list[a] = {
-                    id:data[a].id,
-                    tanggal:data[a].tanggal,
-                    dmo:data[a].dmo,
-                    cpo_olah_rkap:data[a].cpo_olah_rkap,
-                    kapasitas_utility:data[a].kapasitas_utility,
-                    pengali_kapasitas_utility:data[a].pengali_kapasitas_utility,
-                    created_at:data[a].created_at,
-                    updated_at:data[a].updated_at,
-                };
+            if (data != null) {
+                for (let a = 0; a < data.length; a++) {
+                    list[a] = {
+                        id:data[a].id,
+                        tanggal:data[a].tanggal,
+                        dmo:data[a].dmo,
+                        cpo_olah_rkap:data[a].cpo_olah_rkap,
+                        kapasitas_utility:data[a].kapasitas_utility,
+                        pengali_kapasitas_utility:data[a].pengali_kapasitas_utility,
+                        created_at:data[a].created_at,
+                        updated_at:data[a].updated_at,
+                    };
+                }
             }
             products.value = list;
             loadingTable.value = false
@@ -71,13 +73,6 @@
         console.log(cond)
         data_form.value = data;
         title_dialog.value = cond == 'add' ? 'Monthly DMO - Tambah Data' : cond == 'edit' ? 'Monthly DMO - Edit Data' : 'Monthly DMO - Hapus Data' ;
-    }
-
-    const formatCurrency = (amount) => {
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return parts.join(',');
     }
 
     const saveData = async (ket) => {
@@ -147,7 +142,7 @@
                             <small class="font-medium uppercase flex justify-content-center w-full">CPO Olah</small>
                         </template>
                     </Column>
-                    <Column :rowspan="3">
+                    <Column :rowspan="3" v-if="cek_token != null">
                         <template #header>
                             <Button icon="pi pi-plus" label="Add" severity="info" class="py-2" size="small" @click="formDatabase('add', null)"/>
                         </template>
@@ -191,7 +186,7 @@
                     <small class="font-normal flex justify-content-end">{{ formatCurrency((Number(data.kapasitas_utility)*Number(data.pengali_kapasitas_utility)).toFixed(2)) }}</small>
                 </template>
             </Column>
-            <Column field="value" style="width: 3rem;">
+            <Column field="value" style="width: 3rem;" v-if="cek_token != null">
                 <template #body="{ data }">
                     <div class="flex justify-content-center">
                         <Button icon="pi pi-pencil" @click="formDatabase('edit', data)" size="small" severity="warning" text class="py-2"/>

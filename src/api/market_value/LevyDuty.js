@@ -1,14 +1,15 @@
 import http from '../http-auth'
+import http2 from '../http-common'
 
 export default new class LevyDuty{
     getAll(){
-        return http.get(`levy-duty`);
+        return http2.get(`levy-duty`);
     }
     getByID(id){
-        return http.get(`levy-duty/get/${id}`);
+        return http2.get(`levy-duty/get/${id}`);
     }
     getByDate(data){
-        return http.post(`levy-duty/date`, data);
+        return http2.post(`levy-duty/date`, data);
     }
 
     addPost(data){

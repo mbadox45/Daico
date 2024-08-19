@@ -1,14 +1,15 @@
 import http from '../http-auth'
+import http2 from '../http-common'
 
 export default new class MarketRouters{
     getAll(){
-        return http.get(`market-router`);
+        return http2.get(`market-router`);
     }
     getByID(id){
-        return http.get(`market-router/get/${id}`);
+        return http2.get(`market-router/get/${id}`);
     }
     getByDate(data){
-        return http.post(`market-router/date`, data);
+        return http2.post(`market-router/date`, data);
     }
 
     addPost(data){

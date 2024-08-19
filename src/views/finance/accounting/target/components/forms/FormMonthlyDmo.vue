@@ -4,7 +4,7 @@
     import moment from 'moment';
 
     // API
-    import MonthlyDmo from '@/api/target/MonthlyDmo.js';
+    import { addMonthlyDmo_TargetController, updateMonthlyDmo_TargetController } from '@/controller/retail/TargetController.js'
 
     // Variable
     const props = defineProps({
@@ -64,18 +64,16 @@
         try {
             if (forms.value.tanggal != null && forms.value.dmo != null && forms.value.cpo_olah_rkap != null && forms.value.kapasitas_utility != null && forms.value.pengali_kapasitas_utility != null) {
                 if (status == 'add') {
-                    const response = await MonthlyDmo.addPost(forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    const response = await addMonthlyDmo_TargetController(forms.value);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','sudah_ada');
                     }
                     
                 } else {
-                    const response = await MonthlyDmo.updatePost(forms.value.id,forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    const response = await updateMonthlyDmo_TargetController(forms.value.id,forms.value);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','error');

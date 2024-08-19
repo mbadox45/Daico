@@ -10,8 +10,10 @@
 
     // API
     import {loadAllocationCost} from '@/views/load_data/produksi/allocation_cost.js'
+    import {loadAllocation_AllocationCostController} from '@/controller/production/AllocationCostController.js'
 
     // Components
+    import AllocationDepreciation from '@/views/finance/production/allocation_cost/components/AllocationDepreciation.vue'
     import AllocationCost from '@/views/finance/production/allocation_cost/components/AllocationCost.vue'
     import AllocationUtility from '@/views/finance/production/allocation_cost/components/AllocationUtility.vue'
     import AllocationProduksi from '@/views/finance/production/allocation_cost/components/AllocationProduksi.vue'
@@ -41,10 +43,11 @@
         const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
         // const dateString = `2024-05-31`;
         tanggal.value = dateString;
-        const response = await loadAllocationCost(dateString);
-        console.log(response);
-        data_refinery.value = response;
         periods.value = moment(dateString).format('MMMM YYYY')
+        const response = await loadAllocation_AllocationCostController(dateString)
+        // const list = await loadAllocation_AllocationCostController(dateString)
+        // console.log(list);
+        data_refinery.value = response;
         loadingTable.value = false
         loadBulan()
         loadTahun()
@@ -108,10 +111,11 @@
             </div>
             <div class="">
                 <div class="flex justify-content-end gap-1 p-2 border-1 border-gray-500 border-round">
-                    <Button label="Allocation Cost" @click="active = 0" class="py-2 text-xs" severity="secondary" :text="active !== 0" size="small"/>
-                    <Button label="Allocation Utility" @click="active = 1" class="py-2 text-xs" severity="secondary" :text="active !== 1" size="small"/>
-                    <Button label="Allocation Production" @click="active = 2" class="py-2 text-xs" severity="secondary" :text="active !== 2" size="small"/>
-                    <Button label="Allocation Gas" @click="active = 3" class="py-2 text-xs" severity="secondary" :text="active !== 3" size="small"/>
+                    <Button label="Allocation Depreciation" @click="active = 0" class="py-2 text-xs" severity="secondary" :text="active !== 0" size="small"/>
+                    <Button label="Allocation Cost" @click="active = 1" class="py-2 text-xs" severity="secondary" :text="active !== 1" size="small"/>
+                    <Button label="Allocation Utility" @click="active = 2" class="py-2 text-xs" severity="secondary" :text="active !== 2" size="small"/>
+                    <Button label="Allocation Production" @click="active = 3" class="py-2 text-xs" severity="secondary" :text="active !== 3" size="small"/>
+                    <Button label="Allocation Gas" @click="active = 4" class="py-2 text-xs" severity="secondary" :text="active !== 4" size="small"/>
                 </div>
             </div>
         </div>
@@ -126,16 +130,23 @@
         </div>
         <div v-else>
             <!-- Table -->
-            <div v-show="active == 0">
+            <div v-if="active == 0" class="border-round p-4 border-2 border-gray-300">
+                <allocation-depreciation :datas="data_refinery"/>
+            </div>
+            <div v-if="active == 1" class="border-round p-4 border-2 border-gray-300 flex flex-column gap-3">
+                <span class="text-xl font-italic text-gray-500 font-semibold capitalize">Allocation cost</span>
                 <allocation-cost :datas="data_refinery"/>
             </div>
-            <div v-show="active == 1">
+            <div v-if="active == 2" class="border-round p-4 border-2 border-gray-300 flex flex-column gap-3">
+                <span class="text-xl font-italic text-gray-500 font-semibold capitalize">Allocation utility</span>
                 <allocation-utility :datas="data_refinery"/>
             </div>
-            <div v-show="active == 2">
+            <div v-if="active == 3" class="border-round p-4 border-2 border-gray-300 flex flex-column gap-3">
+                <span class="text-xl font-italic text-gray-500 font-semibold capitalize">Allocation produksi</span>
                 <allocation-produksi :datas="data_refinery"/>
             </div>
-            <div v-show="active == 3">
+            <div v-if="active == 4" class="border-round p-4 border-2 border-gray-300 flex flex-column gap-3">
+                <span class="text-xl font-italic text-gray-500 font-semibold capitalize">Allocation gas</span>
                 <allocation-gas :datas="data_refinery"/>
             </div>
         </div>

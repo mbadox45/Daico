@@ -1,11 +1,21 @@
 import KursMandiri from '@/api/accounting/kurs_mandiri.js';
 
-export const loadLatest_KursMandiri = async() => {
+export const loadAll_KursMandiri = async() => {
     try {
         const response = await KursMandiri.getAll()
         const load = response.data
         const data = load.data
-        console.log(data)
+        return data
+    } catch (error) {
+        return null
+    }
+}
+
+export const loadLatest_KursMandiri = async() => {
+    try {
+        const response = await KursMandiri.getLatest()
+        const load = response.data
+        const data = load.data
         return data
     } catch (error) {
         return null

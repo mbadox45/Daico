@@ -6,7 +6,9 @@
     import { useRouter, useRoute } from 'vue-router';
 
     // API ========================================================================================================================================================
-    import TargetReal from '@/api/target/TargetReal.js';
+    import { loadRealByDate_TargetController } from '@/controller/retail/TargetController.js'
+    import { cek_token } from "@/api/DataVariable.js";
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         tanggal:{
@@ -46,21 +48,21 @@
     const loadData = async(tgl) => {
         loadingTable.value = true
         try {
-            const response = await TargetReal.getByDate({tanggal: tgl});
-            const load = response.data;
-            const data = load.data;
+            const data = await loadRealByDate_TargetController(tgl);
             const list = [];
-            for (let a = 0; a < data.length; a++) {
-                const type = data[a].productable_type.split('\\').pop();
-
-                list[a] = {
-                    id:data[a].id,
-                    tanggal:data[a].tanggal,
-                    value:data[a].value,
-                    productable_id:data[a].productable_id,
-                    productable_type:type == 'MasterBulkProduksi' ? 'bulk' : 'retail',
-                    productable:data[a].productable != null ? data[a].productable.name : null,
-                };
+            if (data != null) {
+                for (let a = 0; a < data.length; a++) {
+                    const type = data[a].productable_type.split('\\').pop();
+    
+                    list[a] = {
+                        id:data[a].id,
+                        tanggal:data[a].tanggal,
+                        value:data[a].value,
+                        productable_id:data[a].productable_id,
+                        productable_type:type == 'MasterBulkProduksi' ? 'bulk' : 'retail',
+                        productable:data[a].productable != null ? data[a].productable.name : null,
+                    };
+                }
             }
             products.value = list;
             loadingTable.value = false
@@ -81,13 +83,6 @@
         console.log(cond)
         data_form.value = data;
         title_dialog.value = cond == 'add' ? 'Target Real - Tambah Data' : cond == 'edit' ? 'Target Real - Edit Data' : 'Target Real - Hapus Data' ;
-    }
-
-    const formatCurrency = (amount) => {
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return parts.join(',');
     }
 
     const saveData = async (ket) => {
@@ -124,7 +119,7 @@
 <template>
     <div class="flex-auto flex flex-column gap-3">
         <div class="flex justify-content-between align-items-center gap-3">
-            <div class="w-full">
+            <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full">
                 <Button label="Add" icon="pi pi-plus" class="py-2 text-xs" severity="info" size="small" @click="formDatabase('add', null)"/>
             </div>
             <div class="p-inputgroup">
@@ -184,7 +179,7 @@
                     <small class="font-normal flex justify-content-end">{{ formatCurrency(Number(data.value).toFixed(2)) }}</small>
                 </template>
             </Column>
-            <Column field="value" style="width: 3rem;">
+            <Column field="value" style="width: 3rem;" v-if="cek_token != null">
                 <template #body="{ data }">
                     <div class="flex justify-content-center">
                         <Button icon="pi pi-pencil" @click="formDatabase('edit', data)" size="small" severity="warning" text class="py-2"/>

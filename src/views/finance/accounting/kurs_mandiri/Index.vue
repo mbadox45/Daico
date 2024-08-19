@@ -6,7 +6,8 @@
     import { useToast } from "primevue/usetoast";
 
     // API ========================================================================================================================================================
-    import { loadLatest_KursMandiri, add_KursMandiri, update_KursMandiri, } from "@/controller/accounting/KursMandiriController.js";
+    import { loadAll_KursMandiri, add_KursMandiri, update_KursMandiri, } from "@/controller/accounting/KursMandiriController.js";
+    import { cek_token } from "@/api/DataVariable.js";
 
     // VARIABLE
     const searchKeyword = ref("");
@@ -34,7 +35,7 @@
 const loadData = async () => {
   try {
     loadingTable.value = true;
-    const kurs = await loadLatest_KursMandiri();
+    const kurs = await loadAll_KursMandiri();
     kurs.sort((a, b) => b.id - a.id);
     const value_now = kurs[0] == null ? { id: null, tanggal: null, value: null } : { id: kurs[0].id, tanggal: kurs[0].tanggal, value: kurs[0].value, updated_at: kurs[0].updated_at, };
     const value_before =
@@ -144,7 +145,7 @@ const saveData = async () => {
           ></span
         >
       </div>
-      <div class="w-full flex gap-3 align-items-center">
+      <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full gap-3 align-items-center">
         <InputNumber
           v-model="forms.value"
           inputId="locale-german"

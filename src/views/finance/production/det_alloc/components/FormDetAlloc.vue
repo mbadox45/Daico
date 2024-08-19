@@ -8,7 +8,7 @@
     // API
     import {loadCategory, loadPlant} from '@/views/load_data/master_config.js'
     import Laporan_Produksi from '@/api/det_alloc/Laporan_Produksi.js';
-
+    import { postData_DetAllocController } from '@/controller/production/DetAllocController.js'
     const router = useRouter();
     const route = useRoute();
     const toast = useToast();
@@ -28,7 +28,9 @@
     const list_plant = ref([])
     const list_uraian = ref([])
     const loadingTable = ref(false)
+    const loadingSubmit = ref(false)
     const time = ref(3000)
+    const toast_show = ref(true)
 
     onMounted(()=>{
         loadData();
@@ -49,10 +51,17 @@
         } catch (error) {
             loadingTable.value = false
         }
+        activeToast()
+    }
+
+    const activeToast = () => {
+        toast_show.value = true
+        toast.add({ severity: 'warn', summary: `Pastikan data `, group: 'bc' });
     }
 
     const loadFormList = async() => {
         loadingTable.value = true;
+        loadingSubmit.value = true;
         list_uraian.value = await loadListCategory();
         list_plant.value = await loadPlant();
         const uraian = list_uraian.value;
@@ -84,6 +93,7 @@
                 }
             }
         }
+        loadingSubmit.value = false;
         loadingTable.value = false;
     }
 
@@ -121,69 +131,43 @@
     
     const postData = async() => {
         loadingTable.value = true;
-        if (forms.value.length <= 1) {
-            toast.add({ severity: 'warn', summary: 'Warning', detail: 'Mohon data di lengkapi terlebih dahulu', life: 3000 });
-        } else {
-            const form = forms.value;
-            let total = 0;
-            for (let i = 0; i < form.length; i++) {
-                if (form[i].value == null) {
-                    continue;
-                } else {
-                    total += 1;
-                }
-            }
-            if (total < form.length) {
-                toast.add({ severity: 'warn', summary: 'Warning', detail: 'Mohon data di lengkapi terlebih dahulu', life: 3000 });
-            } else {
-                let tot = 0;
-                for (let i = 0; i < form.length; i++) {
-                    let list;
-                    if (form[i].id_plant == null) {
-                        list = {
-                            id: null,
-                            // id_plant: form[i].id_plant,
-                            id_uraian: form[i].id_uraian,
-                            value: form[i].value,
-                            tanggal: form_tgl.value,
-                        }
-                    } else {
-                        list = {
-                            id: null,
-                            id_plant: form[i].id_plant,
-                            id_uraian: form[i].id_uraian,
-                            value: form[i].value,
-                            tanggal: form_tgl.value,
-                        }
-                    }
-                    const response = await postDetAlloc(list)
-                    console.log(response)
-                    if (response.status == true) {
-                        tot += 1
-                    } else {
-                        continue;
-                    }
-                }
-                if (tot <= form.length && tot > 0) {
-                    toast.add({ severity: 'success', summary: 'Success', detail: `${tot < form.length ? 'Data berhasil disimpan (total : '+tot+' )' : 'Data berhasil disimpan'}`, life: 3000 });
-                } else {
-                    toast.add({ severity: 'error', summary: 'Error', detail: `Terjadi kesalahan sistem, harap hubungi tim IT`, life: 3000 });
-                }
-            }
+        loadingSubmit.value = true;
+        toast_show.value = false
+        const response = await postData_DetAllocController(form_tgl.value, forms.value)
+        toast.add({ severity: response.severity, summary: response.severity == 'warn' ? 'Warning' : 'Success', detail: response.content, life: 3000 });
+        if (response.severity == 'success') {
+            setTimeout(function() {
+                loadData()
+                router.push('/det-alloc')
+            }, 2000);
         }
+        loadingSubmit.value = false;
         loadingTable.value = false;
     }
 
 </script>
 <template>
     <div class="card shadow-3 flex flex-column gap-3">
-        <Toast />
+        <Toast v-if="toast_show == false" />
+        <Toast v-else position="top-center" group="bc">
+            <template #message="slotProps">
+                <div class="flex flex-column align-items-start" style="flex: 1">
+                    <div class="flex align-items-center gap-2">
+                        <span class="font-bold text-md text-orange-500 capitalize">Attention !</span>
+                    </div>
+                    <div class="font-normal text-sm my-3 text-700">{{ slotProps.message.summary }} <span class="font-bold font-italic">Harga Satuan Produk</span> up to date. Jika ingin update silahkan klik tombol dibawah ini:</div>
+                    <div class="flex justify-content-between gap-3 w-full">
+                        <Button size="small" class="text-xs p-2" severity="warning" label="Harga Satuan Produksi" @click="() => {router.push('/master-data/harga_satuan')}"/>
+                    </div>
+                </div>
+            </template>
+        </Toast>
         <div class="flex justify-content-between align-items-center gap-5">
             <div class="flex justify-content-between align-items-center gap-2 w-full">
                 <span class="font-medium text-xl uppercase">Form Detail Allocation </span>
                 <div class="flex gap-2">
                     <Button label="Back" icon="pi pi-times" size="small" class="px-3 py-2" severity="danger" outlined @click="()=>{router.push('/det-alloc')}"/>
-                    <Button label="Save" icon="pi pi-save" size="small" class="px-3 py-2" severity="success" @click="postData" :disabled="loadingTable == true ? true : false"/>
+                    <Button label="Save" icon="pi pi-save" size="small" class="px-3 py-2" severity="success" @click="postData" :disabled="loadingSubmit == true ? true : false"/>
                 </div>
             </div>
         </div>

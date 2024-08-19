@@ -3,161 +3,73 @@
     import { ref, computed, defineProps, onMounted, watch } from 'vue';
     import moment from 'moment';
 
-    // API
-    import KpbnCpo from '@/api/cpo/KpbnCpo.js';
-    import CostProd from '@/api/market_value/CostProd.js'
+    // Controller
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+
 
     // Variable
     const props = defineProps({
         tanggal:{
             type:String
+        },
+        datas:{
+            type:Array,
+            default: () => {}
         }
     });
 
     const days = props.tanggal
-    const avg_actual_price = ref()
-    const avg_cpo_kpbn_this_month = ref()
-    const avg_cpo_kpbn_mtd = ref()
+    const load_data = ref([])
     const loadingData = ref(false)
 
     // Function
     const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
-    watch(() => props.tanggal, (newVal) => {loadProduct(newVal)});
+    watch(() => props.datas, (newVal) => {loadProduct(newVal)});
 
     onMounted(() => {
-        loadProduct(props.tanggal)
+        loadProduct(props.datas)
     });
 
 
-    const loadProduct = async(tanggal) => {
+    const loadProduct = async(data) => {
         loadingData.value = true
         try {
-            // CPO KPBN This Month
-            const get_avg = await loadCPOKPBNMonth(tanggal);
-            let avg_this_month = 0;
-            if (get_avg != null) {
-                let val_tot = 0
-                for (let i = 0; i < get_avg.length; i++) {
-                    val_tot = val_tot + Number(get_avg[i].avg);
-                }
-                avg_this_month = val_tot / get_avg.length;
-            } else {
-                avg_this_month = 0
-            }
-            avg_cpo_kpbn_this_month.value = formatCurrency(avg_this_month.toFixed(0))
-
-            // Avg Actual Price
-            const act_price = await loadAvgActualPrice(tanggal);
-            if (act_price != null) {
-                avg_actual_price.value = formatCurrency(act_price)
-            } else {
-                avg_actual_price.value = 0
-            }
-
-            // Value Average
-            const get_cpo = await loadCpoKpbnYearly();
-            let avg_this_year = 0;
-            if (get_cpo != null) {
-                const load_by_filter = get_cpo.filter(item => moment(item.tanggal).format('YYYY') == moment(tanggal).format('YYYY'))
-                if (load_by_filter.length > 0 ) {
-                    let val_cpo_tot = 0
-                    for (let i = 0; i < load_by_filter.length; i++) {
-                        val_cpo_tot = val_cpo_tot + Number(load_by_filter[i].avg);
-                    }
-                    avg_this_year = val_cpo_tot / load_by_filter.length;
-                } else {
-                    avg_this_year = 0
-                }
-            } else {
-                avg_this_year = 0
-            }
-            avg_cpo_kpbn_mtd.value = formatCurrency(avg_this_year.toFixed(0))
+            const response = data.cpo
+            load_data.value = response
             loadingData.value = false
         } catch (error) {
-            avg_cpo_kpbn_this_month.value = 0
-            avg_actual_price.value = 0
-            avg_cpo_kpbn_mtd.value = 0
+            load_data.value = [
+                {name: 'Average Actual Price', exp: 'CPO Olah INL', value:0},
+                {name: 'This Month', exp: 'Average CPO KPBN', value:0},
+                {name: 'MTD', exp: 'Average CPO KPBN', value:0},
+            ]
             loadingData.value = false
-            
         }
-    }
-
-    const loadCPOKPBNMonth = async(tanggal) => {
-        try {
-            const respose = await KpbnCpo.getByDate({tanggal:tanggal});
-            const load = respose.data;
-            const data = load.data;
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    const loadCpoKpbnYearly = async() => {
-        try {
-            const respose = await KpbnCpo.getAll();
-            const load = respose.data;
-            const data = load.data;
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    const loadAvgActualPrice = async(tanggal) => {
-        try {
-            // const respose = await CostProd.getByDate({tanggal:tanggal, setting_name:'coa_bahan_baku'});
-            // const load = respose.data;
-            // return load.totalDifference;
-            return null;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    onMounted(() => {
-        loadProduct(props.tanggal);
-    });
-
-    const formatCurrency = (amount) =>  {
-        // Convert the number to a string and insert commas every three digits from the right
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        // Combine the integer part with the decimal part (if any)
-        return parts.join(',');
     }
 
 </script>
 <template>
-    <div class="flex gap-5">
-        <div class="flex flex-column w-6 bg-green-700 p-2 border-round shadow-4 gap-3">
-            <span class="text-center text-white font-bold">CPO Olah INL</span>
-            <div class="flex gap-3">
-                <div class="w-full flex flex-column gap-2 bg-white text-center border-round border-white p-3">
-                    <span class="font-semibold text-green-600 border-bottom-1 pb-2">Avg Actual Price</span>
-                    <span class="font-semibold text-red-600 text-5xl">
-                        <span v-if="loadingData == true">.....</span>
-                        <span v-else>{{avg_actual_price}}</span>
-                    </span>
-                </div>
+    <div class="flex flex-column bg-white p-4 w-full border-round shadow-4 gap-4">
+        <span class="font-semibold text-2xl flex flex-row-reverse justify-content-between gap-2 border-bottom-1 pb-2 align-items-center text-yellow-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-droplet" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M7.21.8C7.69.295 8 0 8 0q.164.544.371 1.038c.812 1.946 2.073 3.35 3.197 4.6C12.878 7.096 14 8.345 14 10a6 6 0 0 1-12 0C2 6.668 5.58 2.517 7.21.8m.413 1.021A31 31 0 0 0 5.794 3.99c-.726.95-1.436 2.008-1.96 3.07C3.304 8.133 3 9.138 3 10a5 5 0 0 0 10 0c0-1.201-.796-2.157-2.181-3.7l-.03-.032C9.75 5.11 8.5 3.72 7.623 1.82z"/>
+                <path fill-rule="evenodd" d="M4.553 7.776c.82-1.641 1.717-2.753 2.093-3.13l.708.708c-.29.29-1.128 1.311-1.907 2.87z"/>
+            </svg>
+            <span>CPO</span>
+        </span>
+        <div v-if="load_data.length < 1" class="flex h-10rem align-items-center">
+            <div class="w-full">
+                <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
             </div>
         </div>
-        <div class="flex flex-column w-full bg-green-700 p-2 border-round shadow-4 gap-3">
-            <span class="text-center text-white font-bold">AVG CPO KPBN</span>
-            <div class="flex gap-3">
-                <div class="w-full flex flex-column gap-2 bg-white text-center border-round border-white p-3">
-                    <span class="font-semibold text-green-600 border-bottom-1 pb-2">This Month</span>
-                    <span class="font-semibold text-red-600 text-5xl">
-                        <span v-if="loadingData == true">.....</span>
-                        <span v-else>{{avg_cpo_kpbn_this_month}}</span>
-                    </span>
-                </div>
-                <div class="w-full flex flex-column gap-2 bg-white text-center border-round border-white p-3">
-                    <span class="font-semibold text-green-600 border-bottom-1 pb-2">MTD</span>
-                    <span class="font-semibold text-red-600 text-5xl">
-                        <span v-if="loadingData == true">.....</span>
-                        <span v-else>{{avg_cpo_kpbn_mtd}}</span>
+        <div v-else class="flex flex-column gap-4 w-full">
+            <div v-for="(item, index) in load_data" class="flex align-items-center w-full gap-3 border-bottom-3 border-left-3 border-round px-3 border-yellow-600 pb-2" :key="index">
+                <span class="font-medium w-full text-md text-gray-600 md:text-xl ">{{item.name}}</span>
+                <div class="w-full flex flex-column-reverse gap-1 bg-white align-items-end border-round border-white">
+                    <span class="font-semibold text-gray-400 text-xs md:text-sm">{{item.exp}}</span>
+                    <span class="font-semibold text-yellow-600 text-lg md:text-3xl">
+                        <!--<span v-if="loadingData == true">.....</span>-->
+                        <span>{{formatCurrency(Number(item.value).toFixed(0))}}</span>
                     </span>
                 </div>
             </div>

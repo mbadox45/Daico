@@ -9,6 +9,7 @@
     import TargetRkap from '@/api/target/TargetRkap.js';
     import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
     import RetailProdMaster from '@/api/master/RetailProdMaster.js';
+    import { cek_token } from "@/api/DataVariable.js";
 
     // Variable
     const props = defineProps({

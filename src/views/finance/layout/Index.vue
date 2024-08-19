@@ -2,6 +2,7 @@
 import { computed, watch, onMounted, ref } from 'vue';
 import FooterPage from '@/layout/AppFooter.vue'
 import HeaderPage from '@/views/finance/component/HeaderPage3.vue'
+import AppSidebar from '@/layout/AppSidebar.vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -85,6 +86,9 @@ const loadProduct = () => {
     </div>
     <div v-else class="layout-wrapper bg-gray-100" :class="containerClass">
         <header-page/>
+        <div class="layout-sidebar">
+            <app-sidebar></app-sidebar>
+        </div>
         <div class="layout-main-container bg-bluegray-50">
             <div class="layout-main ">
                 <router-view></router-view>

@@ -5,6 +5,9 @@
 
     // API ========================================================================================================================================================
     import DailyDmo from '@/api/target/DailyDmo.js';
+    import { loadDailyDmoByDate_TargetController } from '@/controller/retail/TargetController.js'
+    import { cek_token } from "@/api/DataVariable.js";
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         tanggal:{
@@ -40,18 +43,18 @@
     const loadData = async(tgl) => {
         loadingTable.value = true
         try {
-            const response = await DailyDmo.getByDate({tanggal: tgl});
-            const load = response.data;
-            const data = load.data;
+            const data = await loadDailyDmoByDate_TargetController(tgl);
             const list = [];
-            for (let a = 0; a < data.length; a++) {
-                list[a] = {
-                    id:data[a].id,
-                    tanggal:data[a].tanggal,
-                    value:data[a].value,
-                    created_at:data[a].created_at,
-                    updated_at:data[a].updated_at,
-                };
+            if (data != null) {
+                for (let a = 0; a < data.length; a++) {
+                    list[a] = {
+                        id:data[a].id,
+                        tanggal:data[a].tanggal,
+                        value:data[a].value,
+                        created_at:data[a].created_at,
+                        updated_at:data[a].updated_at,
+                    };
+                }
             }
             products.value = list;
             loadingTable.value = false
@@ -68,13 +71,6 @@
         console.log(cond)
         data_form.value = data;
         title_dialog.value = cond == 'add' ? 'Daily DMO - Tambah Data' : cond == 'edit' ? 'Daily DMO - Edit Data' : 'Daily DMO - Hapus Data' ;
-    }
-
-    const formatCurrency = (amount) => {
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return parts.join(',');
     }
 
     const saveData = async (ket) => {
@@ -154,7 +150,7 @@
                     <small class="font-normal">{{ moment(data.updated_at).format('DD MMMM YYYY  HH:mm:ss') }}</small>
                 </template>
             </Column>
-            <Column field="value" style="width: 3rem;">
+            <Column field="value" style="width: 3rem;" v-if="cek_token != null">
                 <template #header>
                     <Button icon="pi pi-plus" label="Add" severity="info" class="py-2" size="small" @click="formDatabase('add', null)"/>
                 </template>

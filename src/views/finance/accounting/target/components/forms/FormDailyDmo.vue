@@ -4,7 +4,7 @@
     import moment from 'moment';
 
     // API
-    import DailyDmo from '@/api/target/DailyDmo.js';
+    import { addMonthlyDmo_TargetController, updateMonthlyDmo_TargetController } from '@/controller/retail/TargetController.js'
 
     // Variable
     const props = defineProps({
@@ -58,9 +58,8 @@
         try {
             if (status == 'add') {
                 if (forms.value.tanggal != null && forms.value.value != null) {
-                    const response = await DailyDmo.addPost(forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    const response = await addMonthlyDmo_TargetController(forms.value);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','error');
@@ -70,9 +69,8 @@
                 }
             } else {
                 if (forms.value.tanggal != null && forms.value.value != null && forms.value.harga != null) {
-                    const response = await DailyDmo.updatePost(forms.value.id,forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    const response = await updateMonthlyDmo_TargetController(forms.value.id,forms.value);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','error');

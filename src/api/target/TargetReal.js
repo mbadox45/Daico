@@ -1,4 +1,5 @@
 import http from '../http-auth'
+import http2 from '../http-common'
 
 export default new class TargetReal{
     
@@ -10,12 +11,12 @@ export default new class TargetReal{
     }
     
     getAll(){
-        return http.get('target-real');
+        return http2.get('target-real');
     }
     getByID(id){
-        return http.get(`target-real/get/${id}`);
+        return http2.get(`target-real/get/${id}`);
     }
     getByDate(date){
-        return http.post(`target-real/date`, date);
+        return http2.post(`target-real/date`, date);
     }
 }

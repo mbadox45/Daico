@@ -1,4 +1,5 @@
 import http from '../http-auth'
+import http2 from '../http-common'
 
 export default new class TargetRkap{
     
@@ -10,12 +11,12 @@ export default new class TargetRkap{
     }
     
     getAll(){
-        return http.get('target-rkap');
+        return http2.get('target-rkap');
     }
     getByID(id){
-        return http.get(`target-rkap/get/${id}`);
+        return http2.get(`target-rkap/get/${id}`);
     }
     getByDate(date){
-        return http.post(`target-rkap/date`, date);
+        return http2.post(`target-rkap/date`, date);
     }
 }

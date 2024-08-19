@@ -5,10 +5,9 @@
 
     // API
     import {list_product_type} from '@/api/DummyData.js';
-    import TargetReal from '@/api/target/TargetReal.js';
-    import MonthlyDmo from '@/api/target/MonthlyDmo.js';
-    import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
-    import RetailProdMaster from '@/api/master/RetailProdMaster.js';
+    import { addRkap_TargetController, updateRkap_TargetController } from '@/controller/retail/TargetController.js'
+    import { loadAll_BulkyProduksiMaster } from '@/controller/master_data/BulkyProduksiController.js'
+    import { loadAll_RetailProdMaster } from '@/controller/master_data/RetailProduksiController.js'
 
     // Variable
     const props = defineProps({
@@ -39,9 +38,9 @@
             resetForm()
         } else {
             if (data_prop.productable_type == 'bulk') {
-                list_product.value = await loadBulkProd();
+                list_product.value = await loadAll_BulkyProduksiMaster();
             } else {
-                list_product.value = await loadRetailProd();
+                list_product.value = await loadAll_RetailProdMaster();
             }
             forms.value = {
                 id: data_prop.id,
@@ -67,44 +66,21 @@
         }
     }
 
-    const loadRetailProd = async() => {
-        try {
-            const response = await RetailProdMaster.getAll()
-            const load = response.data;
-            const data = load.mBulky
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-    const loadBulkProd = async() => {
-        try {
-            const response = await BulkyProdMaster.getAll()
-            const load = response.data;
-            const data = load.mBulky
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
     // Function
     const postData = async() => {
         try {
             if (forms.value.tanggal != null && forms.value.value != null && forms.value.product_type != null && forms.value.productable_id != null) {
                 if (status == 'add') {
-                    const response = await TargetReal.addPost(forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    const response = await addRkap_TargetController(forms.value);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','sudah_ada');
                     }
                     
                 } else {
-                    const response = await TargetReal.updatePost(forms.value.id,forms.value);
-                    const load = response.data;
-                    if (load.success == true) {
+                    const response = await updateRkap_TargetController(forms.value.id,forms.value);
+                    if (response.status == true) {
                         emit('submit','sukses');
                     } else {
                         emit('submit','error');

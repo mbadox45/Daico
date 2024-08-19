@@ -4,7 +4,7 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         // tanggal:{
@@ -18,7 +18,8 @@
 
     // VARIABLE
     const loadingTable = ref(false)
-    const load = ref([])
+    const load_gas = ref([])
+    const load_penalty = ref([])
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -29,26 +30,10 @@
         loadingTable.value = true
         try {
             const response = props.datas;
-            const gas = response.find(item => item.name == 'Allocation Gas')
-            const gas_penalty = response.find(item => item.name == 'Allocation Gas Pinalty')
-            const items_gas = gas.items
-            const items_gas_penalty = gas_penalty.items
-            const list = [
-                {category_id: 0, category: 'BIAYA PEMAKAIAN GAS', id: 0, name: 'Incoming *based on Pertagas', satuan: 'mmbtu', value: items_gas.incoming_on_pertagas},
-                {category_id: 0, category: 'BIAYA PEMAKAIAN GAS', id: 1, name: 'Harga Gas', satuan: 'USD', value: items_gas.harga_gas},
-                {category_id: 0, category: 'BIAYA PEMAKAIAN GAS', id: 2, name: 'Nilai Biaya Tagihan', satuan: 'USD', value: items_gas.tagihan_usd},
-                {category_id: 0, category: 'BIAYA PEMAKAIAN GAS', id: 3, name: 'Kurs', satuan: 'IDR', value: items_gas.kurs},
-                {category_id: 0, category: 'BIAYA PEMAKAIAN GAS', id: 4, name: 'Nilai Biaya Tagihan', satuan: 'IDR', value: items_gas.tagihan_rp},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 0, name: 'Incoming *based on Pertagas', satuan: 'mmbtu', value: items_gas_penalty.incoming_on_pertagas},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 1, name: '+/(-) Pamakaian Gas', satuan: 'mmbtu', value: items_gas_penalty.minimum_pakai},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 2, name: 'Minimum Pemakaian', satuan: 'mmbtu', value: items_gas_penalty.pemakaian_gas},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 3, name: 'Harga Gas', satuan: 'USD', value: items_gas_penalty.harga_gas},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 4, name: 'Nilai Biaya Penalty', satuan: 'USD', value: items_gas_penalty.tagihan_pinalty_usd},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 5, name: 'Kurs', satuan: 'IDR', value: items_gas_penalty.kurs},
-                {category_id: 1, category: 'PERHITUNGAN PENALTY GAS', id: 6, name: 'Nilai Biaya Penalty', satuan: 'IDR', value: items_gas_penalty.tagihan_pinalty_rp},
-            ]
-            load.value = list
-            console.log(load.value)
+            const gas = response[0].item
+            const gas_penalty = response[1].item
+            load_gas.value = gas
+            load_penalty.value = gas_penalty
             loadingTable.value = false
         } catch (error) {
             load.value = {}
@@ -62,7 +47,37 @@
 
 <template>
     <div class="w-full">
-        <DataTable :value="load" class="text-sm" showGridlines rowGroupMode="subheader" groupRowsBy="category_id" sortMode="single" sortField="category_id" :sortOrder="1" >
+        <div class="flex flex-column gap-5">
+            <div class="flex flex-column gap-3 p-5 border-bottom-2 border-round bg-yellow-100">
+                <div class="flex justify-content-between align-items-center gap-3 font-medium uppercase pb-1 border-bottom-1">
+                    <span class="w-full flex justify-content-center">BIAYA PEMAKAIAN GAS</span>
+                    <span class="w-full flex justify-content-end">Qty</span>
+                </div>
+                <div class="flex justify-content-between text-sm font-medium" v-for="(item, index) in load_gas" :key="index">
+                    <div class="w-full">{{ item.name }}</div>
+                    <div class="w-auto text-center">{{ item.satuan }}</div>
+                    <div class="w-full flex justify-content-between">
+                        <span class="w-full text-right">{{ item.satuan == 'IDR' ? 'Rp' : item.satuan == 'USD' ? '$' : ''}}</span>
+                        <span class="w-full text-right">{{ item.satuan == 'IDR' || item.satuan == 'USD' ? formatCurrency(Number(item.value).toFixed(2)) : formatCurrency(Number(item.value).toFixed(0)) }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-column gap-3 p-5 border-bottom-2 border-round bg-red-100">
+                <div class="flex justify-content-between align-items-center gap-3 font-medium uppercase pb-1 border-bottom-1">
+                    <span class="w-full flex justify-content-center">PERHITUNGAN PENALTY GAS</span>
+                    <span class="w-full flex justify-content-end">Qty</span>
+                </div>
+                <div class="flex justify-content-between text-sm font-medium" v-for="(item, index) in load_penalty" :key="index">
+                    <div class="w-full">{{ item.name }}</div>
+                    <div class="w-auto text-center">{{ item.satuan }}</div>
+                    <div class="w-full flex justify-content-between">
+                        <span class="w-full text-right">{{ item.satuan == 'IDR' ? 'Rp' : item.satuan == 'USD' ? '$' : ''}}</span>
+                        <span class="w-full text-right">{{ item.satuan == 'IDR' || item.satuan == 'USD' ? formatCurrency(Number(item.value).toFixed(2)) : formatCurrency(Number(item.value).toFixed(0)) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <DataTable :value="load" class="text-sm" showGridlines rowGroupMode="subheader" groupRowsBy="category_id" sortMode="single" sortField="category_id" :sortOrder="1" >
             <Column field="category_id" header="Representative" bodyStyle="background-color:red;"></Column>
             <Column field="name">
                 <template #header>
@@ -111,6 +126,6 @@
                     <small class="font-bold font-italic uppercase">{{ data.category }}</small>
                 </div>
             </template>
-        </DataTable>
+        </DataTable> -->
     </div>
 </template>

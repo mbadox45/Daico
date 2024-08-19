@@ -1,4 +1,5 @@
 import TipeRekeningMaster from '@/api/master/TipeRekeningMaster.js';
+import {msg_success, msg_warning, msg_error} from '@/controller/dummy/func_dummy.js';
 
 export const loadAll_TipeRekeningMaster = async() => {
     try {
@@ -16,24 +17,12 @@ export const add_TipeRekeningMaster = async(form) => {
         const response = await TipeRekeningMaster.addPost(form);
         const load = response.data;
         if (load.success == true) {
-            return {
-                status: true,
-                code: 200,
-                msg: 'Data berhasil di Tambahkan.'
-            }
+            return msg_success;
         } else {
-            return {
-                status: false,
-                code: 400,
-                msg: 'Proses Gagal, silahkan dicoba beberapa saat lagi.'
-            }
+            return msg_warning
         }
     } catch (error) {
-        return {
-            status: false,
-            code: 404,
-            msg: 'Proses Gagal, silahkan hubungi tim IT.'
-        };
+        return msg_error
     }
 }
 
@@ -42,23 +31,11 @@ export const update_TipeRekeningMaster = async(id,form) => {
         const response = await TipeRekeningMaster.updatePost(id,form);
         const load = response.data;
         if (load.success == true) {
-            return {
-                status: true,
-                code: 200,
-                msg: 'Data berhasil di Update.'
-            }
+            return msg_success;
         } else {
-            return {
-                status: false,
-                code: 400,
-                msg: 'Proses Gagal, silahkan dicoba beberapa saat lagi.'
-            }
+            return msg_warning
         }
     } catch (error) {
-        return {
-            status: false,
-            code: 404,
-            msg: 'Proses Gagal, silahkan hubungi tim IT.'
-        };
+        return msg_error
     }
 }

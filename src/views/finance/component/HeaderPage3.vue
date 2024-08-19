@@ -20,79 +20,6 @@
 
     const { layoutConfig, onMenuToggle } = useLayout();
 
-    const items = ref([
-        {
-            label: 'Dashboard',
-            icon: 'pi pi-th-large',
-            route:'/',
-            root: true,
-        },
-        {
-            label: 'Accounting',
-            icon: 'pi pi-book',
-            root: true,
-            items: [
-                {
-                    label: 'Target',
-                    route:'target',
-                    // icon: 'pi pi-bolt',
-                },
-                {
-                    label: 'CPO KPBN',
-                    route:'cpo-kpbn',
-                    // icon: 'pi pi-server',
-                },
-                {
-                    label: 'Proportion Cost',
-                    route:'prop-cost',
-                    // icon: 'pi pi-server',
-                },
-            ]
-        },
-        {
-            label: 'Reporting',
-            icon: 'pi pi-chart-bar',
-            root: true,
-            items: [
-                {
-                    label: 'Average Price',
-                    // icon: 'pi pi-bolt',
-                },
-                {
-                    label: 'Costing HPP',
-                    // icon: 'pi pi-server',
-                },
-                {
-                    label: 'Cost Production',
-                    route:'cost-prod'
-                    // icon: 'pi pi-server',
-                },
-            ]
-        },
-        {
-            label: 'Configuration',
-            icon: 'pi pi-cog',
-            root: true,
-            items: [
-                {
-                    label: 'General Leager',
-                    // icon: 'pi pi-bolt',
-                    route:'general-leager'
-                },
-                {
-                    label: 'Database',
-                    // icon: 'pi pi-server',
-                    route:'database'
-                },
-                {
-                    label: 'Master Data',
-                    // icon: 'pi pi-server',
-                    route:'master-data'
-                },
-            ]
-        },
-    ]);
-
     const onSettingsClick = () => {
         window.location.replace(URL_WEB_Portal);
     };
@@ -113,6 +40,9 @@
                     <!-- <span class="font-normal text-sm text-gray-400">{{moment().format(' DD MMM YYYY')}}</span> -->
                 </div>
                 <Divider layout="vertical" />
+                <button class="p-link layout-menu-button layout-topbar-button text-center text-teal-800 hover:text-teal-500 border-circle p-2 mr-4 w-auto" v-tooltip.bottom="'Menu'"  @click="onMenuToggle()">
+                    <i class="pi pi-bars text-xl"></i>
+                </button>
                 <button class="p-link layout-menu-button layout-topbar-button text-center text-teal-800 hover:text-teal-500 border-circle p-2 w-auto" v-tooltip.bottom="'Sign In'"  @click="onSettingsClick()">
                     <i class="pi pi-sign-in text-xl"></i>
                 </button>

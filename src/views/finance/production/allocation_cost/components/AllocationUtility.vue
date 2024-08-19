@@ -4,7 +4,7 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         // tanggal:{
@@ -29,9 +29,9 @@
         loadingTable.value = true
         try {
             const response = props.datas;
-            const refi = response.find(item => item.name == 'Allocation Utility')
-            load.value = refi.items
-            console.log(load.value)
+            const refi = response.find(item => item.name == 'list_allocation_biaya')
+            load.value = refi.item
+            console.log(refi)
             loadingTable.value = false
         } catch (error) {
             load.value = {}
@@ -49,28 +49,52 @@
             <ColumnGroup type="header">
                 <Row>
                     <Column header="Alokasi Biaya" :rowspan="2" />
-                    <Column header="Refinery" :colspan="2" />
-                    <Column header="Fraksinasi" :colspan="2" />
+                    <Column :colspan="2">
+                        <template #header>
+                            <div class="w-full flex justify-content-center"><span>Refinery</span></div>
+                        </template>
+                    </Column>
+                    <Column :colspan="2">
+                        <template #header>
+                            <div class="w-full flex justify-content-center"><span>Fraksinasi</span></div>
+                        </template>
+                    </Column>
                 </Row>
                 <Row>
-                    <Column header="Qty" field="lastYearSale" />
-                    <Column header="%" field="thisYearSale" />
-                    <Column header="Qty" field="lastYearProfit" />
-                    <Column header="%" field="thisYearProfit" />
+                    <Column>
+                        <template #header><div class="w-full flex justify-content-center"><span>Qty</span></div></template>
+                    </Column>
+                    <Column>
+                        <template #header><div class="w-full flex justify-content-center"><span>%</span></div></template>
+                    </Column>
+                    <Column>
+                        <template #header><div class="w-full flex justify-content-center"><span>Qty</span></div></template>
+                    </Column>
+                    <Column>
+                        <template #header><div class="w-full flex justify-content-center"><span>%</span></div></template>
+                    </Column>
                 </Row>
             </ColumnGroup>
             <Column field="name" />
             <Column field="name">
-                <template #body="slotProps"> {{ formatCurrency(Number(slotProps.data.ref.qty).toFixed(0) )}} </template>
+                <template #body="slotProps"> 
+                    <div class="flex w-full justify-content-end">{{ formatCurrency(Number(slotProps.data.ref_qty).toFixed(0) )}}</div>
+                </template>
             </Column>
             <Column field="name">
-                <template #body="slotProps"> {{ Number(slotProps.data.ref.persen*100).toFixed(0) }}% </template>
+                <template #body="slotProps"> 
+                    <div class="flex w-full justify-content-end">{{ Number(slotProps.data.ref_persen).toFixed(0) }}%</div>
+                </template>
             </Column>
             <Column field="name">
-                <template #body="slotProps"> {{ formatCurrency(Number(slotProps.data.frak.qty).toFixed(0)) }}</template>
+                <template #body="slotProps"> 
+                    <div class="flex w-full justify-content-end">{{ formatCurrency(Number(slotProps.data.frak_qty).toFixed(0)) }}</div>
+                </template>
             </Column>
             <Column field="name">
-                <template #body="slotProps"> {{ Number(slotProps.data.frak.persen*100).toFixed(0) }}% </template>
+                <template #body="slotProps"> 
+                    <div class="flex w-full justify-content-end">{{ Number(slotProps.data.frak_persen).toFixed(0) }}%</div>
+                </template>
             </Column>
         </DataTable>
     </div>

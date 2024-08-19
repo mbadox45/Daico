@@ -18,8 +18,101 @@ const router = createRouter({
                         guestOnly:true,
                     }
                 },
+                // Accounting ====================================
+                {
+                    path: '/viewer/kurs-mandiri',
+                    name: 'viewer - kurs mandiri',
+                    component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/viewer/cash',
+                    name: 'viewer - cash',
+                    component: () => import('@/views/finance/accounting/cash/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                // Retail     ====================================
+                {
+                    path: '/viewer/stock',
+                    name: 'viewer - stock',
+                    component: () => import('@/views/finance/accounting/stock/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/target',
+                    name: 'viewer - target',
+                    component: () => import('@/views/finance/accounting/target/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/cpo',
+                    name: 'viewer - cpo kpbn',
+                    component: () => import('@/views/finance/accounting/cpokpbn/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/avg-price',
+                    name: 'viewer - average price',
+                    component: () => import('@/views/finance/accounting/avg_price/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/prop-cost',
+                    name: 'viewer - proportion cost',
+                    component: () => import('@/views/finance/accounting/propcost/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                // Production     ====================================
+                {
+                    path: '/viewer/cost-prod',
+                    name: 'viewer - cost production',
+                    component: () => import('@/views/finance/production/cost_prod/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/alloc-cost',
+                    name: 'viewer - allocation cost',
+                    component: () => import('@/views/finance/production/allocation_cost/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/det-alloc',
+                    name: 'viewer - Detail Allocation',
+                    component: () => import('@/views/finance/production/det_alloc/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/costing-hpp',
+                    name: 'viewer - Costing HPP',
+                    component: () => import('@/views/finance/production/costing_hpp/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
             ]
         },
+
+
         {
             path: '/',
             component: AppLayout,
@@ -35,11 +128,6 @@ const router = createRouter({
                         // guestOnly:true,
                         requiresAuth: true,
                         akunting:true,
-                        produksi:true,
-                        logistik:true,
-                        marketing:true,
-                        sourcing:true,
-                        view:true,
                     }
                 },
 

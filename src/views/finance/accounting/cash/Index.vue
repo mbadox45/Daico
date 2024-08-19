@@ -9,8 +9,8 @@
     const router = useRouter();
 
     // API
-    import {RekeningUnitKerja} from '@/views/load_data/cash/rekening.js'
-    import {loadTypeRekening} from '@/views/load_data/master_config.js'
+    import { cek_token } from "@/api/DataVariable.js";
+    import {RekeningUnitKerja} from '@/controller/accounting/RekeningUnitController.js'
 
     // Components
     import ListCash from '@/views/finance/accounting/cash/components/List.vue'
@@ -19,15 +19,6 @@
     const type = ref(route.query.active);
     const active = ref(0);
     const loadingTable = ref(false);
-    const bulan = ref(Number(moment().format('M')));
-    const list_bulan = ref([]);
-    const tahun = ref(Number(moment().format('yyyy')));
-    const periods = ref('')
-    const list_tahun = ref([]);
-    const tanggal = ref(`${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`)
-    const op = ref();
-
-    const data_refinery = ref([])
     const datas = ref({})
     
     const tombol_add = ref(false) 
@@ -52,10 +43,15 @@
 
 <template>
     <div class="card shadow-3 flex flex-column gap-3">
-        <div class="flex justify-content-between align-items-center gap-5">
-            <div class="flex gap-2">
-                <Button label="Tambah Data" v-show="tombol_add == true" severity="info" size="small" class="py-2" @click="()=>{router.push(rute)}"/>
-                <Button label="Update Data" v-show="tombol_update == true" severity="warning" size="small" class="py-2" @click="()=>{router.push(rute)}"/>
+        <div class="flex align-items-center gap-3">
+            <div class="w-full">
+                <span class="font-semibold uppercase text-xl">Cash</span>
+            </div>
+            <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full justify-content-end align-items-center gap-5">
+                <div class="flex gap-2">
+                    <Button label="Tambah Data" v-show="tombol_add == true" severity="info" size="small" class="py-2" @click="()=>{router.push(rute)}"/>
+                    <Button label="Update Data" v-show="tombol_update == true" severity="warning" size="small" class="py-2" @click="()=>{router.push(rute)}"/>
+                </div>
             </div>
         </div>
 
@@ -67,7 +63,7 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <div v-else>
+        <div v-else class="p-3 border-1 border-round border-gray-300">
             <!-- Table -->
             <list-cash :datas="datas"/>
         </div>

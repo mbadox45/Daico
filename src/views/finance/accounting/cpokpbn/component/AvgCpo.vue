@@ -1,25 +1,31 @@
 <script setup>
     // Vue Component
-    import { ref, computed, onMounted } from 'vue';
+    import { ref, computed, onMounted, defineProps } from 'vue';
     import { FilterMatchMode } from 'primevue/api';
     import moment from 'moment-timezone';
 
     moment.tz.setDefault('Asia/Jakarta');
 
     // API ========================================================================================================================================================
+    import { URL_WEB } from '@/api/DataVariable';
     import {cpo_kpbn} from '@/api/dummy/variable_form.js';
-    import KpbnCpo from '@/api/cpo/KpbnCpo.js';
+    import { cek_token } from "@/api/DataVariable.js";
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+    import {addCpoKpbn_CpoController, updateCpoKpbn_CpoController} from '@/controller/retail/CpoController.js'
+
+    const props = defineProps({
+        datas:{
+            type:Array,
+            default: () => {}
+        }
+    });
 
     // VARIABLE
-    const products = ref();
+    const products = ref([]);
     const filters = ref({global: { value: null, matchMode: FilterMatchMode.CONTAINS }});
-    const bulan = ref(Number(moment().format('M')));
-    const list_bulan = ref([]);
-    const tahun = ref(Number(moment().format('yyyy')));
-    const list_tahun = ref([]);
-    const op = ref();
     const forms = ref({cpo_kpbn})
     const loadingTable = ref(false)
+    const loadingButton = ref(false)
     
     // Dialog Configure
     const visible = ref(false);
@@ -34,61 +40,14 @@
 
     // Function ===================================================================================================================================================
     onMounted(() => {
-        loadTahun();
-        loadBulan();
         loadData()
     });
-
-    const loadBulan = () => {
-        list_bulan.value = []
-        if (tahun.value >= Number(moment().format('yyyy'))) {
-            const month = Number(moment().format('M'))
-            for (let i = 1; i <= month; i++) {
-                const dateString = `2024-${i.toString().padStart(2, '0')}-01`;
-                const monthName = moment(dateString, 'YYYY-MM-DD').format('MMMM');
-                list_bulan.value.push({ id: i, name: monthName });
-            }
-        } else {
-            for (let i = 1; i <= 12; i++) {
-                const dateString = `2024-${i.toString().padStart(2, '0')}-01`;
-                const monthName = moment(dateString, 'YYYY-MM-DD').format('MMMM');
-                list_bulan.value.push({ id: i, name: monthName });
-            }
-        }
-    }
-
-    const loadTahun = () => {
-        const year = Number(moment().format('yyyy'))
-        list_tahun.value = []
-        for (let i = 2020; i <= year; i++) {
-            list_tahun.value.push({ id: i, name: i });
-        }
-    }
 
     const loadData = async() => {
         loadingTable.value = true
         try {
-            products.value = []
-            const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
-            // const dateString = `2024-03-01`;
-            const response = await KpbnCpo.getByDate({tanggal: dateString})
-            const load = response.data;
-            const data = load.data;
-            for (let a = 0; a < data.length; a++) {
-                products.value.push({
-                    id:data[a].id,
-                    tanggal:moment(data[a].tanggal).format('DD-MMM-YYYY'),
-                    create_at:`<div class="flex flex-column gap-1">
-                            <span>${moment(data[a].created_at).format('DD-MMM-YYYY')}</span>
-                            <span>${moment(data[a].created_at).format('HH:mm:ss')}</span>
-                        </div>`,
-                    update_at:`<div class="flex flex-column gap-1">
-                        <span>${moment(data[a].updated_at).format('DD-MMM-YYYY')}</span>
-                        <span>${moment(data[a].updated_at).format('HH:mm:ss')}</span>
-                    </div>`,
-                    avg:formatCurrency(data[a].avg),
-                })
-            }
+            const response = props.datas
+            products.value = response
             loadingTable.value = false
         } catch (error) {
             products.value = []
@@ -107,7 +66,7 @@
             forms.value = {
                 id: data.id,
                 tanggal: moment(data.tanggal).format('YYYY-MM-DD'),
-                avg: currencyToNumber(data.avg),
+                avg: Number(data.avg),
             }
         }
     }
@@ -119,68 +78,49 @@
         }
     }
 
-    const opByPeriod = (event) => {
-        op.value.toggle(event);
-    }
-
-    const loadByPeriod = () => {
-        op.value.toggle();
-        loadData();
-    }
-
-    const formatCurrency = (amount) => {
-        let parts = amount.toString().split('.');
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-        return 'Rp ' + parts.join(',');
-    }
-
-    const currencyToNumber = (money) => {
-        const numericString = money.replace(/[^\d,.]/g, ''); // Removes all non-numeric characters except ',' and '.'
-        const numericValue = parseFloat(numericString.replace('.', ''));
-        return numericValue;
-    }
-
     const saveData = async () => {
         status_form.value
         if (forms.value.tanggal != null && forms.value.avg != null) {
+            loadingButton.value = true
             if (status_form.value == 'add') {
-                const response = await KpbnCpo.addKpbn(forms.value);
-                const load = response.data;
-                if (load.success == true) {
-                    messages.value = [
-                        { severity: 'success', content: 'Data berhasil di tambahkan', id: count.value++ }
-                    ];
+                const response = await addCpoKpbn_CpoController(forms.value);
+                if (response.status == true) {
+                    messages.value = [{ severity: 'success', content: 'Data berhasil di tambahkan', id: count.value++ }];
                     setTimeout(function() {
-                        loadData()
                         visible.value = false
+                        window.location.replace(`${URL_WEB}cpo?active=0`);
                     }, time.value);
                 } else {
-                    messages.value = [
-                        { severity: 'error', content: 'Proses gagal, silahkan hubungi tim IT', id: count.value++ }
-                    ];
+                    if (response.code == 400) {
+                        messages.value = [{ severity: 'error', content: response.msg, id: count.value++ }];
+                    } else {
+                        messages.value = [{ severity: 'error', content: response.msg, id: count.value++ }];
+                    }
                 }
             } else if (status_form.value == 'edit') {
-                const response = await KpbnCpo.updateKpbn(forms.value.id, forms.value);
-                const load = response.data;
-                if (load.success == true) {
+                const response = await updateCpoKpbn_CpoController(forms.value.id, forms.value);
+                if (response.status == true) {
                     messages.value = [
                         { severity: 'success', content: 'Data berhasil di update', id: count.value++ }
                     ];
                     setTimeout(function() {
-                        loadData()
+                        // loadData()
                         visible.value = false
+                        window.location.replace(`${URL_WEB}cpo?active=0`);
                     }, time.value);
                 } else {
-                    messages.value = [
-                        { severity: 'error', content: 'Proses gagal, silahkan hubungi tim IT', id: count.value++ }
-                    ];
+                    if (response.code == 400) {
+                        messages.value = [{ severity: 'error', content: response.msg, id: count.value++ }];
+                    } else {
+                        messages.value = [{ severity: 'error', content: response.msg, id: count.value++ }];
+                    }
                 }
             } else {
                 messages.value = [
                     { severity: 'success', content: 'Data berhasil di hapus', id: count.value++ }
                 ];
             }
+            loadingButton.value = false
         } else {
             messages.value = [
                 { severity: 'warn', content: 'Mohon data diisi dengan lengkap', id: count.value++ }
@@ -193,32 +133,18 @@
     <div class="flex flex-column gap-3 w-full">
         <span class="font-medium text-xl">CPO KPBN</span>
         <div class="flex justify-content-between align-items-center gap-5">
-            <div class="w-full flex gap-2">
+            <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full gap-2">
                 <Button icon="pi pi-plus" severity="info" size="small" @click="formDatabase('add', null)"/>
-                <Button label="Select by Period" outlined severity="secondary" size="small" @click="opByPeriod"/>
-                <OverlayPanel ref="op" :style="{ width: '25rem' }">
-                    <div class="flex flex-column gap-3">
-                        <span class="font-light text-sm">Please select a period</span>
-                        <div class="p-inputgroup p-fluid">
-                            <span class="p-inputgroup-addon bg-white">
-                                <i class="pi pi-calendar"></i>
-                            </span>
-                            <Dropdown v-model="tahun" :options="list_tahun" optionLabel="name" optionValue="id" placeholder="Tahun" @change="loadBulan" checkmark :highlightOnSelect="false" class="w-full" />
-                            <Dropdown v-model="bulan" :options="list_bulan" optionLabel="name" optionValue="id" placeholder="Bulan" checkmark :highlightOnSelect="false" class="w-full" />
-                        </div>
-                        <Button icon="pi pi-check" label="Submit" severity="success" class="w-auto" @click="loadByPeriod"/>
-                    </div>
-                </OverlayPanel>
             </div>
             <div class="p-inputgroup p-fluid">
                 <span class="p-inputgroup-addon bg-white">
                     <i class="pi pi-search"></i>
                 </span>
-                <InputText type="text" placeholder="Search" class="w-full" v-model="filters['global'].value"/>
+                <InputText type="text" placeholder="Search by Date" class="w-full" v-model="filters['global'].value"/>
             </div>
         </div>
         <!-- Dialog -->
-        <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '50rem' }">
+        <Dialog v-model:visible="visible" modal :header="title_dialog" :closable="false" :style="{ width: '50rem' }">
             <transition-group name="p-message" tag="div">
                 <Message v-for="msg of messages" :key="msg.id" :severity="msg.severity">{{ msg.content }}</Message>
             </transition-group>
@@ -231,8 +157,8 @@
                 <InputNumber v-model="forms.avg" :maxFractionDigits="2" inputId="locale-german" locale="de-DE" class="flex-auto"/>
             </div>
             <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-                <Button type="button" label="Save" @click="saveData"></Button>
+                <Button type="button" label="Cancel" severity="secondary" @click="visible = false" :disabled="loadingButton ? true : false"></Button>
+                <Button type="button" :label="loadingButton ? 'Saving...' : 'Save'" @click="saveData" :disabled="loadingButton ? true : false"></Button>
             </div>
         </Dialog>
 
@@ -245,9 +171,9 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" showGridlines="" :rowsPerPageOptions="[5, 10, 20, 50]" dataKey="id" scrollable :globalFilterFields="['tanggal','avg']">
-            <template #empty> No customers found. </template>
-            <template #loading> Loading customers data. Please wait. </template>
+        <DataTable v-else v-model:filters="filters" :value="products" paginator :rows="10" showGridlines="" dataKey="id" scrollable :globalFilterFields="['tanggal','avg']">
+            <template #empty> No avg cpo kpbn found. </template>
+            <template #loading> Loading avg cpo kpbn data. Please wait. </template>
             <Column field="tanggal" header="Date" style="min-width: 8rem;">
                 <template #body="{ data }">
                     <strong class="text-sm">{{ data.tanggal }}</strong>
@@ -261,21 +187,25 @@
                 </template>
                 <template #body="{ data }">
                     <div class="flex justify-content-end">
-                        <span>{{ data.avg }}</span>
+                        <span>{{ formatCurrency(Number(data.avg).toFixed(2)) }}</span>
                     </div>
                 </template>
             </Column>
             <Column field="tanggal" header="Created At" style="min-width: 4rem;">
                 <template #body="{ data }">
-                    <div class="text-sm" v-html="data.create_at"></div>
+                    <div class="text-sm">
+                        <span>{{ moment(data.created_at).format('YYYY-MM-DD  HH:mm:ss') }}</span>
+                    </div>
                 </template>
             </Column>
             <Column field="tanggal" header="Updated At" style="min-width: 4rem;">
                 <template #body="{ data }">
-                    <div class="text-sm" v-html="data.update_at"></div>
+                    <div class="text-sm">
+                        <span>{{ moment(data.updated_at).format('YYYY-MM-DD  HH:mm:ss') }}</span>
+                    </div>
                 </template>
             </Column>
-            <Column header="" style="min-width: 10px;">
+            <Column header="" style="min-width: 10px;" v-if="cek_token != null">
                 <template #body="{ data }">
                     <div class="flex justify-content-end gap-3">
                         <button @click="formDatabase('edit', data)" class="bg-transparent text-sm border-none border-round text-yellow-500"><i class="pi pi-pencil"></i></button>

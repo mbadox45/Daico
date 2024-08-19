@@ -3,12 +3,13 @@ import { onMounted, ref } from 'vue';
 
 import AppMenuItem from './AppMenuItem.vue';
 
+import { cek_token } from "@/api/DataVariable.js";
+
 // Menu
-import {akuntansi, produksi, logistik, marketing, sourcing, view} from '@/api/MenuBar.js';
+import {akuntansi} from '@/api/MenuBar.js';
 
 const payload = ref(JSON.parse(localStorage.getItem('payload')));
 const token = localStorage.getItem('usertoken');
-const roles = localStorage.getItem('roles');
 
 const model = ref([]);
 
@@ -20,19 +21,7 @@ onMounted(() => {
 
 const Menu = () => {
     // console.log(roles)
-    if (roles == 'akunting') {
-        model.value = akuntansi;
-    } else if (roles == 'produksi') {
-        model.value = produksi;
-    } else if (roles == 'logistik') {
-        model.value = logistik;
-    } else if (roles == 'marketing') {
-        model.value = marketing;
-    } else if (roles == 'sourcing') {
-        model.value = sourcing;
-    } else {
-        model.value = view
-    }
+    model.value = akuntansi;
 }
 
 const load = () => {
@@ -45,10 +34,10 @@ const load = () => {
         <li class="mb-3 text-center">
             <img src="/layout/inl.png" alt="Prime Blocks" class="w-6 mt-3" />
         </li>
-        <li class="text-center">
+        <li class="text-center" v-if="cek_token != null">
             <strong>{{ payload.name }}</strong>
         </li>
-        <li class="text-center mb-5">
+        <li class="text-center mb-5" v-if="cek_token != null">
             <span>{{ payload.email }}</span>
         </li>
         <Divider class="my-5" />

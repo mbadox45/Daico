@@ -6,7 +6,7 @@ services:
             context: "."
         container_name: daico_fe-app
         ports:
-            - 8090:8090
+            - 8090:8481
         networks:
             backend:
                 aliases:

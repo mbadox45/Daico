@@ -1,0 +1,17 @@
+version: "4.3"
+
+services:
+    daico_fe-app:
+        build:
+            context: "."
+        container_name: daico_fe-app
+        ports:
+            - 8090:8090
+        networks:
+            backend:
+                aliases:
+                    - app
+
+networks:
+    backend:
+        name: daico_fe-network

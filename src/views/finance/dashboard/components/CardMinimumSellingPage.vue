@@ -5,20 +5,17 @@
 
     // Controller
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+    import {minimumSellingPrice_DashboardController, nilaiKurs_DashboardController} from '@/controller/dashboard/DashboardController2.js';
 
 
     // Variable
     const props = defineProps({
-        tanggal:{
-            type:String
-        },
-        datas:{
+        sell:{
             type:Array,
             default: () => {}
         }
     });
 
-    const days = props.tanggal
     const retail = ref([])
     const bulky = ref([])
     const loadingData = ref(false)
@@ -26,20 +23,17 @@
     const coloring = ref(["red", "green", "gray", "teal", "yellow", "blue", "orange"])
 
     // Function
-    const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
-    watch(() => props.datas, (newVal) => {loadProduct(newVal)});
-
+    
     onMounted(() => {
-        loadProduct(props.datas)
+        loadProduct()
     });
-
-
-    const loadProduct = async(data) => {
+    
+    
+    const loadProduct = async() => {
         loadingData.value = true
         try {
-            const response = data
-            bulky.value = response.selling_bulk
-            retail.value = response.selling_retail
+            bulky.value = await calculationGPM(props.sell)
+            retail.value = await calculationGPMRetail(props.sell)
             loadingData.value = false
         } catch (error) {
             bulky.value = []
@@ -47,13 +41,69 @@
             loadingData.value = false
         }
     }
-
-    const onInputData = async(e) => {
-        const val = e.value
-        if (val == null) {
-            gpm.value = 0
+    
+    const calculationGPM = async(data) => {
+        try {
+            const response = await minimumSellingPrice_DashboardController(data)
+            const kurs = await nilaiKurs_DashboardController(data);
+            const mandiri = kurs == null ? 0 : Number(kurs.mandiri) == 0 ? 0 : Number(kurs.mandiri)
+            const bulk = response.bulky
+            const list = []
+            for (let i = 0; i < bulk.length; i++) {
+                const loco = bulk[i].rp_kg == 0 || bulk[i].rp_kg == null ? 0 : bulk[i].rp_kg * (1 + (gpm.value / 100));
+                const loco_usd = mandiri == 0 ? 0 : loco / mandiri * 1000
+                let dmo = 0
+                if (bulk[i].name.toLowerCase().includes('rbd olein') || bulk[i].name.toLowerCase().includes('rbdpo')) {
+                    dmo = 212-79
+                } else if (bulk[i].name.toLowerCase().includes('rbd stearin')) {
+                    dmo = 290-79
+                } else {
+                    dmo = 299-81
+                }
+                const fob = loco + dmo
+                const fob_usd = mandiri == 0 ? 0 : fob / mandiri * 1000
+                list.push({
+                    name: bulk[i].name,
+                    items : [
+                        {name: 'Loco', value_idr: loco, value_usd: loco_usd},
+                        {name: 'FOB (DMO)', value_idr: fob, value_usd: fob_usd},
+                    ]
+                })
+            }
+            return list
+        } catch (error) {
+            return []
         }
+
     }
+
+    const calculationGPMRetail = async(data) => {
+        try {
+            const response = await minimumSellingPrice_DashboardController(data)
+        //     const kurs = await nilaiKurs_DashboardController(data);
+        //     const mandiri = kurs == null ? 0 : Number(kurs.mandiri) == 0 ? 0 : Number(kurs.mandiri)
+            const produk = response.retail
+            const list = []
+            for (let i = 0; i < produk.length; i++) {
+                const rp_kemasan = produk[i].rp_kg * (1 + (Number(gpm.value) / 100))
+                const rp_box = produk[i].rp_box * (1 + (Number(gpm.value) / 100))
+                const rp_ppn = produk[i].rp_ppn * (1 + (Number(gpm.value) / 100))
+                list.push({
+                    name: produk[i].name,
+                    rp_kemasan: formatCurrency(Number(rp_kemasan).toFixed(0)),
+                    rp_box: formatCurrency(Number(rp_box).toFixed(0)),
+                    rp_ppn: formatCurrency(Number(rp_ppn).toFixed(0)),
+                })
+            }
+            return list
+            // return response;
+        } catch (error) {
+            return []
+        }
+
+    }
+
+    watch(() => props.sell, loadProduct, { immediate: true });
 
 </script>
 <template>
@@ -62,10 +112,11 @@
             <span class="text-sm md:text-xl w-full">MINIMUM SELLING PRICE (EXCL. LEVY DUTY) --> GPM {{ gpm }}% Base On CPO Olah INL</span>
             <div class="w-full md:w-3">
                 <div class="p-inputgroup p-fluid">
-                    <span class="p-inputgroup-addon bg-red-600">
-                        <i class="pi pi-percentage text-white"></i>
+                    <span class="p-inputgroup-addon ">
+                        <i class="pi pi-percentage text-red-500"></i>
                     </span>
-                    <InputNumber v-model="gpm" placeholder="GPM Value" :min="0" :max="100" class="" @input="onInputData"/>
+                    <InputNumber v-model="gpm" placeholder="GPM Value" :min="0" :max="100" class=""/>
+                    <Button icon="pi pi-save" severity="danger" @click="loadProduct"/>
                 </div>
             </div>
         </div>
@@ -103,7 +154,7 @@
                             </div>
                         </template>
                         <template #body="{data}"> 
-                            <small class="font-medium">{{ data.nama }}</small>
+                            <small class="font-medium">{{ data.name }}</small>
                         </template>
                     </Column>
                     <Column field="value">
@@ -114,7 +165,7 @@
                         </template>
                         <template #body="{data}">
                             <div class="w-full flex justify-content-end">
-                                <small class="font-medium">{{ formatCurrency(Number(data.value).toFixed(0)) }}</small>
+                                <small class="font-medium">{{ data.rp_kemasan }}</small>
                             </div>
                         </template>
                     </Column>
@@ -126,7 +177,7 @@
                         </template>
                         <template #body="{data}">
                             <div class="w-full flex justify-content-end">
-                                <small class="font-medium">{{ formatCurrency(Number(data.value).toFixed(0)) }}</small>
+                                <small class="font-medium">{{ data.rp_box }}</small>
                             </div>
                         </template>
                     </Column>
@@ -138,7 +189,7 @@
                         </template>
                         <template #body="{data}">
                             <div class="w-full flex justify-content-end">
-                                <small class="font-medium">{{ formatCurrency(Number(data.value).toFixed(0)) }}</small>
+                                <small class="font-medium">{{ data.rp_ppn }}</small>
                             </div>
                         </template>
                     </Column>

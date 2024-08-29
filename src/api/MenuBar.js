@@ -1,7 +1,10 @@
 import { cek_token } from "@/api/DataVariable.js";
 
 export const akuntansi = [
-    { label: 'Home', items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-th-large', to: `${cek_token != null ? '/' : '/dashboard'}` }] },
+    { label: 'Dashboard', items: [
+        { label: 'Main Dashboard', icon: 'pi pi-fw pi-desktop', to: `${cek_token != null ? '/' : '/dashboard'}` },
+        { label: 'Costing HPP', icon: 'pi pi-fw pi-desktop', to: `${cek_token != null ? '/viewer' : '/costing-hpp'}` }
+    ] },
     {
         label: 'Management',
         items: [
@@ -9,14 +12,14 @@ export const akuntansi = [
                 { label: 'Kurs Mandiri', icon: 'pi pi-fw pi-dollar', to: `${cek_token != null ? '' : '/viewer'}/kurs-mandiri` },
                 { label: 'Cash', icon: 'pi pi-fw pi-money-bill', to: `${cek_token != null ? '' : '/viewer'}/cash` },
             ]},
-            { label: 'Retail', icon: 'pi pi-fw pi-shopping-cart', items:[
+            { label: 'Retail', icon: 'pi pi-fw pi-box', items:[
                 { label: 'Target', icon: 'pi pi-fw pi-chart-line', to: `${cek_token != null ? '' : '/viewer'}/target` },
                 { label: 'CPO', icon: 'pi pi-fw pi-filter-fill', to: `${cek_token != null ? '' : '/viewer'}/cpo` },
-                { label: 'Market', icon: 'pi pi-fw pi-shopping-cart', to: `${cek_token != null ? '' : '/viewer'}/prop-cost` },
+                { label: 'Proportion Cost', icon: 'pi pi-fw pi-shopping-cart', to: `${cek_token != null ? '' : '/viewer'}/prop-cost` },
                 { label: 'Average Price', icon: 'pi pi-fw pi-dollar', to: `${cek_token != null ? '' : '/viewer'}/avg-price` },
                 { label: 'Stock', icon: 'pi pi-fw pi-shopping-cart', to: `${cek_token != null ? '' : '/viewer'}/stock` },
             ]},
-            { label: 'Production', icon: 'pi pi-fw pi-building', items:[
+            { label: 'Production', icon: 'pi pi-fw pi-sitemap', items:[
                 { label: 'Cost Production', icon: 'pi pi-fw pi-dollar', to: `${cek_token != null ? '' : '/viewer'}/cost-prod` },
                 { label: 'Detail Allocation', icon: 'pi pi-fw pi-sitemap', to: `${cek_token != null ? '' : '/viewer'}/det-alloc` },
                 { label: 'Costing HPP', icon: 'pi pi-fw pi-list', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
@@ -27,9 +30,9 @@ export const akuntansi = [
     {
         label: 'Configuration',
         items: [
-            { label: 'General Leager', icon: 'pi pi-fw pi-shield', to: `${cek_token != null ? '' : '/viewer'}/general-leager` },
+            { label: 'General Ledger', icon: 'pi pi-fw pi-list', to: `${cek_token != null ? '' : '/viewer'}/general-leager` },
             { label: 'Database', icon: 'pi pi-fw pi-database', to: `${cek_token != null ? '' : '/viewer'}/database` },
-            { label: 'Master Data', icon: 'pi pi-fw pi-server', 
+            { label: 'Master Data', icon: 'pi pi-fw pi-folder-open', 
                 items:[
                     { label: 'Allocation', to: '/master-data/allocation' },
                     { label: 'Location', to: '/master-data/location' },

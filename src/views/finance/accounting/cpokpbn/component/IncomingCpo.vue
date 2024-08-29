@@ -83,7 +83,8 @@
 
     const saveData = async () => {
         status_form.value
-        if (forms.value.tanggal != null && forms.value.harga != null && forms.value.qty != null && forms.value.qty_out != null) {
+        forms.value.qty_out = 0
+        if (forms.value.tanggal != null && forms.value.harga != null && forms.value.qty != null) {
             loadingButton.value = true
             if (status_form.value == 'add') {
                 const response = await addCpoIncomming_CpoController(forms.value);
@@ -157,16 +158,7 @@
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="avg" class="font-semibold w-6rem">Qty</label>
-                <div class="flex-auto flex gap-2">
-                    <div class="flex-column flex gap-1 w-full">
-                        <label for="qty" class="font-medium text-xs w-6rem">QTY Terima</label>
-                        <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Terima" class="w-full" />
-                    </div>
-                    <div class="flex-column flex gap-1 w-full">
-                        <label for="qty" class="font-medium text-xs w-6rem">QTY Kirim</label>
-                        <InputNumber v-model="forms.qty_out" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Kirim" class="w-full" />
-                    </div>
-                </div>
+                <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Terima" class="flex-auto" />
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Harga (Rp)</label>
@@ -203,17 +195,17 @@
                     </Column>
                 </Row>
                 <Row>
-                    <Column sortable field="qty">
+                    <!-- <Column sortable field="qty">
                         <template #header>
                             <div class="flex justify-content-end w-full">
                                 <span>Qty Out</span>
                             </div>
                         </template>
-                    </Column>
+                    </Column> -->
                     <Column sortable field="qty">
                         <template #header>
                             <div class="flex justify-content-end w-full">
-                                <span>Qty In</span>
+                                <span>Qty</span>
                             </div>
                         </template>
                     </Column>
@@ -241,13 +233,13 @@
                     </div>
                 </template>
             </Column>
-            <Column field="qty">
+            <!-- <Column field="qty">
                 <template #body="{ data }">
                     <div class="flex justify-content-end w-full">
                         <span>{{ formatCurrency(Number(data.qty_out).toFixed(2)) }}</span>
                     </div>
                 </template>
-            </Column>
+            </Column> -->
             <Column field="qty">
                 <template #body="{ data }">
                     <div class="flex justify-content-end w-full" >

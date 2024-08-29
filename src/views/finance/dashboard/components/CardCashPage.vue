@@ -5,38 +5,35 @@
 
     // Controller
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+    // import {nilaiCash_DashboardController} from '@/controller/dashboard/DashboardController2.js';
+    import {RekeningUnitKerja} from '@/controller/accounting/RekeningUnitController.js'
 
 
     // Variable
     const props = defineProps({
-        tanggal:{
-            type:String
-        },
-        datas:{
+        cash:{
             type:Array,
             default: () => {}
         }
     });
 
-    const days = props.tanggal
     const load_data = ref([])
     const total_cash = ref(0)
     const total_cash_on_hand = ref(0)
     const loadingData = ref(false)
 
     // Function
-    const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
-    watch(() => props.datas, (newVal) => {loadProduct(newVal)});
+    watch(() => props.cash, (newVal) => {loadProduct(newVal)});
 
     onMounted(() => {
-        loadProduct(props.datas)
+        loadProduct(props.cash)
     });
 
 
     const loadProduct = async(data) => {
         loadingData.value = true
         try {
-            const response = data.rekening
+            const response = await RekeningUnitKerja();
             load_data.value = response.list_on_hand
             total_cash.value = response.total
             total_cash_on_hand.value = response.total_on_hand
@@ -60,10 +57,8 @@
             </svg>
             <span>Saldo Cash</span>
         </span>
-        <div v-if="load_data < 1" class="flex h-10rem align-items-center">
-            <div class="w-full">
-                <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
-            </div>
+        <div v-if="loadingData == true" class="w-full h-15rem flex align-items-center justify-content-center">
+            <ProgressSpinner />
         </div>
         <div v-else class="flex flex-column gap-3 w-full">
             <DataTable :value="load_data" class="text-sm" >

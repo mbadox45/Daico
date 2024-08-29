@@ -6,6 +6,8 @@
     import { useRouter, useRoute } from 'vue-router';
 
     // API
+    import {loadAll_TankMaster} from '@/controller/master_data/TankController.js';
+    import {loadTable_StockBulkyController} from '@/controller/retail/StockBulkyController.js'
     import {addStockBulky, updateStockBulky, loadDataBulky} from '@/views/load_data/stock.js'
     import {loadLocation, loadTank, loadBulky, loadProduct, loadSubProduct} from '@/views/load_data/master_config.js'
     import {productable_type} from '@/api/DummyData.js'
@@ -22,7 +24,7 @@
     const list_type = ref(productable_type)
     const location = ref(null)
     const forms = ref(
-        {id: null, tanggal: moment().format('YYYY-MM-DD'), tank_id: null, location: null, productable_type: null, productable_id: null, stok_mt: null, stok_exc_btm_mt: null, umur: null, remarks: null}
+        [{id: null, tanggal: moment().format('YYYY-MM-DD'), tank_id: null, location: null, productable_type: null, productable_id: null, stok_mt: null, stok_exc_btm_mt: null, umur: null, remarks: null}]
     )
 
     onMounted(() => {
@@ -31,12 +33,41 @@
 
     const loadData = async() => {
         loadingTable.value = true
-        try {
-            const tank = await listTank()
-            list_tank.value = tank
+        await loadForms()
+        // await listProduct();
+        // try {
+        //     // const tank = await listTank()
+        //     const tank = await loadAll_TankMaster()
+        //     console.log(tank)
+        //     list_tank.value = tank
+        //     loadingTable.value = false
+        // } catch (error) {
             loadingTable.value = false
-        } catch (error) {
-            loadingTable.value = false
+        // }
+    }
+
+    const loadForms = async() => {
+        const tank = await loadAll_TankMaster();
+        const data = await loadTable_StockBulkyController()
+        const list = []
+        if (tank != null) {
+            for (let i = 0; i < tank.length; i++) {
+                const load = data.find(item => item.tank_id == tank[i].id)
+                list.push({
+                    id: load.id,
+                    tanggal: load.tanggal,
+                    tank_id: tank[i].id,
+                    tank_name: tank[i].name,
+                    capacity: tank[i].capacity,
+                    productable_type: load.productable_type,
+                    productable_id: load.productable_id,
+                    stok_mt: load.stok_mt,
+                    stok_exc_btm_mt: load.stok_exc_btm_mt,
+                    umur: load.umur,
+                    remarks: load.remarks,
+                })
+            }
+            forms.value = list
         }
     }
 
@@ -85,7 +116,7 @@
     const listProduct = async() => {
         loadingProduct.value = true
         let data = []
-        switch (forms.value.productable_type) {
+        switch (forms.value[i].productable_type) {
             case "bulk":
                 const bulk = await loadBulky()
                 const kecuali_bulk = bulk.filter(item => !item.name.includes('Olein'))
@@ -128,28 +159,6 @@
         loadingProduct.value = false
         list_produk.value = data;
     }
-    
-    // const loadDataRetail = async() => {
-    //     loadingTable.value = true
-    //     const retail = await loadRetail()
-    //     const list_retail = retail.find(item => item.location_id == location.value)
-    //     const items = list_retail.items
-    //     forms.value = []
-    //     for (let i = 0; i < items.length; i++) {
-    //         forms.value.push({
-    //             id: items[i].id,
-    //             produk: `${items[i].produk}`,
-    //             productable_id: items[i].productable_id,
-    //             productable_type: items[i].productable_type,
-    //             tanggal: moment().format('YYYY-MM-DD'),
-    //             sub_product: items[i].sub_product,
-    //             productable_type: items[i].product_type,
-    //             location_id: list_retail.location_id,
-    //             ctn: null,
-    //         })
-    //     }
-    //     loadingTable.value = false
-    // }
 
     const postData = async() => {
         loadingTable.value = true
@@ -228,8 +237,8 @@
 
 </script>
 <template>
-    <Toast />
     <div class="card shadow-3 flex flex-column gap-3">
+        <Toast />
         <div class="flex justify-content-between align-items-center gap-2">
             <span class="font-medium text-xl uppercase">Form Stock Bulky</span>
             <div class="flex gap-2">
@@ -245,37 +254,35 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <div v-else class="flex flex-column gap-5">
-            <!-- <div class="grid" v-for="(item, index) in forms" :key="index"> -->
-            <div class="grid">
-                <div class="px-3 col-6 flex flex-column gap-2">
-                    <label>Tank & Location</label>
-                    <Dropdown v-model="forms.tank_id" filter :options="list_tank" optionLabel="name" optionValue="id" placeholder="Select a Tank" class="w-full md:w-56" @change="listBulky()"/>
+        <div v-else class="flex flex-column gap-4">
+            <div class="flex-column flex gap-2 p-3 border-round border-1 border-gray-400" v-for="(item, index) in forms" :key="index">
+            <!-- <div class="flex-column flex gap-2"> -->
+                <div class="w-full text-xs font-medium flex justify-content-between font-italic"><span>TANK - {{ item.tank_name }}</span> <span>Capacity : {{ item.capacity }}</span></div>
+                <div class="w-full flex gap-3">
+                    <div class="w-full">
+                        <label class="font-xs">Product Type <small class="text-red-500 font-bold">*</small></label>
+                        <Dropdown v-model="item.productable_type" :options="list_type" optionLabel="name" optionValue="id" placeholder="Select a Product Type" class="w-full md:w-56" @change="listProduct()"/>
+                    </div>
+                    <div class="w-full">
+                        <label class="font-xs">Product <small class="text-red-500 font-bold">*</small></label>
+                        <Dropdown v-model="item.productable_id" :options="list_produk" optionLabel="name" optionValue="id" placeholder="Select a Product" class="w-full md:w-56"/>
+                    </div>
+                    <div class="w-full">
+                        <label class="font-xs">Stock MT <small class="text-red-500 font-bold">*</small></label>
+                        <InputNumber v-model="item.stok_mt" class="w-full" placeholder="Stock MT" :maxFractionDigits="5" inputId="locale-german" locale="de-DE" />
+                    </div>
+                    <div class="w-full">
+                        <label class="font-xs">Stock <small class="text-red-500 font-bold">*</small></label>
+                        <InputNumber v-model="item.stok_exc_btm_mt" class="w-full" placeholder="Stock" :maxFractionDigits="5" inputId="locale-german" locale="de-DE" />
+                    </div>
+                    <div class="w-full">
+                        <label class="font-xs">Umur <small class="text-red-500 font-bold">*</small></label>
+                        <InputNumber v-model="item.umur" class="w-full" placeholder="Umur" :maxFractionDigits="0" inputId="locale-german" locale="de-DE" />
+                    </div>
                 </div>
-                <div class="px-3 col-3 flex flex-column gap-2">
-                    <label>Product Type</label>
-                    <Dropdown v-model="forms.productable_type" :options="list_type" optionLabel="name" optionValue="id" placeholder="Select a Product Type" class="w-full md:w-56" @change="listProduct()"/>
-                </div>
-                <div class="px-3 col-3 flex flex-column gap-2">
-                    <label>Product</label>
-                    <ProgressBar v-if="loadingProduct == true" mode="indeterminate" style="height: 6px"></ProgressBar>
-                    <Dropdown v-else v-model="forms.productable_id" :options="list_produk" optionLabel="name" optionValue="id" placeholder="Select a Product" class="w-full md:w-56" :disabled="disabled"/>
-                </div>
-                <div class="px-3 col-4 flex flex-column gap-2">
-                    <label>Stock MT</label>
-                    <InputNumber v-model="forms.stok_mt" class="w-full" placeholder="Stock MT" :maxFractionDigits="5" inputId="locale-german" locale="de-DE" />
-                </div>
-                <div class="px-3 col-4 flex flex-column gap-2">
-                    <label>Stock</label>
-                    <InputNumber v-model="forms.stok_exc_btm_mt" class="w-full" placeholder="Stock" :maxFractionDigits="5" inputId="locale-german" locale="de-DE" />
-                </div>
-                <div class="px-3 col-4 flex flex-column gap-2">
-                    <label>Umur</label>
-                    <InputNumber v-model="forms.umur" class="w-full" placeholder="Umur" :maxFractionDigits="0" inputId="locale-german" locale="de-DE" />
-                </div>
-                <div class="px-3 col-12 flex flex-column gap-2">
-                    <label>Remarks</label>
-                    <InputText type="text" v-model="forms.remarks" class="w-full" placeholder="Remarks"/>
+                <div class="w-full">
+                    <label class="font-xs">Umur <small class="text-red-500 font-bold">*</small></label>
+                    <InputText type="text" v-model="item.remarks" class="w-full" placeholder="Remarks"/>
                 </div>
             </div>
         </div>

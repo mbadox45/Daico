@@ -4,37 +4,30 @@
     import moment from 'moment';
 
     // Controller
-    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
-
+    import {nilaiCpo_DashboardController} from '@/controller/dashboard/DashboardController2.js';
 
     // Variable
     const props = defineProps({
-        tanggal:{
-            type:String
-        },
-        datas:{
+        cpo:{
             type:Array,
             default: () => {}
         }
     });
-
-    const days = props.tanggal
     const load_data = ref([])
     const loadingData = ref(false)
 
     // Function
-    const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
-    watch(() => props.datas, (newVal) => {loadProduct(newVal)});
+    watch(() => props.cpo, (newVal) => {loadProduct(newVal)});
 
     onMounted(() => {
-        loadProduct(props.datas)
+        loadProduct(props.cpo)
     });
 
 
     const loadProduct = async(data) => {
         loadingData.value = true
         try {
-            const response = data.cpo
+            const response = await nilaiCpo_DashboardController(data)
             load_data.value = response
             loadingData.value = false
         } catch (error) {
@@ -69,7 +62,7 @@
                     <span class="font-semibold text-gray-400 text-xs md:text-sm">{{item.exp}}</span>
                     <span class="font-semibold text-yellow-600 text-lg md:text-3xl">
                         <!--<span v-if="loadingData == true">.....</span>-->
-                        <span>{{formatCurrency(Number(item.value).toFixed(0))}}</span>
+                        <span>{{item.value}}</span>
                     </span>
                 </div>
             </div>

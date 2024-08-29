@@ -7,12 +7,13 @@
     import DailyDmo from '@/api/target/DailyDmo.js';
     import {loadFrakIv60} from '@/views/load_data/hpp.js'
     import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import {loadControl_CostingHppController} from '@/controller/production/CostingHppController.js'
 
     const props = defineProps({
         // tanggal:{
         //     type:String
         // },
-        datas:{
+        control:{
             type:Array,
             default: () => {}
         }
@@ -21,7 +22,7 @@
     // VARIABLE
     const loadingTable = ref(false)
     const load = ref([])
-    const total = ref({})
+    const total = ref({costing:0, actual:0, selisih:0})
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -31,19 +32,19 @@
     const loadData = async() => {
         loadingTable.value = true
         try {
-            const response = props.datas;
-            const refi = response.find(item => item.name == 'Control')
-            load.value = refi.items
-            total.value = refi.total
-            // console.log(load.value)
+            const response = props.control;
+            const control = await loadControl_CostingHppController(response)
+            load.value = control.control;
+            total.value = control.total
             loadingTable.value = false
         } catch (error) {
-            load.value = {}
+            load.value = []
+            total.value = {costing:0, actual:0, selisih:0}
             loadingTable.value = false
         }
     }
 
-    watch(() => props.datas, loadData, { immediate: true });
+    watch(() => props.control, loadData, { immediate: true });
 
 </script>
 
@@ -74,9 +75,9 @@
                 <tbody class="text-sm font-medium">
                     <tr v-for="(items, index) in load" :key="index">
                         <td>{{items.name}}</td>
-                        <td class="text-right">{{items.value1 == null ? null : Number(items.value1) >= 0 ? formatCurrency(Number(items.value1).toFixed(2)) : `(${formatCurrency((Number(items.value1)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.value2 == null ? null : Number(items.value2) >= 0 ? formatCurrency(Number(items.value2).toFixed(2)) : `(${formatCurrency((Number(items.value2)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.costing}}</td>
+                        <td class="text-right">{{items.actual}}</td>
+                        <td class="text-right">{{items.selisih}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -84,9 +85,9 @@
                 <thead class="text-sm font-medium bg-gray-300">
                     <tr>
                         <th class="underline font-italic text-left" style="width: 50%;">Total</th>
-                        <th class="text-right">{{total.costing == null ? null : Number(total.costing) >= 0 ? formatCurrency(Number(total.costing).toFixed(2)) : `(${formatCurrency((Number(total.costing)*-1).toFixed(2))})`}}</th>
-                        <th class="text-right" style="width: 15%;">{{total.actual == null ? null : Number(total.actual) >= 0 ? formatCurrency(Number(total.actual).toFixed(2)) : `(${formatCurrency((Number(total.actual)*-1).toFixed(2))})`}}</th>
-                        <th class="text-right" style="width: 15%;">{{total.selisih == null ? null : Number(total.selisih) >= 0 ? formatCurrency(Number(total.selisih).toFixed(2)) : `(${formatCurrency((Number(total.selisih)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right">{{total.costing}}</th>
+                        <th class="text-right" style="width: 15%;">{{total.actual}}</th>
+                        <th class="text-right" style="width: 15%;">{{total.selisih}}</th>
                     </tr>
                 </thead>
             </table>

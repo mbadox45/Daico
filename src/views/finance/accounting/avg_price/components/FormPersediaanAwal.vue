@@ -7,8 +7,10 @@
 
     // API
     import {list_product_type} from '@/api/DummyData.js';
-    import {loadProduct, loadSubProduct, loadBulky} from '@/views/load_data/master_config.js';
+    import {loadAll_BulkyMarketMaster} from '@/controller/master_data/BulkyMarketController.js';
+    import {loadAll_SubProductMaster} from '@/controller/master_data/SubProductController.js';
     import {addAvgPrice, updateAvgPrice, forViewAvgPrice} from '@/views/load_data/avg_price.js';
+    import {loadByPeriod_AvgPriceController, loadPersediaanAwal2} from '@/controller/accounting/AvgPriceController.js'
 
     const route = useRoute();
     const router = useRouter();
@@ -40,18 +42,20 @@
 
     const updateData = async () => {
         loadingTable.value = true
+        // console.log('update')
         try {
             const waktu = route.query.tgl
             tgl.value = moment(waktu).format('YYYY-MM');
             const list = await listInput();
-            const avg_price = await forViewAvgPrice(waktu)
-            const response = avg_price.data
-            // console.log(list)
-            // console.log(response)
+            const response = await loadByPeriod_AvgPriceController(waktu);
+
+            const persediaan = await loadPersediaanAwal2(response);
+            const items = persediaan.list
+            console.log(list, items)
             const data = []
             for (let i = 0; i < list.length; i++) {
-                const produk = response.find(item => item.category == list[i].category && item.productable_type == list[i].product_type && item.product == list[i].sub_category )
-                // console.log(produk);
+                const produk = items == null ? null : items.find(item => item.category == list[i].category && item.productable_type == list[i].product_type && item.product == list[i].sub_category )
+                console.log(produk);
                 data.push({
                     id: produk != null ? produk.id :null,
                     tanggal: produk != null ? produk.tanggal :null,
@@ -90,7 +94,7 @@
 
     const listInput = async() => {
         const list = []
-        const bulk = await loadBulky();
+        const bulk = await loadAll_BulkyMarketMaster();
         for (let i = 0; i < bulk.length; i++) {
             if (bulk[i].id == 2 || bulk[i].id == 3 || bulk[i].id == 5) {
                 list.push({
@@ -105,7 +109,7 @@
                 })
             }
         }
-        const sub_product = await loadSubProduct();
+        const sub_product = await loadAll_SubProductMaster();
         const load_sub_product = sub_product.filter(item => item.nama.toLowerCase().includes('kemasan') || item.nama.toLowerCase() === 'bulk')
         for (let i = 0; i < load_sub_product.length; i++) {
             list.push({

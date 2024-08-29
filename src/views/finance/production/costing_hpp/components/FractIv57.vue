@@ -4,15 +4,13 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import DailyDmo from '@/api/target/DailyDmo.js';
-    import {loadFrakIv57} from '@/views/load_data/hpp.js'
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import {loadFrakIV57_CostingHppController} from '@/controller/production/CostingHppController.js'
 
     const props = defineProps({
         // tanggal:{
         //     type:String
         // },
-        datas:{
+        dummy57:{
             type:Array,
             default: () => {}
         }
@@ -20,14 +18,19 @@
 
     // VARIABLE
     const loadingTable = ref(false)
-    const load = ref({})
-    const proportion1 = ref({})
-    const proportion_packing = ref({})
-    const direct = ref([])
-    const in_direct = ref([])
-    const packaging = ref([])
-    const total = ref({})
-    const total_packaging = ref({})
+    const list_main = ref([])
+    const list_direct = ref([])
+    const list_indirect = ref([])
+    const list_packaging = ref([])
+    const total_frak = ref({
+        total_value: 0,
+        rp_kg: 0,
+    })
+    const total_pack = ref({
+        total_value: 0,
+        rp_kg: 0,
+    })
+    const list_allocation = ref([])
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -37,18 +40,15 @@
     const loadData = async() => {
         loadingTable.value = true
         try {
-            const response = props.datas;
-            const refi = response.find(item => item.name == 'Fraksinasi (IV-57)')
-            const data = await loadFrakIv57(refi)
-            proportion1.value = refi.proportion1
-            proportion_packing.value = refi.proportion_packing
-            load.value = data
-            direct.value = refi.direct
-            in_direct.value = refi.in_direct
-            packaging.value = refi.packaging
-            total.value = refi.total
-            total_packaging.value = refi.total_packaging
-            // console.log(load.value)
+            const response = props.dummy57;
+            const frak = await loadFrakIV57_CostingHppController(response);
+            list_main.value = frak.main
+            list_direct.value = frak.direct
+            list_indirect.value = frak.indirect
+            list_allocation.value = frak.allocation
+            list_packaging.value = frak.packaging
+            total_frak.value = frak.total_frak
+            total_pack.value = frak.total_pack
             loadingTable.value = false
         } catch (error) {
             load.value = {}
@@ -56,7 +56,7 @@
         }
     }
 
-    watch(() => props.datas, loadData, { immediate: true });
+    watch(() => props.dummy57, loadData, { immediate: true });
 
 </script>
 
@@ -79,53 +79,11 @@
                     <span class="w-full text-center">Total QTY</span>
                     <span class="w-full text-center">Rendement (%)</span>
                 </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">RBDPO Consume</span>
-                    <span class="w-full text-right font-bold"></span>
-                    <small class="w-full text-right font-bold">{{ load.rbdpo }}</small>
-                    <small class="w-full text-right font-bold"></small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">RBD Olein IV-57</span>
-                    <small class="w-full text-right font-bold"></small>
-                    <small class="w-full text-right font-bold">{{ load.rbdo }}</small>
-                    <small class="w-full text-right font-bold">{{ load.rend_rbdo }}%</small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">RBD Stearin</span>
-                    <small class="w-full text-right font-bold"></small>
-                    <small class="w-full text-right font-bold">{{ load.rbds }}</small>
-                    <small class="w-full text-right font-bold">{{ load.rend_rbds }}%</small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">INL - 250ml</span>
-                    <span class="w-full text-right font-bold gap-2 flex justify-content-between"><small>{{ load.prop1 }}</small> <small>{{ load.prop250 }}%</small></span>
-                    <small class="w-full text-right font-bold">{{ load.qty_250L }}</small>
-                    <small class="w-full text-right font-bold">{{ load.rend_250 }}%</small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">INL - 450ml</span>
-                    <span class="w-full text-right font-bold gap-2 flex justify-content-between"><small>{{ load.prop1 }}</small> <small>{{ load.prop450 }}%</small></span>
-                    <small class="w-full text-right font-bold">{{ load.qty_450L }}</small>
-                    <small class="w-full text-right font-bold">{{ load.rend_450 }}%</small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">INL - 900ml</span>
-                    <span class="w-full text-right font-bold gap-2 flex justify-content-between"><small>{{ load.prop1 }}</small> <small>{{ load.prop900 }}%</small></span>
-                    <small class="w-full text-right font-bold">{{ load.qty_900L }}</small>
-                    <small class="w-full text-right font-bold">{{ load.rend_900 }}%</small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">INL - 1800ml</span>
-                    <span class="w-full text-right font-bold gap-2 flex justify-content-between"><small>{{ load.prop1 }}</small> <small>{{ load.prop1800 }}%</small></span>
-                    <small class="w-full text-right font-bold">{{ load.qty_1800L }}</small>
-                    <small class="w-full text-right font-bold">{{ load.rend_1800 }}%</small>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-bold font-italic">Additional</span>
-                    <span class="w-full text-right font-bold gap-2 flex justify-content-between"></span>
-                    <small class="w-full text-right font-bold">{{ load.additional }}</small>
-                    <span class="w-full text-right font-bold"></span>
+                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1" v-for="(item, index) in list_main" :key="index">
+                    <span class="w-full font-medium">{{item.name}}</span>
+                    <span class="w-full text-right font-bold gap-2 flex justify-content-between"><small>{{ item.proportion }}</small> <small>{{ item.proportion2 }}</small></span>
+                    <small class="w-full text-right font-bold">{{ item.qty }}</small>
+                    <small class="w-full text-right font-bold">{{ item.rendement }}</small>
                 </div>
             </div>
         </div>
@@ -141,31 +99,31 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr v-for="(items, index) in direct" :key="index">
+                    <tr v-for="(items, index) in list_direct" :key="index">
                         <td>{{items.name}}</td>
-                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.proportion}}</td>
+                        <td class="text-right">{{items.proportion2}}</td>
+                        <td class="text-right">{{items.total_value}}</td>
+                        <td class="text-right">{{items.rp_kg}}</td>
                     </tr>
                 </tbody>
             </table>
             <table>
                 <thead class="text-sm font-medium">
                     <tr >
-                        <th class="underline font-italic text-left" style="width: 50%;">Packaging Cost :</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
+                        <th class="underline font-italic text-left" style="width: 50%;">In-Direct Cost :</th>
+                        <th class="underline font-italic text-left" colspan="2"></th>
+                        <th class="" style="width: 15%;"></th>
+                        <th class="" style="width: 15%;"></th>
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr v-for="(items, index) in in_direct" :key="index">
+                    <tr v-for="(items, index) in list_indirect" :key="index">
                         <td>{{items.name}}</td>
-                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.proportion}}</td>
+                        <td class="text-right">{{items.proportion2}}</td>
+                        <td class="text-right">{{items.total_value}}</td>
+                        <td class="text-right">{{items.rp_kg}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -174,8 +132,8 @@
                     <tr >
                         <th class="underline font-italic text-left" style="width: 50%;">Total Cost Fractionation IV-57</th>
                         <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;">{{total.cost == null ? null : Number(total.cost) >= 0 ? formatCurrency(Number(total.cost).toFixed(2)) : `(${formatCurrency((Number(total.cost)*-1).toFixed(2))})`}}</th>
-                        <th class="text-right" style="width: 15%;">{{total.harga == null ? null : Number(total.harga) >= 0 ? formatCurrency(Number(total.harga).toFixed(2)) : `(${formatCurrency((Number(total.harga)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right" style="width: 15%;">{{total_frak.total_value}}</th>
+                        <th class="text-right" style="width: 15%;">{{total_frak.rp_kg}}</th>
                     </tr>
                 </thead>
             </table>
@@ -189,12 +147,12 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr v-for="(items, index) in packaging" :key="index">
+                    <tr v-for="(items, index) in list_packaging" :key="index">
                         <td>{{items.name}}</td>
-                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.proportion}}</td>
+                        <td class="text-right">{{items.proportion2}}</td>
+                        <td class="text-right">{{items.total_value}}</td>
+                        <td class="text-right">{{items.rp_kg}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -203,8 +161,8 @@
                     <tr>
                         <th class="underline font-italic text-left" style="width: 50%;">Total Cost Fractionation IV-57 + Packaging</th>
                         <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;">{{total_packaging.cost == null ? null : Number(total_packaging.cost) >= 0 ? formatCurrency(Number(total_packaging.cost).toFixed(2)) : `(${formatCurrency((Number(total_packaging.cost)*-1).toFixed(2))})`}}</th>
-                        <th class="text-right" style="width: 15%;">{{total_packaging.harga == null ? null : Number(total_packaging.harga) >= 0 ? formatCurrency(Number(total_packaging.harga).toFixed(2)) : `(${formatCurrency((Number(total_packaging.harga)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right" style="width: 15%;">{{total_pack.total_value}}</th>
+                        <th class="text-right" style="width: 15%;">{{total_pack.rp_kg}}</th>
                     </tr>
                 </thead>
             </table>
@@ -216,41 +174,12 @@
                         <th class="text-right" style="width: 15%;"></th>
                         <th class="text-right" style="width: 15%;"></th>
                     </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">RBD Olein IV-57</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">RBD Stearin</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">INL - 250ml</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">INL - 450ml</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">INL - 900ml</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                    </tr>
-                    <tr>
-                        <th class=" font-italic text-right" colspan="3" style="width: 50%;">INL - 1800ml</th>
-                        <th class="" colspan="2"></th>
-                        <th class="text-right" style="width: 15%;"></th>
-                        <th class="text-right" style="width: 15%;"></th>
+                    <tr v-for="(items, index) in list_allocation" :key="index">
+                        <th class="text-right font-medium font-italic" colspan="3">{{items.name}}</th>
+                        <th></th>
+                        <th class="text-right font-medium font-italic">{{items.proportion}}</th>
+                        <th class="text-right font-medium">{{items.total_value}}</th>
+                        <th class="text-right font-medium">{{items.rp_kg}}</th>
                     </tr>
                 </thead>
             </table>

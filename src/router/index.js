@@ -63,7 +63,7 @@ const router = createRouter({
                 {
                     path: '/viewer/avg-price',
                     name: 'viewer - average price',
-                    component: () => import('@/views/finance/accounting/avg_price/Index.vue'),
+                    component: () => import('@/views/finance/accounting/avg_price/Report.vue'),
                     meta:{
                         guestOnly:true
                     }
@@ -105,6 +105,23 @@ const router = createRouter({
                     path: '/viewer/costing-hpp',
                     name: 'viewer - Costing HPP',
                     component: () => import('@/views/finance/production/costing_hpp/Index.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                // General Ledger     ====================================
+                {
+                    path: '/viewer/database',
+                    name: 'viewer - database',
+                    component: () => import('@/views/finance/config/DatabasePage.vue'),
+                    meta:{
+                        guestOnly:true
+                    }
+                },
+                {
+                    path: '/viewer/general-leager',
+                    name: 'viewer - general leager',
+                    component: () => import('@/views/finance/config/GlPage.vue'),
                     meta:{
                         guestOnly:true
                     }
@@ -229,7 +246,7 @@ const router = createRouter({
                 {
                     path: '/avg-price',
                     name: 'average price',
-                    component: () => import('@/views/finance/accounting/avg_price/Index.vue'),
+                    component: () => import('@/views/finance/accounting/avg_price/Report.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

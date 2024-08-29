@@ -4,6 +4,7 @@
     import moment from 'moment';
 
     // API
+    import {nilaiCpoOutstanding_DashboardController, loadUpdateMarket_DashboardController} from '@/controller/dashboard/DashboardController2.js';
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     // Variable
@@ -11,13 +12,12 @@
         tanggal:{
             type:String
         },
-        datas:{
+        rout:{
             type:Array,
             default: () => {}
         }
     });
 
-    const days = props.tanggal
     const list_market = ref([]);
     const load_market = ref([]);
     const list_cpo = ref([]);
@@ -29,34 +29,34 @@
     const dates = ref(props.tanggal)
 
     // Function
-    const date = computed(()=> moment(props.tanggal).format('DD MMMM YYYY'))
-    watch(() => [props.tanggal, props.datas], (newVal) => {
-        loadCpoAndRouters(newVal)
-        dates.value = newVal[0]
-    });
-
+    
     onMounted(() => {
-        loadCpoAndRouters([props.tanggal,props.datas])
+        loadCpoAndRouters()
     });
 
-    const loadCpoAndRouters = async(value) => {
-        const response = value[1];
-        const outstanding = response.outstanding;
-        tot_harga.value = outstanding.tot_harga;
-        tot_qty.value = outstanding.tot_qty;
-        tot_value.value = outstanding.tot_value;
-        list_cpo.value = outstanding.list;
-
+    const loadCpoAndRouters = async() => {
+        const response = props.rout;
+        const outStanding = await nilaiCpoOutstanding_DashboardController(response)
+        tot_harga.value = outStanding.tot_harga;
+        tot_qty.value = outStanding.tot_qty;
+        tot_value.value = outStanding.tot_value;
+        list_cpo.value = outStanding.list;
+        // list_market.value =  market
+        
         // Market
-        const market = response.market;
+        const market = await loadUpdateMarket_DashboardController(response, dates.value)
+        // const market = response.market;
         load_market.value = market
         const market_value = market.find(item => item.tanggal == dates.value)
-        const list = [
-            {name: 'RBDPO', levy: market_value.rbdpo.levy, routers: market_value.rbdpo.routers, excid: market_value.rbdpo},
-            {name: 'PFAD', levy: market_value.pfad.levy, routers: market_value.pfad.routers, excid: market_value.pfad},
-            {name: 'RBD Olein', levy: market_value.rbdo.levy, routers: market_value.rbdo.routers, excid: market_value.rbdo},
-            {name: 'RBD Stearin', levy: market_value.rbds.levy, routers: market_value.rbds.routers, excid: market_value.rbds},
-        ]
+        const list = []
+        if (market_value != null) {
+            list.push(
+                {name: 'RBDPO', levy: market_value.rbdpo.levy, routers: market_value.rbdpo.routers, excid: market_value.rbdpo.excld},
+                {name: 'PFAD', levy: market_value.pfad.levy, routers: market_value.pfad.routers, excid: market_value.pfad.excld},
+                {name: 'RBD Olein', levy: market_value.rbdo.levy, routers: market_value.rbdo.routers, excid: market_value.rbdo.excld},
+                {name: 'RBD Stearin', levy: market_value.rbds.levy, routers: market_value.rbds.routers, excid: market_value.rbds.excld},
+            )
+        }
         list_market.value = list;
     }
 
@@ -72,6 +72,9 @@
         list_market.value = list;
         loadingData2.value = false
     }
+    
+    watch(() => props.rout, props.tanggal, loadCpoAndRouters, { immediate: true });
+
 </script>
 <template>
     <div class="flex md:flex-row flex-column md:align-items-start align-items-center gap-5">
@@ -95,10 +98,10 @@
                         <span class="font-medium text-xs capitalize font-italic">qty(kg)</span>
                     </template>
                     <template #body="{data}">
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(data.qty).toFixed(2))}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{data.qty}}</span>
                     </template>
                     <template #footer>
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(tot_qty).toFixed(0))}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{tot_qty}}</span>
                     </template>
                 </Column>
                 <Column field="harga">
@@ -106,10 +109,10 @@
                         <span class="font-medium text-xs capitalize font-italic">harga</span>
                     </template>
                     <template #body="{data}">
-                        <span class="font-normal text-xs flex w-full justify-content-end">{{formatCurrency(Number(data.harga).toFixed(2))}}</span>
+                        <span class="font-normal text-xs flex w-full justify-content-end">{{data.harga}}</span>
                     </template>
                     <template #footer>
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(tot_harga).toFixed(2))}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{tot_harga}}</span>
                     </template>
                 </Column>
                 <Column field="value">
@@ -117,10 +120,10 @@
                         <span class="font-medium text-xs capitalize font-italic">value</span>
                     </template>
                     <template #body="{data}">
-                        <span class="font-normal text-xs flex w-full justify-content-end">{{formatCurrency(Number(data.value).toFixed(2))}}</span>
+                        <span class="font-normal text-xs flex w-full justify-content-end">{{data.value}}</span>
                     </template>
                     <template #footer>
-                        <span class="font-medium text-xs flex w-full justify-content-end">{{formatCurrency(Number(tot_value).toFixed(0))}}</span>
+                        <span class="font-medium text-xs flex w-full justify-content-end">{{tot_value}}</span>
                     </template>
                 </Column>
             </DataTable>

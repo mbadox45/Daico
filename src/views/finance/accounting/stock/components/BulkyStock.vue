@@ -6,6 +6,7 @@
 
     // API ========================================================================================================================================================
     import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { cek_token } from "@/api/DataVariable.js";
 
     // Components
     import TankiMaster from '@/views/finance/config/master/components/TankiMaster.vue'
@@ -87,7 +88,7 @@
 </script>
 
 <template>
-    <div class="w-full flex flex-column gap-5">
+    <div class="w-full flex flex-column gap-6">
         <div class="flex flex-column gap-3">
             <Dialog v-model:visible="visible" modal :header="header_dialog" :style="{ width: '55rem' }">
                 <tanki-master v-if="status_dialog == 'tanki'"/>
@@ -98,117 +99,37 @@
                     </div>
                 </template>
             </Dialog>
-            <div class="flex justify-content-between gap-5">
+            <div :class="cek_token == null ? 'hidden' : 'flex'" class="justify-content-between gap-5">
                 <Button label="Update Data" severity="warning" size="small" class="h-2rem" @click="()=>{router.push('/form-bulky-stock')}"/>
                 <div>
                     <Button type="button" icon="pi pi-cog" @click="toggle" aria-haspopup="true" severity="info" rounded aria-controls="overlay_menu"  class="h-2rem w-2rem"/>
                     <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
                 </div>
             </div>
-            <DataTable :value="load" showGridlines class="text-sm" >
-                <Column field="nama">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic uppercase">
-                            <small>Lokasi</small>
-                        </div>
-                    </template>
-                    <template #body="{data}"> 
-                        <small class="font-medium">{{ data.location }}</small>
-                    </template>
-                </Column>
-                <Column field="nama">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic uppercase">
-                            <small>No Tank</small>
-                        </div>
-                    </template>
-                    <template #body="{data}"> 
-                        <small class="font-medium">{{ data.name }}</small>
-                    </template>
-                </Column>
-                <Column field="nama">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic uppercase">
-                            <small>Produk</small>
-                        </div>
-                    </template>
-                    <template #body="{data}"> 
-                        <small class="font-medium">{{ data.product }}</small>
-                    </template>
-                </Column>
-                <Column field="value">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic">
-                            <small>Kapaistas</small>
-                        </div>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.capacity).toFixed(0)) }}</small>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="value">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic">
-                            <small>Stok MT</small>
-                        </div>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.stok_mt).toFixed(0)) }}</small>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="value">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic">
-                            <small>Stock</small>
-                        </div>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.stok_exc_btm_mt).toFixed(0)) }}</small>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="value">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic">
-                            <small>Space</small>
-                        </div>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.space).toFixed(0)) }}</small>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="value">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic">
-                            <small>Umur</small>
-                        </div>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ formatCurrency(Number(data.umur).toFixed(0)) }}</small>
-                        </div>
-                    </template>
-                </Column>
-                <Column field="value">
-                    <template #header>
-                        <div class="flex justify-content-center w-full font-italic">
-                            <small>Remarks</small>
-                        </div>
-                    </template>
-                    <template #body="{data}">
-                        <div class="w-full flex justify-content-end">
-                            <small class="font-medium">{{ data.remarks }}</small>
-                        </div>
-                    </template>
-                </Column>
-            </DataTable>
+            <div class="p-3 flex flex-column gap-3">
+                <div class="grid text-sm font-semibold font-italic bg-gray-200">
+                    <div class="col-1 text-center border-1 border-gray-300">No Tank</div>
+                    <div class="col-3 text-center border-1 border-gray-300">Produk</div>
+                    <div class="col-1 text-center border-1 border-gray-300">Kapasitas</div>
+                    <div class="col-1 text-center border-1 border-gray-300">Stock MT</div>
+                    <div class="col-1 text-center border-1 border-gray-300">Stock</div>
+                    <div class="col-1 text-center border-1 border-gray-300">Space</div>
+                    <div class="col-1 text-center border-1 border-gray-300">Umur</div>
+                    <div class="col-3 text-center border-1 border-gray-300">Remarks</div>
+                </div>
+                <div class="grid text-xs font-normal font-italic" v-for="(item, index) in load" :key="index" :class="item.tank_name == 'Total' ? 'bg-gray-200' : 'bg-white'">
+                    <div v-if="item.tank_name == 'Total'" class="col-4 font-bold border-1 border-gray-300">TOTAL</div>
+                    <div v-if="item.tank_name != 'Total'" class="col-1 text-center border-1 border-gray-300">{{item.tank_name}}</div>
+                    <div v-if="item.tank_name != 'Total'" class="col-3 border-1 border-gray-300">{{item.nama_produk}}</div>
+                    <div class="col-1 text-right border-1 border-gray-300">{{ item.capacity }}</div>
+                    <div class="col-1 text-right border-1 border-gray-300">{{ formatCurrency(Number(item.stok_mt).toFixed(0)) }}</div>
+                    <div class="col-1 text-right border-1 border-gray-300">{{ formatCurrency(Number(item.stok_exc_btm_mt).toFixed(0)) }}</div>
+                    <div class="col-1 text-right border-1 border-gray-300">{{ formatCurrency(Number(item.space).toFixed(0)) }}</div>
+                    <div v-if="item.tank_name != 'Total'" class="col-1 text-right border-1 border-gray-300">{{ formatCurrency(Number(item.umur).toFixed(0)) }}</div>
+                    <div v-if="item.tank_name != 'Total'" class="col-3 border-1 border-gray-300">{{item.remarks}}</div>
+                    <div v-if="item.tank_name == 'Total'" class="col-4 text-center border-1 border-gray-300"></div>
+                </div>
+            </div>
         </div>
     </div>
 </template>

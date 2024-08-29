@@ -22,3 +22,9 @@ export const msg_error = {
     code: 404,
     msg: 'Proses Gagal, data sudah tersedia. Jika belum tersedia silahkan dicoba beberapa saat lagi.',
 }
+
+export const productableType = async(post) => {
+    const data = post.split('\\').pop().replace('Master', '');
+    const result = data.toLowerCase()
+    return result;
+}

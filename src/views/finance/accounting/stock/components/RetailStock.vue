@@ -7,6 +7,7 @@
 
     // API ========================================================================================================================================================
     import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { cek_token } from "@/api/DataVariable.js";
 
     const props = defineProps({
         // tanggal:{
@@ -24,7 +25,7 @@
     // VARIABLE
     const loadingTable = ref(false)
     const load = ref([])
-    const load_rekening_on_hand = ref([])
+    const load_total = ref([])
     const total_cash_inl = ref(0)
     const total_cash_on_hand = ref(0)
 
@@ -37,8 +38,9 @@
         loadingTable.value = true
         try {
             const response = props.datas;
-            load.value = response
-            // console.log(response)
+            load.value = response.list
+            load_total.value = response.list_stock
+            console.log(response)
             loadingTable.value = false
         } catch (error) {
             load.value = []
@@ -52,10 +54,74 @@
 
 <template>
     <div class="flex flex-column gap-5">
-        <div class="w-full">
+        <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full">
             <Button label="Update Data" severity="warning" size="small" @click="()=>{router.push('/form-retail-stock')}"/>
         </div>
         <div class="grid">
+            <div class="col-6 flex p-2" v-for="(totals, index) in load_total" :key="index">
+                <div class="border-1 w-full p-3 border-round border-gray-300 flex flex-column gap-2">
+                    <span class="text-sm font-medium font-italic text-center">{{ totals.lokasi }}</span>
+                    <DataTable :value="totals.items" showGridlines class="text-sm" >
+                        <Column field="nama">
+                            <template #header>
+                                <div class="flex justify-content-start w-full font-italic uppercase">
+                                    <small>Produk</small>
+                                </div>
+                            </template>
+                            <template #body="{data}"> 
+                                <small class="font-medium">{{ data.produk }}</small>
+                            </template>
+                        </Column>
+                        <Column field="ctn">
+                            <template #header>
+                                <div class="flex justify-content-center w-full font-italic uppercase">
+                                    <small>Ctn</small>
+                                </div>
+                            </template>
+                            <template #body="{data}">
+                                <div class="w-full flex justify-content-end">
+                                    <small class="font-medium">{{ data.ctn == null ? '-' : formatCurrency(Number(data.ctn).toFixed(1)) }}</small>
+                                </div>
+                            </template>
+                        </Column>
+                        <Column field="mt">
+                            <template #header>
+                                <div class="flex justify-content-center w-full font-italic uppercase">
+                                    <small>MT</small>
+                                </div>
+                            </template>
+                            <template #body="{data}">
+                                <div class="w-full flex justify-content-end">
+                                    <small class="font-medium">{{ data.mt == null ? '-' : formatCurrency(Number(data.mt).toFixed(3)) }}</small>
+                                </div>
+                            </template>
+                        </Column>
+                        <ColumnGroup type="footer">
+                            <Row>
+                                <Column>
+                                    <template #footer>
+                                        <small class="font-bold font-italic uppercase">Total</small>
+                                    </template>
+                                </Column>
+                                <Column>
+                                    <template #footer>
+                                        <div class="flex justify-content-end">
+                                            <small class="font-bold font-italic uppercase">{{formatCurrency(Number(totals.tot_ctn).toFixed(2))}}</small>
+                                        </div>
+                                    </template>
+                                </Column>
+                                <Column>
+                                    <template #footer>
+                                        <div class="flex justify-content-end">
+                                            <small class="font-bold font-italic uppercase">{{formatCurrency(Number(totals.tot_mt).toFixed(2))}}</small>
+                                        </div>
+                                    </template>
+                                </Column>
+                            </Row>
+                        </ColumnGroup>
+                    </DataTable>
+                </div>
+            </div>
             <div class="col-6 flex p-2" v-for="(lokasi, index) in load" :key="index">
                 <div class="border-1 w-full p-3 border-round border-gray-300 flex flex-column gap-2">
                     <span class="text-sm font-medium font-italic text-center">{{ lokasi.lokasi }}</span>
@@ -106,6 +172,36 @@
                                 </div>
                             </template>
                         </Column>
+                        <ColumnGroup type="footer">
+                            <Row>
+                                <Column>
+                                    <template #footer>
+                                        <small class="font-bold font-italic uppercase">Total</small>
+                                    </template>
+                                </Column>
+                                <Column>
+                                    <template #footer>
+                                        <div class="flex justify-content-end">
+                                            <small class="font-bold font-italic uppercase">{{formatCurrency(Number(lokasi.tot_ctn).toFixed(2))}}</small>
+                                        </div>
+                                    </template>
+                                </Column>
+                                <Column>
+                                    <template #footer>
+                                        <div class="flex justify-content-end">
+                                            <small class="font-bold font-italic uppercase">{{formatCurrency(Number(lokasi.tot_mt).toFixed(2))}}</small>
+                                        </div>
+                                    </template>
+                                </Column>
+                                <Column>
+                                    <template #footer>
+                                        <div class="flex justify-content-end">
+                                            <small class="font-bold font-italic uppercase">{{formatCurrency(Number(lokasi.tot_pallet).toFixed(2))}}</small>
+                                        </div>
+                                    </template>
+                                </Column>
+                            </Row>
+                        </ColumnGroup>
                     </DataTable>
                 </div>
             </div>

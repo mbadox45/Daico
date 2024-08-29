@@ -9,8 +9,9 @@
     const router = useRouter();
 
     // API
-    import {loadDataCostHpp, loadRefinery} from '@/views/load_data/produksi/costing_hpp.js'
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    // import {loadDataCostHpp, loadRefinery} from '@/views/load_data/produksi/costing_hpp.js'
+    import {loadCostingHpp_CostingHppController} from '@/controller/production/CostingHppController.js'
+    import { dummy } from "@/controller/production/TestDummy.js";
 
     // Components
     import FractIv60 from '@/views/finance/production/costing_hpp/components/FractIv60.vue'
@@ -41,11 +42,11 @@
 
     const loadData = async() => {
         loadingTable.value = true
-        const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
-        // const dateString = `2024-05-31`;
+        // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+        const dateString = `2024-05-31`;
         tanggal.value = dateString;
-        const response = await loadDataCostHpp(dateString);
-        console.log(response);
+        const response = await loadCostingHpp_CostingHppController(dateString);
+        // const response = dummy;
         data_refinery.value = response;
         periods.value = moment(dateString).format('MMMM YYYY')
         loadingTable.value = false
@@ -132,22 +133,22 @@
         <div v-else>
             <!-- Table -->
             <div v-show="active == 0">
-                <refinery-cost :datas="data_refinery"/>
+                <refinery-cost :dummy_ref="data_refinery"/>
             </div>
             <div v-show="active == 1">
-                <FractIv56 :datas="data_refinery"/>
+                <fract-iv-56 :dummy56="data_refinery"/>
             </div>
             <div v-show="active == 2">
-                <FractIv57 :datas="data_refinery"/>
+                <fract-iv-57 :dummy57="data_refinery"/>
             </div>
             <div v-show="active == 3">
-                <FractIv58 :datas="data_refinery"/>
+                <fract-iv-58 :dummy58="data_refinery"/>
             </div>
             <div v-show="active == 4">
-                <FractIv60 :datas="data_refinery"/>
+                <fract-iv-60 :dummy60="data_refinery"/>
             </div>
             <div v-show="active == 5">
-                <control-cost :datas="data_refinery"/>
+                <control-cost :control="data_refinery"/>
             </div>
         </div>
 

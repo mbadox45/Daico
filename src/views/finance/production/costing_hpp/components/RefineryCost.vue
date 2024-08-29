@@ -5,14 +5,11 @@
 
     // API ========================================================================================================================================================
     import DailyDmo from '@/api/target/DailyDmo.js';
-    import {loadRefinery} from '@/views/load_data/hpp.js'
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import {loadRefinery_CostingHppController} from '@/controller/production/CostingHppController.js'
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
-        // tanggal:{
-        //     type:String
-        // },
-        datas:{
+        dummy_ref:{
             type:Array,
             default: () => {}
         }
@@ -22,15 +19,11 @@
 
     // VARIABLE
     const loadingTable = ref(false)
-    const refinery = ref({})
-    const proportion1 = ref({})
-    const proportion_packing = ref({})
-    const direct = ref([])
-    const in_direct = ref([])
-    const total_cont_refinery = ref({})
-    const alloc_cost = ref({})
-    const produk = ref({})
-    // const data_ref
+    const list_main = ref([])
+    const list_direct = ref([])
+    const list_indirect = ref([])
+    const total = ref()
+    const list_allocation = ref([])
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -41,26 +34,25 @@
         const tgl = '2024-05-31'
         loadingTable.value = true
         try {
-            const response = props.datas;
-            const refi = response.find(item => item.name == 'Refinery')
-            refinery.value = refi.produk;
-            alloc_cost.value = refi.alloc_cost
-            proportion1.value = refi.proportion1
-            proportion_packing.value = refi.proportion_packing
-            direct.value = refi.direct
-            in_direct.value = refi.in_direct
-            total_cont_refinery.value = refi.total_cont_refinery
-            // console.log(((Number(total_cont_refinery.value.value) * Number(alloc_cost.value.prop_rbdpo) / 100) / Number(refinery.value.qty_rbdpo)))
+            const response = props.dummy_ref;
+            const ref = await loadRefinery_CostingHppController(response);
+            list_main.value = ref.main
+            list_direct.value = ref.direct
+            list_indirect.value = ref.indirect
+            list_allocation.value = ref.allocation
+            total.value = ref.total
             loadingTable.value = false
         } catch (error) {
-            refinery.value = {}
-            direct.value = []
-            in_direct.value = []
+            list_main.value = []
+            list_direct.value = []
+            list_indirect.value = []
+            list_allocation.value = []
+            total.value = {}
             loadingTable.value = false
         }
     }
 
-    watch(() => props.datas, loadData, { immediate: true });
+    watch(() => props.dummy_ref, loadData, { immediate: true });
 
 </script>
 
@@ -82,20 +74,10 @@
                     <span class="w-full text-center">Total QTY</span>
                     <span class="w-full text-center">Rendement (%)</span>
                 </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">CPO Consume</span>
-                    <span class="w-full text-right font-bold">{{ formatCurrency(Number(refinery.qty_cpo_olah).toFixed(2)) }}</span>
-                    <span class="w-full text-right font-bold"></span>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">RBDPO</span>
-                    <span class="w-full text-right font-bold">{{ formatCurrency(Number(refinery.qty_rbdpo).toFixed(2)) }}</span>
-                    <span class="w-full text-right font-bold">{{ formatCurrency(Number(refinery.rend_rbdpo).toFixed(2)) }}%</span>
-                </div>
-                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1">
-                    <span class="w-full font-medium">PFAD</span>
-                    <span class="w-full text-right font-bold">{{ formatCurrency(Number(refinery.qty_pfad).toFixed(2)) }}</span>
-                    <span class="w-full text-right font-bold">{{ formatCurrency(Number(refinery.rend_pfad).toFixed(2)) }}%</span>
+                <div class="flex justify-content-between gap-3 px-2 pb-2 border-bottom-1" v-for="(item, index) in list_main" :key="index">
+                    <span class="w-full font-medium">{{item.name}}</span>
+                    <span class="w-full text-right font-bold">{{ item.qty }}</span>
+                    <span class="w-full text-right font-bold">{{ item.rendement }}</span>
                 </div>
             </div>
         </div>
@@ -111,12 +93,12 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr v-for="(items, index) in direct" :key="index">
+                    <tr v-for="(items, index) in list_direct" :key="index">
                         <td>{{items.name}}</td>
-                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.proportion}}</td>
+                        <td class="text-right">{{items.proportion2}}</td>
+                        <td class="text-right">{{items.total_value}}</td>
+                        <td class="text-right">{{items.rp_kg}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -130,12 +112,12 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm font-medium">
-                    <tr v-for="(items, index) in in_direct" :key="index">
+                    <tr v-for="(items, index) in list_indirect" :key="index">
                         <td>{{items.name}}</td>
-                        <td class="text-right">{{items.prop_1 == null ? null : formatCurrency(Number(items.prop_1).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.prop_2 == null ? null : formatCurrency(Number(items.prop_2).toFixed(2))+'%'}}</td>
-                        <td class="text-right">{{items.value == null ? null : Number(items.value) >= 0 ? formatCurrency(Number(items.value).toFixed(2)) : `(${formatCurrency((Number(items.value)*-1).toFixed(2))})`}}</td>
-                        <td class="text-right">{{items.harga == null ? null : Number(items.harga) >= 0 ? formatCurrency(Number(items.harga).toFixed(2)) : `(${formatCurrency((Number(items.harga)*-1).toFixed(2))})`}}</td>
+                        <td class="text-right">{{items.proportion}}</td>
+                        <td class="text-right">{{items.proportion2}}</td>
+                        <td class="text-right">{{items.total_value}}</td>
+                        <td class="text-right">{{items.rp_kg}}</td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -143,8 +125,8 @@
                         <th class="text-left font-italic">Total Cost Refinery</th>
                         <th></th>
                         <th></th>
-                        <th class="text-right">{{Number(total_cont_refinery.value) >= 0 ? formatCurrency(Number(total_cont_refinery.value).toFixed(2)) : `(${formatCurrency((Number(total_cont_refinery.value)*-1).toFixed(2))})`}}</th>
-                        <th class="text-right">{{Number(total_cont_refinery.rp_kg) >= 0 ? formatCurrency(Number(total_cont_refinery.rp_kg).toFixed(2)) : `(${formatCurrency((Number(total_cont_refinery.rp_kg)*-1).toFixed(2))})`}}</th>
+                        <th class="text-right">{{total.total_value}}</th>
+                        <th class="text-right">{{total.rp_kg}}</th>
                     </tr>
                     <tr>
                         <th class="text-left font-italic"></th>
@@ -160,19 +142,12 @@
                         <th class="text-right"></th>
                         <th class="text-right"></th>
                     </tr>
-                    <tr class="mt-3 text-sm">
-                        <th class="text-right font-medium font-italic">RBDPO</th>
+                    <tr class="mt-3 text-sm" v-for="(item, index) in list_allocation" :key="index">
+                        <th class="text-right font-medium font-italic">{{item.name}}</th>
                         <th></th>
-                        <th class="text-right font-medium font-italic">{{formatCurrency(Number(alloc_cost.prop_rbdpo).toFixed(2))}}%</th>
-                        <th class="text-right font-medium">{{(Number(total_cont_refinery.value) * Number(alloc_cost.prop_rbdpo) / 100) >= 0 ? formatCurrency((Number(total_cont_refinery.value) * Number(alloc_cost.prop_rbdpo) / 100).toFixed(2)) : `(${formatCurrency((Number(total_cont_refinery.value) * Number(alloc_cost.prop_rbdpo) / 100 * -1).toFixed(2))})`}}</th>
-                        <th class="text-right font-medium">{{((Number(total_cont_refinery.value) * Number(alloc_cost.prop_rbdpo) / 100) / Number(refinery.qty_rbdpo)) >= 0 ? formatCurrency(((Number(total_cont_refinery.value) * Number(alloc_cost.prop_rbdpo) / 100) / Number(refinery.qty_rbdpo)).toFixed(2)) : `(${formatCurrency(((Number(total_cont_refinery.value) * Number(alloc_cost.prop_rbdpo) / 100) / Number(refinery.qty_rbdpo) * -1).toFixed(2))})`}}</th>
-                    </tr>
-                    <tr class="mt-3 text-sm">
-                        <th class="text-right font-medium font-italic">PFAD</th>
-                        <th></th>
-                        <th class="text-right font-medium font-italic">{{formatCurrency(Number(alloc_cost.prop_pfad).toFixed(2))}}%</th>
-                        <th class="text-right font-medium">{{(Number(total_cont_refinery.value) * Number(alloc_cost.prop_pfad) / 100) >= 0 ? formatCurrency((Number(total_cont_refinery.value) * Number(alloc_cost.prop_pfad) / 100).toFixed(2)) : `(${formatCurrency((Number(total_cont_refinery.value) * Number(alloc_cost.prop_pfad) / 100 * -1).toFixed(2))})`}}</th>
-                        <th class="text-right font-medium">{{((Number(total_cont_refinery.value) * Number(alloc_cost.prop_pfad) / 100) / Number(refinery.qty_pfad)) >= 0 ? formatCurrency(((Number(total_cont_refinery.value) * Number(alloc_cost.prop_pfad) / 100) / Number(refinery.qty_pfad)).toFixed(2)) : `(${formatCurrency(((Number(total_cont_refinery.value) * Number(alloc_cost.prop_pfad) / 100) / Number(refinery.qty_pfad) *-1).toFixed(2))})`}}</th>
+                        <th class="text-right font-medium font-italic">{{item.proportion}}</th>
+                        <th class="text-right font-medium">{{item.total_value}}</th>
+                        <th class="text-right font-medium">{{item.rp_kg}}</th>
                     </tr>
                 </tfoot>
             </table>

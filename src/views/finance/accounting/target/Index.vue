@@ -59,8 +59,8 @@
     }
 
     const loadData = async() => {
-        // let dateString = `2024-05-01`;
-        let dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
+        // const dateString = `2024-05-01`;
+        const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${tgls.value}`;
         tanggal.value = dateString;
         if (type.value != null) {
             active.value = Number(type.value);

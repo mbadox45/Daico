@@ -9,6 +9,10 @@
     const props = defineProps({
         tanggal:{
             type:String
+        },
+        chart:{
+            type:Array,
+            default: () => {}
         }
     });
 
@@ -28,42 +32,42 @@
     // Function
     const loadProduct = async(tgl) => {
         loadingData.value = true
-        const data_target = await loadForChartTarget(tgl)
-        console.log(data_target)
+        // const data_target = await loadForChartTarget(tgl)
+        // console.log(data_target)
 
-        sales.value = []
-        const list_sales = data_target.sales;
-        const list_produksi = data_target.produksi;
-        for (let a = 0; a < list_sales.length; a++) {
-            const persen_real = ((list_sales[a].real/list_sales[a].rkap)*100).toFixed(1);
-            const persen_rkap = (100 - persen_real).toFixed(1);
-            sales.value.push({
-                real: formatCurrency(list_sales[a].real),
-                rkap: formatCurrency(list_sales[a].rkap),
-                jenis: list_sales[a].jenis,
-                persen_real: persen_real,
-                name_real: list_sales[a].name_real,
-                name_rkap: list_sales[a].name_rkap,
-                chartData: setChartData(persen_real, persen_rkap , [list_sales[a].name_real, list_sales[a].name_rkap]),
-                chartOptions: setChartOptions(),
-            })
-        }
+        // sales.value = []
+        // const list_sales = data_target.sales;
+        // const list_produksi = data_target.produksi;
+        // for (let a = 0; a < list_sales.length; a++) {
+        //     const persen_real = ((list_sales[a].real/list_sales[a].rkap)*100).toFixed(1);
+        //     const persen_rkap = (100 - persen_real).toFixed(1);
+        //     sales.value.push({
+        //         real: formatCurrency(list_sales[a].real),
+        //         rkap: formatCurrency(list_sales[a].rkap),
+        //         jenis: list_sales[a].jenis,
+        //         persen_real: persen_real,
+        //         name_real: list_sales[a].name_real,
+        //         name_rkap: list_sales[a].name_rkap,
+        //         chartData: setChartData(persen_real, persen_rkap , [list_sales[a].name_real, list_sales[a].name_rkap]),
+        //         chartOptions: setChartOptions(),
+        //     })
+        // }
 
-        produksi.value = []
-        for (let a = 0; a < list_produksi.length; a++) {
-            const persen_real = ((list_produksi[a].real/list_produksi[a].rkap)*100).toFixed(1);
-            const persen_rkap = (100 - persen_real).toFixed(1);
-            produksi.value.push({
-                real: formatCurrency(list_produksi[a].real),
-                rkap: formatCurrency(list_produksi[a].rkap),
-                jenis: list_produksi[a].jenis,
-                persen_real: persen_real,
-                name_real: list_produksi[a].name_real,
-                name_rkap: list_produksi[a].name_rkap,
-                chartData: setChartData(persen_real, persen_rkap, [list_produksi[a].name_real, list_produksi[a].name_rkap]),
-                chartOptions: setChartOptions(),
-            })
-        }
+        // produksi.value = []
+        // for (let a = 0; a < list_produksi.length; a++) {
+        //     const persen_real = ((list_produksi[a].real/list_produksi[a].rkap)*100).toFixed(1);
+        //     const persen_rkap = (100 - persen_real).toFixed(1);
+        //     produksi.value.push({
+        //         real: formatCurrency(list_produksi[a].real),
+        //         rkap: formatCurrency(list_produksi[a].rkap),
+        //         jenis: list_produksi[a].jenis,
+        //         persen_real: persen_real,
+        //         name_real: list_produksi[a].name_real,
+        //         name_rkap: list_produksi[a].name_rkap,
+        //         chartData: setChartData(persen_real, persen_rkap, [list_produksi[a].name_real, list_produksi[a].name_rkap]),
+        //         chartOptions: setChartOptions(),
+        //     })
+        // }
         loadingData.value = false
     }
 </script>

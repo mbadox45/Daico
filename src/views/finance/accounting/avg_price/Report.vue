@@ -10,9 +10,13 @@
 
     // API
     import {forViewAvgPrice} from '@/views/load_data/avg_price.js'
+    import {loadByPeriodRekap_DetAllocController, loadPersediaanAwal, loadQtyBebanProduksi, loadBebanBlending, loadStokTersedia} from '@/controller/accounting/AvgPriceController.js'
 
     // Components
     import PersediaanAwal from '@/views/finance/accounting/avg_price/components/PersediaanAwal.vue'
+    import QtyProduksi from '@/views/finance/accounting/avg_price/components/QtyProduksi.vue'
+    import QtyPengolahan from '@/views/finance/accounting/avg_price/components/QtyPengolahan.vue'
+    import StokTersedia from '@/views/finance/accounting/avg_price/components/StokTersedia.vue'
 
     // VARIABLE
     const type = ref(route.query.active);
@@ -26,6 +30,9 @@
     const tanggal = ref(`${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`)
     const op = ref();
 
+    const persediaan_awal = ref({})
+    const qty_beban_produksi = ref({})
+    const beban_blending = ref({})
     const data_refinery = ref({})
 
     // Function ===================================================================================================================================================
@@ -38,12 +45,16 @@
         // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
         const dateString = `2024-05-31`;
         tanggal.value = dateString;
-        const response = await forViewAvgPrice(dateString);
-        data_refinery.value = response;
+        console.log(tanggal.value)
         periods.value = moment(dateString).format('MMMM YYYY')
-        loadingTable.value = false
+        const response = await loadByPeriodRekap_DetAllocController(dateString);
+        persediaan_awal.value = await loadPersediaanAwal(response);
+        qty_beban_produksi.value = await loadQtyBebanProduksi(response);
+        beban_blending.value = await loadBebanBlending(response);
+        data_refinery.value = await loadStokTersedia(response)
         loadBulan()
         loadTahun()
+        loadingTable.value = false
     }
 
     const loadBulan = () => {
@@ -123,16 +134,16 @@
         <div v-else>
             <!-- Table -->
             <div v-show="active == 0">
-                <persediaan-awal :datas="data_refinery"/>
+                <persediaan-awal :date="tanggal" :datas="persediaan_awal"/>
             </div>
             <div v-show="active == 1">
-                <!-- <allocation-utility :datas="data_refinery"/> -->
+                <qty-produksi :datas="qty_beban_produksi"/>
             </div>
             <div v-show="active == 2">
-                <!-- <allocation-produksi :datas="data_refinery"/> -->
+                <qty-pengolahan :datas="beban_blending"/>
             </div>
             <div v-show="active == 3">
-                <!-- <allocation-gas :datas="data_refinery"/> -->
+                <stok-tersedia :datas="data_refinery"/>
             </div>
         </div>
 

@@ -5,8 +5,10 @@
     import { useToast } from 'primevue/usetoast';
 
     // API
-    import {loadTank, loadProduct, loadLocation} from '@/views/load_data/master_config.js'
+    // import {loadTank, loadProduct, loadLocation} from '@/views/load_data/master_config.js'
     import {loadRetail, loadDataBulky} from '@/views/load_data/stock.js'
+    import {loadTable_StockBulkyController} from '@/controller/retail/StockBulkyController.js'
+    import {loadTable_StockRetailController} from '@/controller/retail/StockRetailController.js'
 
     // Components
     import BulkyStock from '@/views/finance/accounting/stock/components/BulkyStock.vue'
@@ -14,7 +16,7 @@
 
     const active = ref(0);
     const load_bulky = ref([])
-    const load_retail = ref([])
+    const load_retail = ref()
     const loadingTable = ref(false);
 
     onMounted(() => {
@@ -24,11 +26,12 @@
     const loadData = async() => {
         // Bulky
         loadingTable.value = true
-        const response = await loadDataBulky()
+        const response = await loadTable_StockBulkyController()
         load_bulky.value = response
-        console.log(response)
 
-        load_retail.value = await loadRetail();
+        const retail = await loadTable_StockRetailController()
+        console.log(retail)
+        load_retail.value = retail;
         loadingTable.value = false
     }
 

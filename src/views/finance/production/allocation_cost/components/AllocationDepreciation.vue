@@ -85,9 +85,11 @@
                 <Message v-for="msg of messages" :key="msg.id" :severity="msg.severity">{{ msg.content }}</Message>
             </transition-group>
         </Dialog>
-        <div class="flex justify-content-between align-items-center gap-2">
+        <div class="flex justify-content-between align-items-center gap-2 w-full">
             <span class="w-full text-xl font-italic text-gray-500 font-semibold capitalize">Allocation depreciation</span>
-            <Button v-if="cek_token != null" icon="pi pi-plus" severity="info" size="small" @click="formData('add', null)" />
+            <div v-if="cek_token != null" class="w-full flex justify-content-end">
+                <Button icon="pi pi-pencil" label="Update Data" severity="warning" size="small" @click="formData('add', null)" />
+            </div>
         </div>
         <div class="w-full">
             <DataTable :value="load" class="text-sm" showGridlines tableStyle="min-width: 50rem">

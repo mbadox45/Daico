@@ -11,6 +11,9 @@ export default new class InitialSupply{
     getByDate(date){
         return http.post(`initial-supply/date`,date);
     }
+    getByDateRecap(date){
+        return http.post(`initial-supply/recap`,date);
+    }
 
     addPost(data){
         return http2.post(`initial-supply/add`, data);

@@ -31,7 +31,6 @@
             const response = props.datas;
             const refi = response.find(item => item.name == 'list_allocation_biaya')
             load.value = refi.item
-            console.log(refi)
             loadingTable.value = false
         } catch (error) {
             load.value = {}

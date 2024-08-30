@@ -2,11 +2,12 @@
     // Vue Component
     import { ref, computed, onMounted, defineProps, watch } from 'vue';
     import moment from 'moment';
+    import { useRouter } from 'vue-router';
 
     // API ========================================================================================================================================================
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
     import { cek_token } from "@/api/DataVariable.js";
-    import { loadLatest_PenyusutanBiayaController, add_PenyusutanBiayaController, update_PenyusutanBiayaController } from '@/controller/master_data/PenyusutanBiayaController.js'
+    import { postData_PenyusutanBiayaController, loadLatest_PenyusutanBiayaController, add_PenyusutanBiayaController, update_PenyusutanBiayaController } from '@/controller/master_data/PenyusutanBiayaController.js'
     import { loadAll_AllocMaster } from '@/controller/master_data/AllocController.js'
 
     const props = defineProps({
@@ -19,12 +20,16 @@
         }
     });
 
+    const router = useRouter();
+
     // VARIABLE
     const loadingTable = ref(false)
+    const loadingButton = ref(false)
     const load = ref([])
     const total_data = ref({
         unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0
     })
+    const tanggal = ref(moment().format('YYYY-MM-DD'));
 
     // Dialog Configure
     const visible = ref(false);
@@ -47,7 +52,6 @@
         try {
             const response = props.datas;
             const data = response.find(item => item.name == 'list_biaya_peyusutan')
-            // console.log(data)
             load.value = data.item
             total_data.value = {
                 unit_qty: data.total.unit_qty,
@@ -64,25 +68,30 @@
         }
     }
 
-    const formData = async(cond, data) => {
+    const formData = async(cond) => {
         const param = await paramAlloc()
-        if (cond == 'add') {
-            const list = []
-            for (let i = 0; i < param.length; i++) {
-                list.push({
-                    id: param[i].id,
-                    alokasi_id: param[i].alokasi_id,
-                    tanggal: param[i].tanggal,
-                    value: param[i].value,
-                })
-            }
-            data_form.value = list
-        } else {
+        const data = load.value;
+        const list = []
+        for (let i = 0; i < param.length; i++) {
+            const filter = data.find(item => item.name == param[i].alokasi_name)
+            list.push({
+                id: filter.id,
+                alokasi_id: param[i].alokasi_id,
+                alokasi_name: param[i].alokasi_name,
+                tanggal: param[i].tanggal,
+                value: filter.id == null ? null : filter.unit_qty,
+            })
         }
+        data_form.value = list
+        console.log(list)
+        // if (cond == 'add') {
+        // } else {
+        // }
         visible.value = true;
         messages.value = [];
         status_form.value = cond;
-        title_dialog.value = cond == 'add' ? 'Allocation Depreciation - Tambah Data' : cond == 'edit' ? 'Allocation Depreciation - Edit Data' : 'Allocation Depreciation - Hapus Data' ;
+        loadingButton.value = false
+        title_dialog.value = 'Allocation Depreciation - Update Data';
     }
 
     const paramAlloc = async() => {
@@ -94,6 +103,7 @@
                 list.push({
                     id: null,
                     alokasi_id: filter[i].id,
+                    alokasi_name: filter[i].nama,
                     tanggal: moment().format('YYYY-MM-DD'),
                     value: null,
                 })
@@ -102,14 +112,54 @@
         return list;
     }
 
+    const postData = async() => {
+        loadingButton.value = true
+        try {
+            console.log(data_form.value)
+            const response = await postData_PenyusutanBiayaController(data_form.value, tanggal.value)
+            messages.value = [
+                { severity: response.severity, content: response.content, id: count.value++ },
+            ];
+            setTimeout(function() {
+                visible.value = false;
+                router.push('/alloc-cost')
+            }, 2000);
+            loadingButton.value = false
+        } catch (error) {
+            messages.value = [
+                { severity: 'error', content: 'Proses gagal, silahkan dicoba beberapa saat lagi.', id: count.value++ },
+            ];
+            loadingButton.value = false
+        }
+    }
+
 </script>
 
 <template>
     <div class="flex flex-column gap-3">
         <!-- Dialog -->
-        <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '70rem' }">
+        <Dialog v-model:visible="visible" :closable="false" modal :header="title_dialog" :style="{ width: '70rem' }">
             <transition-group name="p-message" tag="div">
                 <Message v-for="msg of messages" :key="msg.id" :severity="msg.severity">{{ msg.content }}</Message>
+                <div class="flex w-full flex-column gap-4">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon bg-white">
+                            <i class="pi pi-calendar"></i>
+                        </span>
+                        <InputText id="tanggal" v-model="tanggal" type="date" class="w-full" autocomplete="off" :max="moment().format('YYYY-MM-DD')"/>
+                    </div>
+                    <div class="flex flex-column gap-2 border-round border-2 border-gray-300 p-3">
+                        <span class="uppercase text-sm font-light">Allocation : </span>
+                        <div v-for="(item, index) in data_form" :key="index" class="flex justify-content-between gap-4 border-bottom-1 py-2 border-gray-300 align-items-center">
+                            <span class="font-bold font-italic text-lg w-full">{{ item.alokasi_name }} <small class="text-red-500">*</small></span>
+                            <InputNumber v-model="item.value" :maxFractionDigits="2" inputId="locale-german" placeholder="Qty Unit" locale="de-DE" class="w-full" />
+                        </div>
+                    </div>
+                    <div class="flex justify-content-end gap-2">
+                        <Button label="Close" severity="secondary" outlined @click="visible = false"/>
+                        <Button :disabled="loadingButton == true ? true : false" :label="loadingButton == false ? 'Save' : 'Saving...'" severity="success" @click="postData"/>
+                    </div>
+                </div>
             </transition-group>
         </Dialog>
         <div class="flex justify-content-between align-items-center gap-2 w-full">

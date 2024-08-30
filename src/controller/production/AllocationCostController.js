@@ -123,10 +123,10 @@ export const loadAllocation_AllocationCostController = async(tgl) => {
     const alloc_persen = alloc == null ? null : alloc.find(item => item.name == "%") == null ? null : alloc.find(item => item.name == "%");
     const total = {unit_qty: unit_qty == null ? 0 : unit_qty.total, unit_persen: unit_persen == null ? 0 : unit_persen.total, aux_qty: aux_qty == null ? 0 : aux_qty.total, aux_persen: aux_persen == null ? 0 : aux_persen.total, alloc_qty: alloc_qty == null ? 0 : alloc_qty.total, alloc_persen: alloc_persen == null ? 0 : alloc_persen.total}
     let list_biaya_peyusutan = [
-        {name:'Refinery', unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
-        {name:'Fraksinasi', unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
-        {name:'Packaging', unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
-        {name:'Auxiliary', unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
+        {name:'Refinery', id:null, unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
+        {name:'Fraksinasi', id:null, unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
+        {name:'Packaging', id:null, unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
+        {name:'Auxiliary', id:null, unit_qty: 0, unit_persen: 0, aux_qty: 0, aux_persen: 0, alloc_qty: 0, alloc_persen: 0},
     ]
     // for unit
     if (unit_qty != null ) {
@@ -134,6 +134,7 @@ export const loadAllocation_AllocationCostController = async(tgl) => {
         for (let i = 0; i < list_biaya_peyusutan.length; i++) {
             const result = unit_qty_list.find(item => item.name == list_biaya_peyusutan[i].name)
             list_biaya_peyusutan[i].unit_qty = Number(result.value)
+            list_biaya_peyusutan[i].id = result.id
         }
     }
     if (unit_persen != null ) {
@@ -212,3 +213,4 @@ export const loadAllocation_AllocationCostController = async(tgl) => {
 
     return list_all
 }
+

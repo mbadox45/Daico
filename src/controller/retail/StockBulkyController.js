@@ -1,5 +1,7 @@
 import stockBulky from '@/api/accounting/stockBulky.js';
 import { formatCurrency, productableType } from "@/controller/dummy/func_dummy.js";
+import {msg_success, msg_warning, msg_error} from '@/controller/dummy/func_dummy.js';
+import moment from 'moment';
 
 export const loadLatest_StockBulkyController = async() => {
     try {
@@ -10,6 +12,88 @@ export const loadLatest_StockBulkyController = async() => {
     } catch (error) {
         return null;
     }
+}
+
+export const add_StockBulkyController = async(form) => {
+    try {
+        const response = await stockBulky.addPost(form);
+        const load = response.data;
+        if (load.success == true) {
+            return msg_success;
+        } else {
+            return msg_warning
+        }
+    } catch (error) {
+        return msg_error
+    }
+}
+
+export const update_StockBulkyController = async(id,form) => {
+    try {
+        const response = await stockBulky.updatePost(id,form);
+        const load = response.data;
+        if (load.success == true) {
+            return msg_success;
+        } else {
+            return msg_warning
+        }
+    } catch (error) {
+        return msg_error
+    }
+}
+
+export const postData_StockBulkyController = async(form) => {
+    let msg = {severity: '', content: ''}
+    const list = []
+    for (let i = 0; i < form.length; i++) {
+        list.push({
+            id: form[i].id,
+            tanggal: form[i].tanggal,
+            tank_id: form[i].tank_id,
+            tank_name: form[i].tank_name,
+            capacity: form[i].capacity,
+            productable_type: form[i].productable_id.type,
+            productable_id: form[i].productable_id.id,
+            stok_mt: form[i].stok_mt,
+            stok_exc_btm_mt: form[i].stok_exc_btm_mt,
+            umur: form[i].umur,
+            remarks: form[i].remarks,
+        })
+    }
+
+    // Proses List
+    let kondisi;
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].productable_type != null && list[i].productable_type != null && list[i].productable_id != null && list[i].stok_mt != null && list[i].stok_exc_btm_mt != null && list[i].umur != null && list[i].remarks != null) {
+            if (i < (list.length - 1)) {
+                continue;
+            }
+            kondisi = true
+        } else {
+            msg = {severity:'warn', content:`Mohon data diisi value pada bagian ${list[i].tank_name} ${list[i].capacity}`};
+            kondisi = false
+            break;
+        }
+    }
+
+    // Proses Post Data
+    if (kondisi == true) {
+        const date = moment().format('YYYY-MM-DD');
+        for (let i = 0; i < list.length; i++) {
+            // const verify = form.find(item => item.tanggal == list[i].tanggal)
+            const cond = date == list[i].tanggal ? 'update' : 'add'
+            console.log(cond, list[i].tanggal, date)
+            if (cond == 'update') {
+                await update_StockBulkyController(list[i].id, list[i])
+            } else {
+                list[i].tanggal = date
+                await add_StockBulkyController(list[i])
+            }
+        }
+        msg = { severity: 'success', content: 'Data berhasil di simpan' };
+    }
+
+    return msg
 }
 
 export const loadTable_StockBulkyController = async() => {
@@ -42,6 +126,7 @@ export const loadTable_StockBulkyController = async() => {
                         space: Number(items[j].space),
                         tank_name: items[j].tank.name,
                         tank_id: items[j].tank_id,
+                        location: items[j].tank.location.name,
                         tanggal: items[j].tanggal,
                         productable_type: await productableType(items[j].productable_type) == 'bulky' ? 'bulk' : await productableType(items[j].productable_type),
                         productable_id: items[j].productable_id,
@@ -61,6 +146,7 @@ export const loadTable_StockBulkyController = async() => {
                 tank_name: 'Total',
                 tank_id: null,
                 tanggal: null,
+                location: null,
                 productable_type: null,
                 productable_id: null,
                 remarks: null,
@@ -83,7 +169,6 @@ export const loadTable_StockBulkyController = async() => {
           }, {});
           
           const summedData = Object.values(result);
-          console.log(list);
     }
     return list;
 }

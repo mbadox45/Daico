@@ -166,7 +166,7 @@
             </div>
             <DataView v-else :value="filteredList" :layout="'list'" :paginator="true" :rows="5">
                 <template #list="{data}">
-                    <div class="col-12 flex flex-column gap-3 border-1 border-round border-gray-300 p-3 my-2">
+                    <div class="col-12 flex flex-column gap-3 border-2 border-round border-gray-300 p-3 my-2">
                         <div class="flex w-full">
                             <div class="flex align-items-center w-full">
                                 <div class="flex-1 text-center md:text-left">
@@ -180,7 +180,7 @@
                                 <InputText v-model="filters['global'].value" placeholder="Search"/>
                             </div>-->
                         </div>
-                        <DataTable v-model:filters="filters" v-model:expandedRows="expandedRows" :value="data.uraian" dataKey="id" :globalFilterFields="['nama', 'total_qty']">
+                        <DataTable v-model:filters="filters" v-model:expandedRows="expandedRows" :value="data.uraian" showGridlines dataKey="id" :globalFilterFields="['nama', 'total_qty']">
                             <template #empty> No uraian production found. </template>
                             <template #loading> Loading uraian production data. Please wait. </template>
                             <Column expander style="width: 5rem" />

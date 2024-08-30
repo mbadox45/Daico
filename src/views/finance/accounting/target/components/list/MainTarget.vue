@@ -68,7 +68,7 @@
 </script>
 
 <template>
-    <div class="flex flex-column gap-5">
+    <div class="flex flex-column gap-5 p-3 border-round border-3 border-cyan-100">
         <div class="flex justify-content-between gap-4">
             <span class="text-xl font-bold font-italic">Report Target Penjualan & Produksi</span>
         </div>
@@ -90,9 +90,9 @@
                     <span class="font-semibold text-sm font-italic">{{produk.nama}}</span>
                     <div class="pt-3 w-full flex flex-column gap-2">
                         <div class="grid">
-                            <div class="col-12">
-                                <div class="grid">
-                                    <div class="col-8 px-4">
+                            <div class="col-12 pb-0">
+                                <div class="grid pb-0">
+                                    <div class="col-8 pb-0 px-4">
                                         <div class="grid border-round bg-green-600 font-bold text-sm text-white">
                                             <div class="col-3 text-center">PRODUCT</div>
                                             <div class="col-3 text-center">REAL</div>
@@ -100,7 +100,7 @@
                                             <div class="col-3 text-center">DIFF</div>
                                         </div>
                                     </div>
-                                    <div class="col-4 px-4">
+                                    <div class="col-4 pb-0 px-4">
                                         <div class="grid border-round bg-green-600 font-bold text-sm text-white">
                                             <div class="col-6 text-center">REAL</div>
                                             <div class="col-6 text-center">SISA TARGET</div>
@@ -118,13 +118,13 @@
                             <div class="col-12" v-else>
                                 <div class="px-2">
                                     <div class="grid border-round align-items-center" v-for="(qty, indexs) in produk.items" :class="indexs == 0 ? 'mt-0' : 'mt-1'" :key="indexs">
-                                        <div class="col-12 py-1" v-if="indexs < (produk.items.length - 1) && qty.nama != null">
+                                        <div class="col-12 pt-0 border-bottom-2 border-gray-300" v-if="indexs < (produk.items.length - 1) && qty.nama != null">
                                             <span class="font-italic underline font-medium uppercase">{{ qty.nama }}</span>
                                         </div>
                                         <div class="col-12 py-1" v-if="qty.items.length > 1">
-                                            <div class="grid" v-for="(items, num) in qty.items" :key="num">
-                                                <div class="col-8 py-1">
-                                                    <div class="grid text-xs font-medium">
+                                            <div class="grid pb-0 border-bottom-2 border-gray-300" v-for="(items, num) in qty.items" :key="num">
+                                                <div class="col-8 pb-0">
+                                                    <div class="grid text-xs font-medium pb-0">
                                                         <div class="col-3">{{ items.productable_name }}</div>
                                                         <div class="col-3 text-right">{{ items.total_real }}</div>
                                                         <div class="col-3 text-right">{{ items.total_rkap }}</div>

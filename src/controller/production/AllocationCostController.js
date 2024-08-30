@@ -105,16 +105,19 @@ export const loadAllocation_AllocationCostController = async(tgl) => {
 
     // Allocation Biaya Penyusutan
     const penyusutan_unit = response == null ? null : response.biayaPenyusutanUnit == null ? null : response.biayaPenyusutanUnit
+    console.log(penyusutan_unit)
     const unit = penyusutan_unit == null ? null : penyusutan_unit.columns == null || penyusutan_unit.columns.length < 1 ? null : penyusutan_unit.columns
     const unit_qty = unit == null ? null : unit.find(item => item.name == "Qty") == null ? null : unit.find(item => item.name == "Qty");
     const unit_persen = unit == null ? null : unit.find(item => item.name == "%") == null ? null : unit.find(item => item.name == "%");
     
     const penyusutan_aux = response == null ? null : response.biayaPenyusutanAuxiliary == null ? null : response.biayaPenyusutanAuxiliary
+    console.log(penyusutan_aux)
     const aux = penyusutan_aux == null ? null : penyusutan_aux.columns == null || penyusutan_aux.columns.length < 1 ? null : penyusutan_aux.columns
     const aux_qty = aux == null ? null : aux.find(item => item.name == "Qty") == null ? null : aux.find(item => item.name == "Qty");
     const aux_persen = aux == null ? null : aux.find(item => item.name == "%") == null ? null : aux.find(item => item.name == "%");
     
     const penyusutan_alloc = response == null ? null : response.biayaPenyusutanAllocation == null ? null : response.biayaPenyusutanAllocation
+    console.log(penyusutan_alloc)
     const alloc = penyusutan_alloc == null ? null : penyusutan_alloc.columns == null || penyusutan_alloc.columns.length < 1 ? null : penyusutan_alloc.columns
     const alloc_qty = alloc == null ? null : alloc.find(item => item.name == "Qty") == null ? null : alloc.find(item => item.name == "Qty");
     const alloc_persen = alloc == null ? null : alloc.find(item => item.name == "%") == null ? null : alloc.find(item => item.name == "%");

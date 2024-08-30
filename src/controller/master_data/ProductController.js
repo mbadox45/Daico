@@ -1,20 +1,20 @@
-import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
+import ProductMaster from '@/api/master/ProductMaster.js';
 import {msg_success, msg_warning, msg_error} from '@/controller/dummy/func_dummy.js';
 
-export const loadAll_BulkyProduksiMaster = async() => {
+export const loadAll_ProductMaster = async() => {
     try {
-        const response = await BulkyProdMaster.getAll();
+        const response = await ProductMaster.getAll();
         const load = response.data;
-        const data = load.mBulky;
+        const data = load.data;
         return data;
     } catch (error) {
         return null;
     }
 }
 
-export const add_BulkyProduksiMaster = async(form) => {
+export const add_ProductMaster = async(form) => {
     try {
-        const response = await BulkyProdMaster.addPost(form);
+        const response = await ProductMaster.addPost(form);
         const load = response.data;
         if (load.success == true) {
             return msg_success;
@@ -26,9 +26,9 @@ export const add_BulkyProduksiMaster = async(form) => {
     }
 }
 
-export const update_BulkyProduksiMaster = async(id,form) => {
+export const update_ProductMaster = async(id,form) => {
     try {
-        const response = await BulkyProdMaster.updatePost(id,form);
+        const response = await ProductMaster.updatePost(id,form);
         const load = response.data;
         if (load.success == true) {
             return msg_success;

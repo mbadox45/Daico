@@ -92,7 +92,7 @@
                     messages.value = [{ severity: 'success', content: 'Data berhasil di tambahkan', id: count.value++ }];
                     setTimeout(function() {
                         visible.value = false
-                        window.location.replace(`${URL_WEB}cpo?active=1`);
+                        window.location.replace(`${URL_WEB}cpo?active=2`);
                     }, time.value);
                 } else {
                     if (response.code == 400) {
@@ -110,7 +110,7 @@
                     setTimeout(function() {
                         // loadData()
                         visible.value = false
-                        window.location.replace(`${URL_WEB}cpo?active=1`);
+                        window.location.replace(`${URL_WEB}cpo?active=2`);
                     }, time.value);
                 } else {
                     if (response.code == 400) {
@@ -144,7 +144,7 @@
                 <span class="p-inputgroup-addon bg-white">
                     <i class="pi pi-search"></i>
                 </span>
-                <InputText type="text" placeholder="Search by Date" class="w-full" v-model="filters['global'].value"/>
+                <InputText type="text" placeholder="Search" class="w-full" v-model="filters['global'].value"/>
             </div>
         </div>
         <!-- Dialog -->
@@ -158,7 +158,7 @@
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="avg" class="font-semibold w-6rem">Qty</label>
-                <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Terima" class="flex-auto" />
+                <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty" class="flex-auto" />
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="avg" class="font-semibold w-6rem">Harga (Rp)</label>

@@ -16,17 +16,16 @@
     const load_data = ref([])
     const loadingData = ref(false)
 
-    // Function
-    watch(() => props.cpo, (newVal) => {loadProduct(newVal)});
-
-    onMounted(() => {
-        loadProduct(props.cpo)
-    });
+    
+    // onMounted(() => {
+    //     loadProduct(props.cpo)
+    // });
 
 
-    const loadProduct = async(data) => {
+    const loadProduct = async() => {
         loadingData.value = true
         try {
+            const data = props.cpo
             const response = await nilaiCpo_DashboardController(data)
             load_data.value = response
             loadingData.value = false
@@ -39,6 +38,9 @@
             loadingData.value = false
         }
     }
+
+    // Function
+    watch(() => props.cpo, loadProduct, { immediate: true });
 
 </script>
 <template>

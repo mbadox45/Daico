@@ -5,6 +5,7 @@ import MonthlyDmo from '@/api/target/MonthlyDmo.js';
 import DailyDmo from '@/api/target/DailyDmo.js';
 import {msg_success, msg_warning, msg_error} from '@/controller/dummy/func_dummy.js';
 import { formatCurrency } from "@/controller/dummy/func_dummy.js";
+import moment from 'moment';
 
 // Rekap
 export const loadRekapByDate_TargetController = async(tgl) => {
@@ -92,6 +93,50 @@ export const updateReal_TargetController = async(id,form) => {
     } catch (error) {
         return msg_error
     }
+}
+
+export const postTarget_TargetController = async(form, tanggal) => {
+    let msg = {severity: '', content: ''}
+    const list = []
+    for (let i = 0; i < form.length; i++) {
+        list.push({
+            id: null,
+            tanggal: moment(tanggal).format('YYYY-MM-DD'),
+            value: form[i].value,
+            product_type: form[i].product_type,
+            productable_id: form[i].productable_id,
+            type: form[i].type,
+        })
+    }
+
+    // Proses List
+    let kondisi;
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].value != null && list[i].product_type != null && list[i].productable_id != null) {
+            if (i < (list.length - 1)) {
+                continue;
+            }
+            kondisi = true
+        } else {
+            msg = {severity:'warn', content:`Mohon data diisi value pada bagian ${list[i].product_type} ${list[i].productable_id}`};
+            kondisi = false
+            break;
+        }
+    }
+
+    // Proses Post Data
+    if (kondisi == true) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].type == 'real') {
+                await addReal_TargetController(list[i])
+            } else {
+                await addRkap_TargetController(list[i])
+            }
+        }
+        msg = { severity: 'success', content: 'Data berhasil di simpan' };
+    }
+
+    return msg
 }
 
 // Monthly DMO

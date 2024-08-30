@@ -22,15 +22,12 @@
     const total_cash_on_hand = ref(0)
     const loadingData = ref(false)
 
-    // Function
-    watch(() => props.cash, (newVal) => {loadProduct(newVal)});
-
-    onMounted(() => {
-        loadProduct(props.cash)
-    });
-
-
-    const loadProduct = async(data) => {
+    
+    // onMounted(() => {
+    //     loadProduct(props.cash)
+    // });
+    
+    const loadProduct = async() => {
         loadingData.value = true
         try {
             const response = await RekeningUnitKerja();
@@ -45,6 +42,9 @@
             loadingData.value = false
         }
     }
+
+    // Function
+    watch(() => props.cash, loadProduct, { immediate: true });
 
 </script>
 <template>

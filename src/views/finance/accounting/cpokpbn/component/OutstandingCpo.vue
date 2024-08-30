@@ -68,7 +68,7 @@
                 supplier: data.supplier,
                 harga: data.harga,
                 qty: data.qty,
-                qty_out: data.qty_out,
+                qty_out: 0,
             }
         }
     }
@@ -79,7 +79,7 @@
             kontrak: null,
             supplier: null,
             qty: null,
-            qty_out: null,
+            qty_out: 0,
             harga: null,
         }
     }
@@ -94,7 +94,7 @@
                     messages.value = [{ severity: 'success', content: 'Data berhasil di tambahkan', id: count.value++ }];
                     setTimeout(function() {
                         visible.value = false
-                        window.location.replace(`${URL_WEB}cpo?active=2`);
+                        window.location.replace(`${URL_WEB}cpo?active=3`);
                     }, time.value);
                 } else {
                     if (response.code == 400) {
@@ -112,7 +112,7 @@
                     setTimeout(function() {
                         // loadData()
                         visible.value = false
-                        window.location.replace(`${URL_WEB}cpo?active=2`);
+                        window.location.replace(`${URL_WEB}cpo?active=3`);
                     }, time.value);
                 } else {
                     if (response.code == 400) {
@@ -164,16 +164,16 @@
             </div>
             <div class="flex align-items-center gap-3 mb-3">
                 <label for="avg" class="font-semibold w-6rem">Qty</label>
-                <div class="flex-auto flex gap-2">
+                <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Terima" class="flex-auto" />
+                <!--<div class="flex-auto flex gap-2">
                     <div class="flex-column flex gap-1 w-full">
                         <label for="qty" class="font-medium text-xs w-6rem">QTY Terima</label>
-                        <InputNumber v-model="forms.qty" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Terima" class="w-full" />
                     </div>
                     <div class="flex-column flex gap-1 w-full">
                         <label for="qty" class="font-medium text-xs w-6rem">QTY Kirim</label>
                         <InputNumber v-model="forms.qty_out" inputId="locale-german" locale="de-DE" :minFractionDigits="1" :maxFractionDigits="2" placeholder="Qty Kirim" class="w-full" />
                     </div>
-                </div>
+                </div>-->
             </div>
             <div class="flex align-items-center gap-3 mb-5">
                 <label for="harga" class="font-semibold w-6rem">Harga (Rp)</label>
@@ -211,17 +211,17 @@
                     </Column>
                 </Row>
                 <Row>
-                    <Column sortable field="qty">
+                    <!--<Column sortable field="qty">
                         <template #header>
                             <div class="flex justify-content-end w-full">
                                 <span>Qty Out</span>
                             </div>
                         </template>
-                    </Column>
+                    </Column>-->
                     <Column sortable field="qty">
                         <template #header>
                             <div class="flex justify-content-end w-full">
-                                <span>Qty In</span>
+                                <span>Qty</span>
                             </div>
                         </template>
                     </Column>
@@ -254,13 +254,13 @@
                     <strong class="text-sm uppercase">{{ data.supplier }}</strong>
                 </template>
             </Column>
-            <Column field="qty">
+            <!-- <Column field="qty">
                 <template #body="{ data }">
                     <div class="flex justify-content-end">
                         <span>{{ formatCurrency(Number(data.qty_out).toFixed(2)) }}</span>
                     </div>
                 </template>
-            </Column>
+            </Column>-->
             <Column field="qty">
                 <template #body="{ data }">
                     <div class="flex justify-content-end">

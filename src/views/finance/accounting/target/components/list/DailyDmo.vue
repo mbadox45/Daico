@@ -97,7 +97,11 @@
 </script>
 
 <template>
-    <div class="flex-auto flex flex-column gap-3">
+    <div class="flex flex-column gap-3 p-3 border-round border-3 border-cyan-100">
+        <div class="flex justify-content-between gap-4">
+            <span class="text-xl font-bold font-italic">Daily DMO</span>
+            <Button v-if="cek_token != null" icon="pi pi-plus" label="Add" severity="info" class="py-2" size="small" @click="formDatabase('add', null)"/>
+        </div>
         <!-- Dialog -->
         <Dialog v-model:visible="visible" modal :header="title_dialog" :style="{ width: '50rem' }">
             <transition-group name="p-message" tag="div">
@@ -115,18 +119,21 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else :value="products" paginator :rows="5" dataKey="id" :globalFilterFields="['tanggal']">
+        <DataTable v-else :value="products" showGridlines :globalFilterFields="['tanggal']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
-            <Column field="tanggal" style="min-width: 8rem;" sortable>
+            <Column field="tanggal" style="min-width: 8rem;" sortable headerStyle="background-color:#d5d8dc;">
                 <template #header>
-                    <small class="font-medium uppercase">Date</small>
+                    <small class="font-bold uppercase">Date</small>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium">{{ moment(data.tanggal).format('DD MMMM YYYY') }}</small>
+                    <div class="flex justify-content-between gap-5">
+                        <small class="font-medium">{{ moment(data.tanggal).format('DD MMMM YYYY') }}</small>
+                        <Button v-if="cek_token != null" icon="pi pi-pencil" @click="formDatabase('edit', data)" size="small" severity="warning" text class="py-2"/>
+                    </div>
                 </template>
             </Column>
-            <Column field="value" style="min-width: 8rem;" sortable>
+            <Column field="value" style="min-width: 8rem;" sortable headerStyle="background-color:#d5d8dc;">
                 <template #header>
                     <small class="font-medium uppercase">Value</small>
                 </template>
@@ -134,7 +141,7 @@
                     <small class="font-normal">{{ formatCurrency(Number(data.value).toFixed(2)) }}</small>
                 </template>
             </Column>
-            <Column field="value" style="min-width: 8rem;">
+            <Column field="value" style="min-width: 8rem;" headerStyle="background-color:#d5d8dc;">
                 <template #header>
                     <small class="font-medium uppercase">Created At</small>
                 </template>
@@ -142,22 +149,12 @@
                     <small class="font-normal">{{ moment(data.created_at).format('DD MMMM YYYY  HH:mm:ss') }}</small>
                 </template>
             </Column>
-            <Column field="value" style="min-width: 8rem;">
+            <Column field="value" style="min-width: 8rem;" headerStyle="background-color:#d5d8dc;">
                 <template #header>
                     <small class="font-medium uppercase">Updated At</small>
                 </template>
                 <template #body="{ data }">
                     <small class="font-normal">{{ moment(data.updated_at).format('DD MMMM YYYY  HH:mm:ss') }}</small>
-                </template>
-            </Column>
-            <Column field="value" style="width: 3rem;" v-if="cek_token != null">
-                <template #header>
-                    <Button icon="pi pi-plus" label="Add" severity="info" class="py-2" size="small" @click="formDatabase('add', null)"/>
-                </template>
-                <template #body="{ data }">
-                    <div class="flex justify-content-center">
-                        <Button icon="pi pi-pencil" @click="formDatabase('edit', data)" size="small" severity="warning" text class="py-2"/>
-                    </div>
                 </template>
             </Column>
         </DataTable>

@@ -8,9 +8,10 @@
     import AvgCpo from '@/views/finance/accounting/cpokpbn/component/AvgCpo.vue'
     import IncomingCpo from '@/views/finance/accounting/cpokpbn/component/IncomingCpo.vue'
     import OutstandingCpo from '@/views/finance/accounting/cpokpbn/component/OutstandingCpo.vue'
+    import StockAwalCpo from '@/views/finance/accounting/cpokpbn/component/StockAwalCpo.vue'
 
     // API
-    import {loadCpoKpbnByDate_CpoController, loadCpoIncommingByDate_CpoController, loadCpoOutstandingAll_CpoController} from '@/controller/retail/CpoController.js'
+    import {loadCpoKpbnByDate_CpoController, loadCpoIncommingByDate_CpoController, loadCpoOutstandingAll_CpoController, loadTableStockAwal_CpoController} from '@/controller/retail/CpoController.js'
 
     const route = useRoute()
     const active = ref(0);
@@ -18,6 +19,7 @@
     const loadCPOKpbn = ref([]);
     const loadIncomming = ref([]);
     const loadOutstanding = ref([]);
+    const loadStockAwal = ref([]);
 
     // OP Show Date
     const bulan = ref(Number(moment().format('M')));
@@ -40,12 +42,15 @@
         const tgl = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`
         tanggal.value = tgl
         periods.value = moment(tgl).format('MMMM YYYY')
+        const stok_awal = await loadTableStockAwal_CpoController(tgl)
+        // const stok_awal = null
         const cpo_kpbn = await loadCpoKpbnByDate_CpoController(tgl)
         const incomming = await loadCpoIncommingByDate_CpoController(tgl)
         const outstanding = await loadCpoOutstandingAll_CpoController()
         loadCPOKpbn.value = cpo_kpbn
         loadIncomming.value = incomming
         loadOutstanding.value = outstanding
+        loadStockAwal.value = stok_awal
         loadingTable.value = false
         loadBulan()
         loadTahun()
@@ -109,9 +114,10 @@
                 <span class="font-medium text-sm text-gray-400">{{ moment(tanggal).format('MMMM YYYY') }}</span>
             </div>
             <div class="flex mb-2 gap-2 justify-content-end border-1 p-2 border-round border-gray-500">
-                <Button @click="active = 0" label="CPO KPBN" severity="secondary" class="py-2 text-xs" :text="active !== 0" size="small"/>
-                <Button @click="active = 1" label="Actual Incomming" severity="secondary" class="py-2 text-xs" :text="active !== 1" size="small"/>
-                <Button @click="active = 2" label="Outstanding CPO" severity="secondary" class="py-2 text-xs" :text="active !== 2" size="small"/>
+                <Button @click="active = 0" label="Stock Awal" severity="secondary" class="py-2 text-xs" :text="active !== 0" size="small"/>
+                <Button @click="active = 1" label="CPO KPBN" severity="secondary" class="py-2 text-xs" :text="active !== 1" size="small"/>
+                <Button @click="active = 2" label="Actual Incoming" severity="secondary" class="py-2 text-xs" :text="active !== 2" size="small"/>
+                <Button @click="active = 3" label="Outstanding CPO" severity="secondary" class="py-2 text-xs" :text="active !== 3" size="small"/>
             </div>
         </div>
         <div v-if="loadingTable == true" class="flex flex-column-reverse justify-content-center align-items-center gap-3">
@@ -125,15 +131,20 @@
         <div v-else>
             <div v-show="active == 0">
                 <div class="flex flex-column gap-3 p-3 border-round border-1 border-gray-300">
-                    <avg-cpo :datas="loadCPOKpbn"/>
+                    <stock-awal-cpo :datas="loadStockAwal"/>
                 </div>
             </div>
             <div v-show="active == 1">
                 <div class="flex flex-column gap-3 p-3 border-round border-1 border-gray-300">
-                    <incoming-cpo :datas="loadIncomming"/>
+                    <avg-cpo :datas="loadCPOKpbn"/>
                 </div>
             </div>
             <div v-show="active == 2">
+                <div class="flex flex-column gap-3 p-3 border-round border-1 border-gray-300">
+                    <incoming-cpo :datas="loadIncomming"/>
+                </div>
+            </div>
+            <div v-show="active == 3">
                 <div class="flex flex-column gap-3 p-3 border-round border-1 border-gray-300">
                     <outstanding-cpo :datas="loadOutstanding"/>
                 </div>

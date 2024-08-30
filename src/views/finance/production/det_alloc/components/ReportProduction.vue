@@ -49,7 +49,7 @@
         </div>
         <div class="w-full">
             <DataTable :value="load" v-model:filters="filters" rowGroupMode="subheader" showGridlines scrollHeight="430px" scrollable groupRowsBy="kategori" sortMode="single" sortField="id_kategori" :sortOrder="1" tableStyle="min-width: 50rem" :globalFilterFields="['kategori', 'name', 'satuan', 'qty']">
-                <Column field="kategori" header="Representative" style="min-width: 200px"></Column>
+                <Column field="kategori" header="Representative" style="min-width: 200px" headerClass="bg-gray-300"></Column>
                 <Column style="min-width: 150px">
                     <template #header>
                         <div class="flex w-full justify-content-center">

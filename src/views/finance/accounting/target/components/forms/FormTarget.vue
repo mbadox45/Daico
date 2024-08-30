@@ -7,10 +7,9 @@
 
     // API
     import {list_product_type} from '@/api/DummyData.js';
-    import TargetReal from '@/api/target/TargetReal.js';
-    import TargetRkap from '@/api/target/TargetRkap.js';
-    import BulkyProdMaster from '@/api/master/BulkyProdMaster.js';
-    import RetailProdMaster from '@/api/master/RetailProdMaster.js';
+    import { postTarget_TargetController } from '@/controller/retail/TargetController.js'
+    import { loadAll_BulkyProduksiMaster } from '@/controller/master_data/BulkyProduksiController.js'
+    import { loadAll_RetailProdMaster } from '@/controller/master_data/RetailProduksiController.js'
 
     const route = useRoute();
     const router = useRouter();
@@ -19,6 +18,8 @@
     const product_type = ref(list_product_type)
     const loadingTable = ref(false)
     const time = ref(3000)
+    const tanggal = ref(moment().format('YYYY-MM-DD'));
+    const type = ref(route.query.type);
     const forms = ref([{
         id: null,
         tanggal: moment().format('YYYY-MM-DD'),
@@ -36,37 +37,42 @@
     const loadData = async() => {
         loadingTable.value = true
         try {
-            const real = await loadTargetReal()
-            console.log(real)
-
-            const retail = await loadRetailProd();
-            list_product_retail.value = retail;
-    
-            const bulk = await loadBulkProd();
-            list_product_bulk.value = bulk;
-            
-            const list = [];
-            // Retail Looping
-            for (let i = 0; i < retail.length; i++) {
-                list.push ({
-                    id: null,
-                    tanggal: moment().format('YYYY-MM-DD'),
-                    value: null,
-                    product_type: 'retail',
-                    productable_id: retail[i].id,
-                })
+            // const real = await loadTargetReal()
+            // console.log(real)
+            if (type.value == null || type.value == '') {
+                router.push('/target')
+            } else {
+                const retail = await loadAll_RetailProdMaster();
+                list_product_retail.value = retail;
+        
+                const bulk = await loadAll_BulkyProduksiMaster();
+                list_product_bulk.value = bulk;
+                
+                const list = [];
+                // Retail Looping
+                for (let i = 0; i < retail.length; i++) {
+                    list.push ({
+                        id: null,
+                        tanggal: moment().format('YYYY-MM-DD'),
+                        value: null,
+                        product_type: 'retail',
+                        productable_id: retail[i].id,
+                        type: type.value
+                    })
+                }
+                // Bulk Looping
+                for (let i = 0; i < bulk.length; i++) {
+                    list.push ({
+                        id: null,
+                        tanggal: moment().format('YYYY-MM-DD'),
+                        value: null,
+                        product_type: 'bulk',
+                        productable_id: bulk[i].id,
+                        type: type.value
+                    })
+                }
+                forms.value = list
             }
-            // Bulk Looping
-            for (let i = 0; i < bulk.length; i++) {
-                list.push ({
-                    id: null,
-                    tanggal: moment().format('YYYY-MM-DD'),
-                    value: null,
-                    product_type: 'bulk',
-                    productable_id: bulk[i].id,
-                })
-            }
-            forms.value = list
             loadingTable.value = false
         } catch (error) {
             loadingTable.value = false
@@ -76,94 +82,25 @@
                 value: null,
                 product_type: null,
                 productable_id: null,
+                type: null,
             }]
         }
-    }
-
-    // Function
-    const loadProduct = async() => {
-        forms_real.value.product_type
-        if (forms_real.value.product_type == 'bulk') {
-            // const response = await 
-        } else {
-            
-        }
-    }
-
-    const loadTargetReal = async() => {
-        try {
-            const response = await TargetReal.getByDate({tanggal: moment().format('YYYY-MM-DD')})
-            const load = response.data;
-            const data = load.data
-            return data;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    const loadRetailProd = async() => {
-        try {
-            const response = await RetailProdMaster.getAll()
-            const load = response.data;
-            const data = load.mBulky
-            return data;
-        } catch (error) {
-            return null;
-        }
-
-    }
-
-    const loadBulkProd = async() => {
-        try {
-            const response = await BulkyProdMaster.getAll()
-            const load = response.data;
-            const data = load.mBulky
-            return data;
-        } catch (error) {
-            return null;
-        }
-
     }
 
     const postData = async() => {
         loadingTable.value = true
         try {
-            const form = forms.value
-            let count_value = 0;
-            for (let i = 0; i < form.length; i++) {
-                if (form[i].value == null) {
-                    continue;
-                }
-                count_value = count_value + 1;
-            }
-            if (count_value >= form.length) {
-                // status = 'bisa di simpan';
-                if (route.query.type == 'real') {
-                    for (let i = 0; i < form.length; i++) {
-                        const response = await TargetReal.addPost(form[i]);
-                        const load = response.data;
-                        console.log(load)
-                    }
-                    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data berhasil di simpan', life: 3000 });
-                    setTimeout(function() {
-                        router.push('/target?active=3')
-                    }, time.value);
+            const response = await postTarget_TargetController(forms.value, tanggal.value)
+            toast.add({ severity: response.severity, summary: response.severity == 'success' ? 'Sukses' : response.severity == 'warn' ? 'Mohon Perhatian' : 'Gagal Proses', detail: response.content, life: 3000 });
+            loadingTable.value = false
+            setTimeout(function() {
+                // loadData()
+                if (type.value == 'real') {
+                    router.push('/target?active=3')
                 } else {
-                    for (let i = 0; i < form.length; i++) {
-                        const response = await TargetRkap.addPost(form[i]);
-                        const load = response.data;
-                        console.log(load)
-                    }
-                    toast.add({ severity: 'success', summary: 'Sukses', detail: 'Data berhasil di simpan', life: 3000 });
-                    setTimeout(function() {
-                        router.push('/target?active=4')
-                    }, time.value);
+                    router.push('/target?active=4')
                 }
-                loadingTable.value = false
-            } else {
-                loadingTable.value = false
-                toast.add({ severity: 'warn', summary: 'Perhatian', detail: 'Harap data diisi dengan lengkap.', life: 3000 });
-            }
+            }, 2000);
         } catch (error) {
             console.log(error)
             loadingTable.value = false
@@ -214,7 +151,7 @@
                                 <span class="p-inputgroup-addon bg-white">
                                     Tanggal
                                 </span>
-                                <InputText id="tanggal" v-model="data.tanggal" type="date" class="w-full" autocomplete="off" />
+                                <InputText id="tanggal" v-model="tanggal" type="date" class="w-full" autocomplete="off" />
                             </div>
                         </div>
                     </template>

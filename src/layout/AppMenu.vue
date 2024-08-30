@@ -6,7 +6,7 @@ import AppMenuItem from './AppMenuItem.vue';
 import { cek_token } from "@/api/DataVariable.js";
 
 // Menu
-import {akuntansi} from '@/api/MenuBar.js';
+import {akuntansi, akuntansi2} from '@/api/MenuBar.js';
 
 const payload = ref(JSON.parse(localStorage.getItem('payload')));
 const token = localStorage.getItem('usertoken');
@@ -21,7 +21,7 @@ onMounted(() => {
 
 const Menu = () => {
     // console.log(roles)
-    model.value = akuntansi;
+    model.value = cek_token != null ? akuntansi : akuntansi2;
 }
 
 const load = () => {

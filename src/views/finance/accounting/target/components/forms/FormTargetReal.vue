@@ -39,6 +39,7 @@
         } else {
             if (data_prop.productable_type == 'bulk') {
                 list_product.value = await loadAll_BulkyProduksiMaster();
+                console.log(data_prop, await loadAll_BulkyProduksiMaster())
             } else {
                 list_product.value = await loadAll_RetailProdMaster();
             }

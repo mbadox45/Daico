@@ -8,16 +8,16 @@
     // Components
     import CardDashAvg from '@/views/finance/dashboard/components/CardDashAvg.vue'
     import CardCashPage from '@/views/finance/dashboard/components/CardCashPage.vue'
-    import CardMinimumSellingPage from '@/views/finance/dashboard/components/CardMinimumSellingPage.vue'
-    import CardPotensiPage from '@/views/finance/dashboard/components/CardPotensiPage.vue'
-    import CardSellingPrice from '@/views/finance/dashboard/components/CardSellingPrice.vue'
-    import ChartDougnutPage from '@/views/finance/dashboard/components/ChartDougnutPage2.vue'
+    import CardMinimumSellingPage from '@/views/finance/dashboard/components/CardMinimumSellingPage2.vue'
+    import ChartDougnutPage from '@/views/finance/dashboard/components/ChartDougnutPage.vue'
     import CardStockInventory from '@/views/finance/dashboard/components/CardStockInventory.vue';
     import CardCpoPage from '@/views/finance/dashboard/components/CardCPOPage.vue'
     import CpoAndRoutersPage from '@/views/finance/dashboard/components/CpoAndRoutersPage.vue'
 
     // API
     import {loadDashByDate_DashboardController} from '@/controller/dashboard/DashboardController2.js';
+
+    const toast = useToast();
 
     // Variable
     const now = moment().format('YYYY-MM-DD');
@@ -39,26 +39,30 @@
 
     const loadData = async() => {
         loadingData.value = true
-        // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(moment(now).format('D'))-1).toString().padStart(2, '0')}`;
-        const dateString = `2024-05-31`;
-        tanggal.value = dateString;
-        const response = await loadDashByDate_DashboardController(dateString)
-        load_data.value = response
-        loadingData.value = false
-        loadBulan();
-        loadTahun()
+        try {
+            const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(moment(now).format('D'))-1).toString().padStart(2, '0')}`;
+            // const dateString = `2024-05-31`;
+            tanggal.value = dateString;
+            const response = await loadDashByDate_DashboardController(dateString)
+            if (response == null) {
+                toast.add({ severity: 'error', summary: 'Error', detail: 'Load data failed, please try again.', life: 5000 });
+            } else {
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Load data success', life: 5000 });
+            }
+            load_data.value = response
+            loadBulan();
+            loadTahun();
+            loadingData.value = false
+        } catch (error) {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Message Content', life: 5000 });
+            const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(moment(now).format('D'))-1).toString().padStart(2, '0')}`;
+            tanggal.value = dateString;
+            loadBulan();
+            loadTahun();
+            load_data.value = null
+            loadingData.value = false
+        }
     }
-
-    // const onSubmit = async(date, data) => {
-    //     // tanggal.value = '2024-05-31';
-    //     console.log(loadingData.value);
-    //     try {
-    //         tanggal.value = date;
-    //         load_data.value = data
-    //     } finally {
-    //         loadingData.value = false
-    //     }
-    // }
 
     const loadBulan = () => {
         list_bulan.value = []
@@ -99,6 +103,7 @@
 
 <template>
     <div class="flex flex-column gap-5 mt-5 md:mt-0">
+        <Toast position="bottom-center" />
         <div v-if="loadingData == true" class="w-full bg-white p-5 flex flex-column justify-content-center align-items-center gap-4" style="height: 70vh;">
             <div class="w-full flex flex-column gap-4">
                 <span>Loading data....</span>
@@ -133,14 +138,20 @@
                 </div>
                 <card-dash-avg :kurs="load_data"/>
             </div>
-            <card-minimum-selling-page :sell="load_data"/>
+            <div class="flex flex-column lg:flex-row gap-5">
+                <div class="w-full">
+                    <card-minimum-selling-page :sell="load_data"/>
+                </div>
+                <div class="lg:w-7 w-full">
+                    <chart-dougnut-page :chart="load_data"/>
+                </div>
+            </div>
             <div class="flex md:flex-row flex-column gap-5 align-items-center md:align-items-start">
                 <card-cpo-page :cpo="load_data"/>
                 <card-cash-page :cash="load_data"/>
             </div>
             <cpo-and-routers-page :tanggal="tanggal" :rout="load_data"/>
             <card-stock-inventory :stock="load_data"/>
-            <chart-dougnut-page :chart="load_data"/>
         </div>
     </div>
 </template>

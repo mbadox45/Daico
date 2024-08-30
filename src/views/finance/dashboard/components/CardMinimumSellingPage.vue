@@ -24,9 +24,9 @@
 
     // Function
     
-    onMounted(() => {
-        loadProduct()
-    });
+    // onMounted(() => {
+    //     loadProduct()
+    // });
     
     
     const loadProduct = async() => {
@@ -107,9 +107,9 @@
 
 </script>
 <template>
-    <div class="flex flex-column p-4 bg-yellow-100 w-full border-round gap-5">
+    <div class="flex flex-column p-4 bg-yellow-100 w-full h-full border-round gap-5">
         <div class="font-semibold shadow-4 bg-white p-3 border-round flex flex-column md:flex-row md:justify-content-between gap-2 md:align-items-center text-red-600">
-            <span class="text-sm md:text-xl w-full">MINIMUM SELLING PRICE (EXCL. LEVY DUTY) --> GPM {{ gpm }}% Base On CPO Olah INL</span>
+            <span class="text-sm md:text-lg font-medium w-full">MINIMUM SELLING PRICE (EXCL. LEVY DUTY) --> GPM {{ gpm }}% Base On CPO Olah INL</span>
             <div class="w-full md:w-3">
                 <div class="p-inputgroup p-fluid">
                     <span class="p-inputgroup-addon ">

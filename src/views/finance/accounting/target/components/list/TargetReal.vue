@@ -117,12 +117,11 @@
 </script>
 
 <template>
-    <div class="flex-auto flex flex-column gap-3">
+    <div class="flex flex-column gap-3 p-3 border-round border-3 border-cyan-100">
         <div class="flex justify-content-between align-items-center gap-3">
-            <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full">
-                <Button label="Add" icon="pi pi-plus" class="py-2 text-xs" severity="info" size="small" @click="formDatabase('add', null)"/>
-            </div>
+            <span class="text-xl font-bold font-italic w-full">Target Real</span>
             <div class="p-inputgroup">
+                <Button v-if="cek_token != null" icon="pi pi-plus" class="py-2 text-xs" severity="info" size="small" @click="formDatabase('add', null)"/>
                 <span class="p-inputgroup-addon bg-white">
                     <i class="pi pi-search"></i>
                 </span>
@@ -146,7 +145,7 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else v-model:filters="filters" :value="products" rowGroupMode="subheader" groupRowsBy="tanggal" sortMode="single" sortField="tanggal" scrollable scrollHeight="395px" :sortOrder="1" :rows="5" dataKey="id" :globalFilterFields="['tanggal', 'productable_type', 'productable', 'value']">
+        <DataTable v-else v-model:filters="filters" :value="products" showGridlines rowGroupMode="subheader" groupRowsBy="tanggal" sortMode="single" sortField="tanggal" scrollable scrollHeight="395px" :sortOrder="1" :rows="5" dataKey="id" :globalFilterFields="['tanggal', 'productable_type', 'productable', 'value']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <template #groupheader="{data}">
@@ -155,15 +154,18 @@
                 </div>
             </template>
             <Column field="tanggal" style="min-width: 8rem;" sortable></Column>
-            <Column field="productable_type" style="min-width: 8rem;" sortable>
+            <Column field="productable_type" style="min-width: 8rem;" sortable headerStyle="background-color:#d5d8dc;">
                 <template #header>
                     <small class="font-medium uppercase">Type</small>
                 </template>
                 <template #body="{ data }">
-                    <small class="font-medium capitalize">{{ data.productable_type }}</small>
+                    <div class="flex justify-content-between gap-5">
+                        <small class="font-medium capitalize">{{ data.productable_type }}</small>
+                        <Button v-if="cek_token != null" icon="pi pi-pencil" @click="formDatabase('edit', data)" size="small" severity="warning" text class="py-2"/>
+                    </div>
                 </template>
             </Column>
-            <Column field="type" style="min-width: 8rem;" sortable>
+            <Column field="type" style="min-width: 8rem;" sortable headerStyle="background-color:#d5d8dc;">
                 <template #header>
                     <small class="font-medium uppercase flex justify-content-center w-full">Product Name</small>
                 </template>
@@ -171,19 +173,12 @@
                     <small class="font-normal">{{ data.productable }}</small>
                 </template>
             </Column>
-            <Column field="value" style="min-width: 8rem;" sortable>
+            <Column field="value" style="min-width: 8rem;" sortable headerStyle="background-color:#d5d8dc;">
                 <template #header>
                             <small class="font-medium uppercase flex justify-content-center w-full">Value</small>
                         </template>
                 <template #body="{ data }">
                     <small class="font-normal flex justify-content-end">{{ formatCurrency(Number(data.value).toFixed(2)) }}</small>
-                </template>
-            </Column>
-            <Column field="value" style="width: 3rem;" v-if="cek_token != null">
-                <template #body="{ data }">
-                    <div class="flex justify-content-center">
-                        <Button icon="pi pi-pencil" @click="formDatabase('edit', data)" size="small" severity="warning" text class="py-2"/>
-                    </div>
                 </template>
             </Column>
         </DataTable>

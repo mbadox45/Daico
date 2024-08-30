@@ -169,9 +169,9 @@
             <div class="w-full flex gap-2">
                 <span class="uppercase text-xl text-cyan-700 font-medium">Market Value</span>
             </div>
-            <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full justify-content-end">
+            <!--<div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full justify-content-end">
                 <Button icon="pi pi-plus font-bold" severity="info" size="small" @click="formDatabase('add', null)" outlined class="h-2rem w-2rem"/>
-            </div>
+            </div>-->
         </div>
         <!-- Dialog -->
         <Dialog v-model:visible="visible" modal :style="{ width: '85rem' }" :closable="false">
@@ -184,7 +184,7 @@
                 </div>
             </template>
             <div class="flex gap-6">
-                <div class="w-full flex flex-column gap-3 border-1 border-gray-300 p-3 border-round">
+                <div class="w-full flex flex-column gap-3 border-2 bg-gray-100 border-gray-400 p-3 border-round">
                     <div class="w-full text-right">
                         <span class="font-medium text-xl">Market Routers</span>
                     </div>
@@ -204,7 +204,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="w-full flex flex-column gap-3 border-1 border-gray-300 p-3 border-round">
+                <div class="w-full flex flex-column gap-3 border-2 bg-gray-100 border-gray-400 p-3 border-round">
                     <div class="w-full text-right">
                         <span class="font-medium text-xl">Levy + Duty</span>
                     </div>
@@ -242,7 +242,7 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner" />
             </div>
         </div>
-        <DataTable v-else :value="products" showGridlines  scrollHeight="430px" dataKey="id" scrollable :globalFilterFields="['date']">
+        <DataTable v-else :value="products" showGridlines  scrollHeight="450px" dataKey="id" scrollable :globalFilterFields="['date']">
             <template #empty> No customers found. </template>
             <template #loading> Loading customers data. Please wait. </template>
             <ColumnGroup type="header">

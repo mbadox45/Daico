@@ -42,8 +42,8 @@
 
     const loadData = async() => {
         loadingTable.value = true
-        // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
-        const dateString = `2024-05-31`;
+        const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-01`;
+        // const dateString = `2024-05-31`;
         tanggal.value = dateString;
         console.log(tanggal.value)
         periods.value = moment(dateString).format('MMMM YYYY')

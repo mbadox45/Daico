@@ -117,12 +117,11 @@
 </script>
 
 <template>
-    <div class="flex-auto flex flex-column gap-3">
+    <div class="flex flex-column gap-3 p-3 border-round border-3 border-cyan-100">
         <div class="flex justify-content-between align-items-center gap-3">
-            <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full">
-                <Button label="Add" icon="pi pi-plus" class="py-2 text-xs" severity="info" size="small" @click="formDatabase('add', null)"/>
-            </div>
+            <span class="text-xl font-bold font-italic w-full">Target RKAP</span>
             <div class="p-inputgroup">
+                <Button  v-if="cek_token != null" icon="pi pi-plus" class="py-2 text-xs" severity="info" size="small" @click="formDatabase('add', null)"/>
                 <span class="p-inputgroup-addon bg-white">
                     <i class="pi pi-search"></i>
                 </span>

@@ -81,7 +81,7 @@
         <div class="flex flex-column w-full p-4 bg-white border-round shadow-3 border-1 border-gray-300 gap-3">
             <span class="font-bold w-full">Update Outstanding CPO :</span>
             <ProgressBar v-if="loadingData == true" mode="indeterminate" style="height: 6px"></ProgressBar>
-            <DataTable v-else :value="list_cpo">
+            <DataTable v-else showGridlines :value="list_cpo">
                 <Column field="supplier">
                     <template #header>
                         <span class="font-medium text-xs capitalize font-italic">Entitas</span>
@@ -139,7 +139,7 @@
                 </div>
             </div>
             <ProgressBar v-if="loadingData2 == true" mode="indeterminate" style="height: 6px"></ProgressBar>
-            <DataTable v-else :value="list_market">
+            <DataTable v-else showGridlines :value="list_market">
                 <Column field="name">
                     <template #header>
                         <span class="font-medium text-xs capitalize font-italic">Product</span>

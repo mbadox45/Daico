@@ -30,7 +30,6 @@
         load_bulky.value = response
 
         const retail = await loadTable_StockRetailController()
-        console.log(retail)
         load_retail.value = retail;
         loadingTable.value = false
     }

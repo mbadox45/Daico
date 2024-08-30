@@ -88,7 +88,7 @@
                     messages.value = [{ severity: 'success', content: 'Data berhasil di tambahkan', id: count.value++ }];
                     setTimeout(function() {
                         visible.value = false
-                        window.location.replace(`${URL_WEB}cpo?active=0`);
+                        window.location.replace(`${URL_WEB}cpo?active=1`);
                     }, time.value);
                 } else {
                     if (response.code == 400) {
@@ -106,7 +106,7 @@
                     setTimeout(function() {
                         // loadData()
                         visible.value = false
-                        window.location.replace(`${URL_WEB}cpo?active=0`);
+                        window.location.replace(`${URL_WEB}cpo?active=1`);
                     }, time.value);
                 } else {
                     if (response.code == 400) {
@@ -140,7 +140,7 @@
                 <span class="p-inputgroup-addon bg-white">
                     <i class="pi pi-search"></i>
                 </span>
-                <InputText type="text" placeholder="Search by Date" class="w-full" v-model="filters['global'].value"/>
+                <InputText type="text" placeholder="Search" class="w-full" v-model="filters['global'].value"/>
             </div>
         </div>
         <!-- Dialog -->

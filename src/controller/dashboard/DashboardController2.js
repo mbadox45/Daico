@@ -14,10 +14,149 @@ export const loadDashByDate_DashboardController = async(tgl) => {
     }
 }
 
-export const nilaiStock_DashboardController = async(data) => {
-    const nilai_stock = data == null ? null : data.dataStokBulky == null ? null : data.dataStokBulky.bulkyStock == null ? null : data.dataStokBulky.bulkyStock;
-    const nilai_retail = data == null ? null : data.dataStokRetail == null ? null : data.dataStokRetail.totalStock == null ? null : data.dataStokBulky.totalStock.item == null ? null : data.dataStokBulky.totalStock.item;
+export const statistikKinerja__DashboardController = async(data) => {
+    const persentage = data == null ? null : data.dataTarget == null ? null : data.dataTarget.percentageToTarget == null ? null : data.dataTarget.percentageToTarget
+    const real = data == null ? null : data.dataTarget == null ? null : data.dataTarget.targetReal == null ? null : data.dataTarget.targetReal
+    const rkap = data == null ? null : data.dataTarget == null ? null : data.dataTarget.targetRkap == null ? null : data.dataTarget.targetRkap
+    
+    const prodvsrkap = data == null ? null : data.dataTarget == null ? null : data.dataTarget.qtyProduksiVsRkap == null ? null : data.dataTarget.qtyProduksiVsRkap
+    const prodvsutil = data == null ? null : data.dataTarget == null ? null : data.dataTarget.qtyProduksiVsUtility == null ? null : data.dataTarget.qtyProduksiVsUtility
+    console.log(prodvsutil)
+    const kinerja_sales = []
+    const kinerja_produksi = []
+    
+    // Proses Kinerja Sales
+    if (persentage != null && real != null && rkap != null) {
+        for (let i = 0; i < persentage.length; i++) {
+            const newName = persentage[i].name.replace('Total', '');
+            const bracketedName = newName.replace(/(\w+)/, '$1');
+            const nilai_real = real.find(item => item.name.toLowerCase().includes(bracketedName.toLowerCase())) == null ? 0 : real.find(item => item.name.toLowerCase().includes(bracketedName.toLowerCase()))
+            const nilai_rkap = rkap.find(item => item.name.toLowerCase().includes(bracketedName.toLowerCase())) == null ? 0 : rkap.find(item => item.name.toLowerCase().includes(bracketedName.toLowerCase()))
+            kinerja_sales.push({
+                name: bracketedName,
+                persen: Number(persentage[i].real),
+                real: Number(nilai_real.total),
+                rkap: Number(nilai_rkap.total),
+            })
+        }
+    }
+
+    // Proses Kinerja Produksi
+    if (prodvsrkap != null) {
+        const nilai_real = prodvsrkap.find(item => item.name.toLowerCase().includes('real'));
+        const nilai_rkap = prodvsrkap.find(item => item.name.toLowerCase().includes('rkap'));
+        const nilai_persen = prodvsrkap.find(item => item.name.toLowerCase().includes('target'));
+        kinerja_produksi.push({
+            name: 'Real vs RKAP',
+            persen: Number(nilai_persen.value),
+            real: Number(nilai_real.value),
+            rkap: Number(nilai_rkap.value),
+            name_real: 'Real',
+            name_rkap: 'RKAP',
+        })
+    }
+    if (prodvsutil != null) {
+        const nilai_real = prodvsutil.find(item => item.name.toLowerCase().includes('real'));
+        const nilai_rkap = prodvsutil.find(item => item.name.toLowerCase().includes('utility'));
+        const nilai_persen = prodvsutil.find(item => item.name.toLowerCase().includes('target'));
+        kinerja_produksi.push({
+            name: 'Real vs RKAP',
+            persen: Number(nilai_persen.value),
+            real: Number(nilai_real.value),
+            rkap: Number(nilai_rkap.value),
+            name_real: 'Real',
+            name_rkap: 'Kap. Terpasang',
+        })
+    }
+
+    return {
+        kinerja_sales: kinerja_sales,
+        kinerja_produksi: kinerja_produksi,
+    }
+}
+
+export const nilaiStockKemasan_DashboardController = async(data) => {
     const avg_price = data == null ? null : data.dataAvgPrice == null ? null : data.dataAvgPrice.stockTersedia == null ? null : data.dataAvgPrice.stockTersedia.items == null ? null : data.dataAvgPrice.stockTersedia.items;
+    // const nilai_retail = data == null ? null : data.dataStokRetail == null ? null : data.dataStokRetail.totalStock == null ? null : data.dataStokBulky.totalStock.item == null ? null : data.dataStokBulky.totalStock.item;
+    const nilai_retail = data == null ? null : data.dataStokRetail == null ? null : data.dataStokRetail
+    const kemasan = nilai_retail == null ? null : nilai_retail.totalStock == null ? null : nilai_retail.totalStock.item == null ? null : nilai_retail.totalStock.item
+    
+    const list_kemasan = []
+    let total_kemasan = {qty: 0, harga:0, value:0}
+    const price_kemasan = avg_price == null ? null : avg_price.filter(item => item.name.toLowerCase().includes('kemasan') && !item.name.toLowerCase().includes('kemasan58')) == null ? null : avg_price.filter(item => item.name.toLowerCase().includes('kemasan') && !item.name.toLowerCase().includes('kemasan58'))
+    
+    const list_price_kemasan = []
+    if (price_kemasan != null) {
+        for (let i = 0; i < price_kemasan.length; i++) {
+            const newName = price_kemasan[i].name.replace('kemasan', '');
+            const bracketedName = newName.replace(/(\w+)/, '$1');
+            list_price_kemasan.push({
+                name: bracketedName,
+                qty: price_kemasan[i].qty,
+                rpPerKg: price_kemasan[i].rpPerKg,
+                jumlah: price_kemasan[i].jumlah,
+            })
+        }
+    }
+    
+    if (kemasan != null) {
+        const list = []
+        for (let i = 0; i < kemasan.length; i++) {
+            let kalkulasi = 0
+            if (kemasan[i].name.includes('1L') || kemasan[i].name.includes('2L')) {
+                kalkulasi = 12 * 0.905
+            } else if (kemasan[i].name.includes('900')) {
+                kalkulasi = 12 * 0.9 * 0.905
+            } else if (kemasan[i].name.includes('1800')) {
+                kalkulasi = 6 * 1.8 * 0.905
+            } else if (kemasan[i].name.includes('450')) {
+                kalkulasi = 24 * 0.45 * 0.905
+            } else {
+                kalkulasi = 48 * 0.25 * 0.905
+            }
+            const qty = Number(kemasan[i].total) * kalkulasi
+            const harga = 0;
+            const value = qty * harga;
+            list.push({
+                name: kemasan[i].name,
+                qty: qty,
+                harga: harga,
+                value: value,
+            })
+            total_kemasan.qty += qty;
+        }
+
+        for (let i = 0; i < list_price_kemasan.length; i++) {
+            const retails = list.filter(item => item.name.toLowerCase().includes(list_price_kemasan[i].name.toLowerCase()))
+            if (retails.length > 0 || retails != null) {
+                for (let j = 0; j < retails.length; j++) {
+                    const value = Number(retails[j].qty) * Number(list_price_kemasan[i].rpPerKg)
+                    list_kemasan.push({
+                        name: retails[j].name,
+                        qty: retails[j].qty,
+                        harga: list_price_kemasan[i].rpPerKg,
+                        value: value,
+                    })
+                    total_kemasan.value += value;
+                }
+            }
+        }
+
+        total_kemasan.harga = Number(total_kemasan.value) / Number(total_kemasan.qty)
+    }
+
+    const result = {
+        list_kemasan: list_kemasan,
+        total_kemasan: total_kemasan,
+    }
+
+    return result
+}
+
+export const nilaiStock_DashboardController = async(data) => {
+    const avg_price = data == null ? null : data.dataAvgPrice == null ? null : data.dataAvgPrice.stockTersedia == null ? null : data.dataAvgPrice.stockTersedia.items == null ? null : data.dataAvgPrice.stockTersedia.items;
+    const nilai_stock = data == null ? null : data.dataStokBulky == null ? null : data.dataStokBulky.bulkyStock == null ? null : data.dataStokBulky.bulkyStock;
+    
     // Stock Bulky
     const list_bulk = []
     let total_bulk = {qty: 0, harga:0, value:0}
@@ -114,61 +253,10 @@ export const nilaiStock_DashboardController = async(data) => {
         total_bulk.harga = Number(total_bulk.value) / Number(total_bulk.qty)
     }
 
-    // Stock Retail
-    // const list_retail = []
-    // let total_retail = {qty: 0, harga:0, value:0}
-    // const price_kemasan = avg_price == null ? null : avg_price.filter(item => item.name.toLowerCase().includes('kemasan') || !item.name.toLowerCase().includes('kemasan58')) == null ? null : avg_price.filter(item => item.name.toLowerCase().includes('kemasan') || !item.name.toLowerCase().includes('kemasan58'))
-    // const list_price_kemasan = []
-    // if (price_kemasan != null) {
-    //     for (let i = 0; i < price_kemasan.length; i++) {
-    //         const newName = price_kemasan[i].name.replace('kemasan', '');
-    //         const bracketedName = newName.replace(/(\w+)/, '$1');
-    //         list_price_kemasan.push({
-    //             name: bracketedName,
-    //             qty: price_kemasan[i].qty,
-    //             rpPerKg: price_kemasan[i].rpPerKg,
-    //             jumlah: price_kemasan[i].jumlah,
-    //         })
-    //     }
-    //     console.log(list_price_kemasan)
-    // }
-    // if (nilai_retail != null) {
-    //     for (let i = 0; i < nilai_retail.length; i++) {
-    //         let kalkulasi = 0
-    //         if (nilai_retail[i].name.includes('1L') || nilai_retail[i].name.includes('2L')) {
-    //             kalkulasi = 12 * 0.905
-    //         } else if (nilai_retail[i].name.includes('900')) {
-    //             kalkulasi = 12 * 0.9 * 0.905
-    //         } else if (nilai_retail[i].name.includes('1800')) {
-    //             kalkulasi = 6 * 1.8 * 0.905
-    //         } else if (nilai_retail[i].name.includes('450')) {
-    //             kalkulasi = 24 * 0.45 * 0.905
-    //         } else {
-    //             kalkulasi = 48 * 0.25 * 0.905
-    //         }
-    //         const qty = Number(nilai_retail[i].total) * kalkulasi
-    //         const harga = 0;
-    //         const value = qty * harga;
-    //         list_retail.push({
-    //             name: nilai_retail[i].name,
-    //             qty: qty,
-    //             harga: harga,
-    //             value: value,
-    //         })
-    //         total_retail.qty += qty;
-    //         total_retail.value += value;
-    //     }
-    //     total_retail.harga = Number(total_retail.value) / Number(total_retail.qty)
-    // }
-
     const result = {
         list_bulk: list_bulk,
         total_bulk: total_bulk,
-        list_retail: list_retail,
-        total_retail: total_retail,
     }
-
-    console.log(result)
 
     return result
 }

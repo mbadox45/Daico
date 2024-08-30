@@ -108,8 +108,9 @@
             </div>
             <div class="p-3 flex flex-column gap-3">
                 <div class="grid text-sm font-semibold font-italic bg-gray-200">
+                    <div class="col-1 text-center border-1 border-gray-300">Lokasi</div>
                     <div class="col-1 text-center border-1 border-gray-300">No Tank</div>
-                    <div class="col-3 text-center border-1 border-gray-300">Produk</div>
+                    <div class="col-2 text-center border-1 border-gray-300">Produk</div>
                     <div class="col-1 text-center border-1 border-gray-300">Kapasitas</div>
                     <div class="col-1 text-center border-1 border-gray-300">Stock MT</div>
                     <div class="col-1 text-center border-1 border-gray-300">Stock</div>
@@ -119,8 +120,9 @@
                 </div>
                 <div class="grid text-xs font-normal font-italic" v-for="(item, index) in load" :key="index" :class="item.tank_name == 'Total' ? 'bg-gray-200' : 'bg-white'">
                     <div v-if="item.tank_name == 'Total'" class="col-4 font-bold border-1 border-gray-300">TOTAL</div>
+                    <div v-if="item.tank_name != 'Total'" class="col-1 text-center border-1 border-gray-300">{{item.location}}</div>
                     <div v-if="item.tank_name != 'Total'" class="col-1 text-center border-1 border-gray-300">{{item.tank_name}}</div>
-                    <div v-if="item.tank_name != 'Total'" class="col-3 border-1 border-gray-300">{{item.nama_produk}}</div>
+                    <div v-if="item.tank_name != 'Total'" class="col-2 border-1 border-gray-300">{{item.nama_produk}}</div>
                     <div class="col-1 text-right border-1 border-gray-300">{{ item.capacity }}</div>
                     <div class="col-1 text-right border-1 border-gray-300">{{ formatCurrency(Number(item.stok_mt).toFixed(0)) }}</div>
                     <div class="col-1 text-right border-1 border-gray-300">{{ formatCurrency(Number(item.stok_exc_btm_mt).toFixed(0)) }}</div>

@@ -7,6 +7,7 @@
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
     import { cek_token } from "@/api/DataVariable.js";
     import { loadLatest_PenyusutanBiayaController, add_PenyusutanBiayaController, update_PenyusutanBiayaController } from '@/controller/master_data/PenyusutanBiayaController.js'
+    import { loadAll_AllocMaster } from '@/controller/master_data/AllocController.js'
 
     const props = defineProps({
         // tanggal:{
@@ -28,7 +29,7 @@
     // Dialog Configure
     const visible = ref(false);
     const status_form = ref('add');
-    const data_form = ref();
+    const data_form = ref([]);
     const title_dialog = ref('');
 
     // Message Configure
@@ -63,16 +64,42 @@
         }
     }
 
-    const formData = (cond, data) => {
+    const formData = async(cond, data) => {
+        const param = await paramAlloc()
         if (cond == 'add') {
-            // router.push('/form-det-alloc')
+            const list = []
+            for (let i = 0; i < param.length; i++) {
+                list.push({
+                    id: param[i].id,
+                    alokasi_id: param[i].alokasi_id,
+                    tanggal: param[i].tanggal,
+                    value: param[i].value,
+                })
+            }
+            data_form.value = list
         } else {
         }
         visible.value = true;
         messages.value = [];
         status_form.value = cond;
-        data_form.value = data;
         title_dialog.value = cond == 'add' ? 'Allocation Depreciation - Tambah Data' : cond == 'edit' ? 'Allocation Depreciation - Edit Data' : 'Allocation Depreciation - Hapus Data' ;
+    }
+
+    const paramAlloc = async() => {
+        const response = await loadAll_AllocMaster()
+        const list = []
+        if (response != null) {
+            const filter = response.filter(item => item.nama.toLowerCase().includes('refinery') || item.nama.toLowerCase().includes('packaging') || item.nama.toLowerCase().includes('fraksinasi') || item.nama.toLowerCase().includes('auxiliary'));
+            for (let i = 0; i < filter.length; i++) {
+                list.push({
+                    id: null,
+                    alokasi_id: filter[i].id,
+                    tanggal: moment().format('YYYY-MM-DD'),
+                    value: null,
+                })
+            }
+        }
+        return list;
     }
 
 </script>

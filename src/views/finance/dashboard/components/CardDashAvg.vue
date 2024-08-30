@@ -42,13 +42,13 @@
         }
     }
 
-    watch(() => props.kurs, loadData);
+    watch(() => props.kurs, loadData, { immediate: true });
 
-    onMounted(() => {
-        loadData();  // Ensure data is loaded if props.kurs is available on mount
-        // if (props.kurs.length > 0) {
-        // }
-    })
+    // onMounted(() => {
+    //     loadData();  // Ensure data is loaded if props.kurs is available on mount
+    //     // if (props.kurs.length > 0) {
+    //     // }
+    // })
 
 </script>
 <template>

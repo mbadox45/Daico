@@ -87,7 +87,7 @@
                     })
                 }
             } else {
-                list = [{id:null, id_category:null, nama:null, satuan: null}]
+                list.push({id:null, id_category:null, nama:null, satuan: null})
             }
             forms.value = {id:data.id, nama: data.nama, uraian: []};
             forms_sub.value = list;

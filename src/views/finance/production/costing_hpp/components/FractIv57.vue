@@ -42,6 +42,7 @@
         try {
             const response = props.dummy57;
             const frak = await loadFrakIV57_CostingHppController(response);
+            console.log(frak)
             list_main.value = frak.main
             list_direct.value = frak.direct
             list_indirect.value = frak.indirect

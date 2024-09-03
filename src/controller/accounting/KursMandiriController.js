@@ -11,6 +11,17 @@ export const loadAll_KursMandiri = async() => {
     }
 }
 
+export const loadByID_KursMandiri = async(id) => {
+    try {
+        const response = await KursMandiri.getByID(id)
+        const load = response.data
+        const data = load.data
+        return data
+    } catch (error) {
+        return null
+    }
+}
+
 export const loadLatest_KursMandiri = async() => {
     try {
         const response = await KursMandiri.getLatest()

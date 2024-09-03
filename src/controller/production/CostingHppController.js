@@ -99,8 +99,10 @@ export const loadFrakIV57_CostingHppController = async(data) => {
         );
 
         // Direct Cost Data table
-        const direct = response.dataDirect == null ? null : response.dataDirect.cost == null ? null : response.dataDirect.cost;
-        const ref = direct == null ? null : direct.find(item => item.name == 'Fraksinasi IV-57') == null ? null : direct.find(item => item.name == 'Fraksinasi IV-57')
+        const direct = response.dataDirect == null ? null : response.dataDirect['cost'] == null ? null : response.dataDirect['cost'];
+        // const direct = list_direct == null ? null : list_direct.find(item => item.nama.includes('IV-57')) == null ? null : list_direct.find(item => item.nama.includes('IV-57')).
+        // console.log(direct)
+        const ref = direct == null ? null : direct.find(item => item.nama == 'Fraksinasi IV-57') == null ? null : direct.find(item => item.nama == 'Fraksinasi IV-57')
         const item_direct = ref == null ? null : ref.item == null || ref.item.length < 1 ? null : ref.item;
         if (item_direct != null) {
             for (let i = 0; i < item_direct.length; i++) {
@@ -109,15 +111,15 @@ export const loadFrakIV57_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_direct[i].proportion).toFixed(2))+'%',
                     proportion2: item_direct[i].proportion2 == null ? null : item_direct[i].proportion2 == 0 ? null : item_direct[i].proportion2 == 1 ? null : formatCurrency(Number(item_direct[i].proportion2).toFixed(2))+'%',
                     value: item_direct[i].value,
-                    total_value: formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_direct[i].totalValue) < 0 ? `(${formatCurrency(Number(item_direct[i].totalValue).toFixed(0)*-1)})` : Number(item_direct[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_direct[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)*-1)})` : Number(item_direct[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
                 })
             }
         }
 
         // In Direct Cost Data table
         const indirect = response.dataInDirect == null ? null : response.dataInDirect.cost == null ? null : response.dataInDirect.cost;
-        const ref_in = indirect == null ? null : indirect.find(item => item.name == 'Fraksinasi IV-57') == null ? null : indirect.find(item => item.name == 'Fraksinasi IV-57')
+        const ref_in = indirect == null ? null : indirect.find(item => item.nama == 'Fraksinasi IV-57') == null ? null : indirect.find(item => item.nama == 'Fraksinasi IV-57')
         const item_indirect = ref_in == null ? null : ref_in.item == null || ref_in.item.length < 1 ? null : ref_in.item;
         if (item_indirect != null) {
             for (let i = 0; i < item_indirect.length; i++) {
@@ -126,15 +128,16 @@ export const loadFrakIV57_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_indirect[i].proportion).toFixed(2))+'%',
                     proportion2: item_indirect[i].proportion2 == null ? null : item_indirect[i].proportion2 == 0 ? null : item_indirect[i].proportion2 == 1 ? null : formatCurrency(Number(item_indirect[i].proportion2).toFixed(2))+'%',
                     value: item_indirect[i].value,
-                    total_value: formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_indirect[i].totalValue) < 0 ? `(${formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)*-1)})` : Number(item_indirect[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_indirect[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)*-1)})` : Number(item_indirect[i].rpPerKg) == 0 ? '-' : `${formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2))}`,
                 })
             }
         }
 
         // Packaging Cost Data table
         const packaging = response.dataPackaging == null ? null : response.dataPackaging.cost == null ? null : response.dataPackaging.cost;
-        const pack = packaging == null ? null : packaging.find(item => item.name == 'Fraksinasi IV-57') == null ? null : packaging.find(item => item.name == 'Fraksinasi IV-57')
+        console.log(packaging)
+        const pack = packaging == null ? null : packaging.find(item => item.nama == 'Fraksinasi IV-57') == null ? null : packaging.find(item => item.nama == 'Fraksinasi IV-57')
         const item_pack = pack == null ? null : pack.item == null || pack.item.length < 1 ? null : pack.item;
         if (item_pack != null) {
             for (let i = 0; i < item_pack.length; i++) {
@@ -143,17 +146,17 @@ export const loadFrakIV57_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_pack[i].proportion).toFixed(2))+'%',
                     proportion2: item_pack[i].proportion2 == null ? null : item_pack[i].proportion2 == 0 ? null : item_pack[i].proportion2 == 1 ? null : formatCurrency(Number(item_pack[i].proportion2).toFixed(2))+'%',
                     value: item_pack[i].value,
-                    total_value: formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_pack[i].totalValue) < 0 ? `(${formatCurrency(Number(item_pack[i].totalValue).toFixed(0) *-1)})` : Number(item_pack[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_pack[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)*-1)})` : Number(item_pack[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
                 })
             }
         }
 
         // Total
-        total_frak.total_value = response.totalCostFraksinasiIv57 == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv57).toFixed(0)),
-        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv57 == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv57).toFixed(2));
-        total_pack.total_value = response.totalCostFraksinasiIv57PlusPackaging == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv57PlusPackaging).toFixed(0)),
-        total_pack.rp_kg = response.totalRpPerKgFraksinasiIv57PlusPackaging == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv57PlusPackaging).toFixed(2));
+        total_frak.total_value = response.totalCostFraksinasiIv57 == 0 || response.totalCostFraksinasiIv57 == null ? '-' : response.totalCostFraksinasiIv57 < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv57).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv57).toFixed(0));
+        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv57 == 0 || response.totalRpPerKgFraksinasiIv57 == null ? '-' : response.totalRpPerKgFraksinasiIv57 < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv57).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv57).toFixed(2));
+        total_pack.total_value = response.totalCostFraksinasiIv57PlusPackaging == 0 || response.totalCostFraksinasiIv57PlusPackaging == null ? '-' : response.totalCostFraksinasiIv57PlusPackaging < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv57PlusPackaging).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv57PlusPackaging).toFixed(0));
+        total_pack.rp_kg = response.totalRpPerKgFraksinasiIv57PlusPackaging == 0 || response.totalRpPerKgFraksinasiIv57PlusPackaging == null ? '-' : response.totalRpPerKgFraksinasiIv57PlusPackaging < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv57PlusPackaging).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv57PlusPackaging).toFixed(2));
 
         // Allocation Cost Data table
         const alloc = response.allocationCostFraksinasiIv57 == null ? null : response.allocationCostFraksinasiIv57;
@@ -317,8 +320,8 @@ export const loadFrakIV60_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_direct[i].proportion).toFixed(2))+'%',
                     proportion2: item_direct[i].proportion2 == null ? null : item_direct[i].proportion2 == 0 ? null : item_direct[i].proportion2 == 1 ? null : formatCurrency(Number(item_direct[i].proportion2).toFixed(2))+'%',
                     value: item_direct[i].value,
-                    total_value: formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_direct[i].totalValue) < 0 ? `(${formatCurrency(Number(item_direct[i].totalValue).toFixed(0)*-1)})` : Number(item_direct[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_direct[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)*-1)})` : Number(item_direct[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
                 })
             }
         }
@@ -334,8 +337,8 @@ export const loadFrakIV60_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_indirect[i].proportion).toFixed(2))+'%',
                     proportion2: item_indirect[i].proportion2 == null ? null : item_indirect[i].proportion2 == 0 ? null : item_indirect[i].proportion2 == 1 ? null : formatCurrency(Number(item_indirect[i].proportion2).toFixed(2))+'%',
                     value: item_indirect[i].value,
-                    total_value: formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_indirect[i].totalValue) < 0 ? `(${formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)*-1)})` : Number(item_indirect[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_indirect[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)*-1)})` : Number(item_indirect[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
                 })
             }
         }
@@ -351,17 +354,17 @@ export const loadFrakIV60_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_pack[i].proportion).toFixed(2))+'%',
                     proportion2: item_pack[i].proportion2 == null ? null : item_pack[i].proportion2 == 0 ? null : item_pack[i].proportion2 == 1 ? null : formatCurrency(Number(item_pack[i].proportion2).toFixed(2))+'%',
                     value: item_pack[i].value,
-                    total_value: formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_pack[i].totalValue) < 0 ? `(${formatCurrency(Number(item_pack[i].totalValue).toFixed(0)*-1)})` : Number(item_pack[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_pack[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)*-1)})` : Number(item_pack[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
                 })
             }
         }
 
         // Total
-        total_frak.total_value = response.totalCostFraksinasiIv60 == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv60).toFixed(0)),
-        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv60 == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv60).toFixed(2));
-        total_pack.total_value = response.totalCostFraksinasiIv60PlusPackaging == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv60PlusPackaging).toFixed(0)),
-        total_pack.rp_kg = response.totalRpPerKgFraksinasiIv60PlusPackaging == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv60PlusPackaging).toFixed(2));
+        total_frak.total_value = response.totalCostFraksinasiIv60 == null || response.totalCostFraksinasiIv60 == 0 ? '-' : response.totalCostFraksinasiIv60 < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv60).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv60).toFixed(0));
+        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv60 == null || response.totalRpPerKgFraksinasiIv60 == 0 ? '-' : response.totalRpPerKgFraksinasiIv60 < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv60).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv60).toFixed(2));
+        total_pack.total_value = response.totalCostFraksinasiIv60PlusPackaging == null || response.totalCostFraksinasiIv60PlusPackaging == 0 ? '-' : response.totalCostFraksinasiIv60PlusPackaging < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv60PlusPackaging).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv60PlusPackaging).toFixed(0));
+        total_pack.rp_kg = response.totalRpPerKgFraksinasiIv60PlusPackaging == null || response.totalRpPerKgFraksinasiIv60PlusPackaging == 0 ? '-' : response.totalRpPerKgFraksinasiIv60PlusPackaging < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv60PlusPackaging).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv60PlusPackaging).toFixed(2));
 
         // Allocation Cost Data table
         const alloc = response.allocationCostFraksinasiIv60 == null ? null : response.allocationCostFraksinasiIv60;
@@ -442,8 +445,8 @@ export const loadFrakIV58_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_direct[i].proportion).toFixed(2))+'%',
                     proportion2: item_direct[i].proportion2 == null ? null : formatCurrency(Number(item_direct[i].proportion2).toFixed(2))+'%',
                     value: item_direct[i].value,
-                    total_value: formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_direct[i].totalValue) < 0 ? `(${formatCurrency(Number(item_direct[i].totalValue).toFixed(0)*-1)})` : Number(item_direct[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_direct[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)*-1)})` : Number(item_direct[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
                 })
             }
         }
@@ -459,8 +462,8 @@ export const loadFrakIV58_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_indirect[i].proportion).toFixed(2))+'%',
                     proportion2: formatCurrency(Number(item_indirect[i].proportion2).toFixed(2))+'%',
                     value: item_indirect[i].value,
-                    total_value: formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_indirect[i].totalValue) < 0 ? `(${formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)*-1)})` : Number(item_indirect[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_indirect[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)*-1)})` : Number(item_indirect[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
                 })
             }
         }
@@ -476,15 +479,15 @@ export const loadFrakIV58_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_pack[i].proportion).toFixed(2))+'%',
                     proportion2: formatCurrency(Number(item_pack[i].proportion2).toFixed(2))+'%',
                     value: item_pack[i].value,
-                    total_value: formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_pack[i].totalValue) < 0 ? `(${formatCurrency(Number(item_pack[i].totalValue).toFixed(0)*-1)})` : Number(item_pack[i].totalValue) == 0 ? '-' : formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_pack[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)*-1)})` : Number(item_pack[i].rpPerKg) == 0 ? '-' : formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
                 })
             }
         }
 
         // Total
-        total_frak.total_value = response.totalCostFraksinasiIv58 == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv58).toFixed(0)),
-        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv58 == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv58).toFixed(2));
+        total_frak.total_value = response.totalCostFraksinasiIv58 == null || response.totalCostFraksinasiIv58 == 0 ? '-' : response.totalCostFraksinasiIv58 < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv58).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv58).toFixed(0));
+        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv58 == null || response.totalRpPerKgFraksinasiIv58 == 0 ? '-' : response.totalRpPerKgFraksinasiIv58 < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv58).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv58).toFixed(2));
 
         // Allocation Cost Data table
         const alloc = response.allocationCostFraksinasiIv58 == null ? null : response.allocationCostFraksinasiIv58;
@@ -588,8 +591,8 @@ export const loadFrakIV56_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_direct[i].proportion).toFixed(2))+'%',
                     proportion2: item_direct[i].proportion2 == null ? null : item_direct[i].proportion2 == 0 ? null : item_direct[i].proportion2 == 1 ? null : formatCurrency(Number(item_direct[i].proportion2).toFixed(2))+'%',
                     value: item_direct[i].value,
-                    total_value: formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_direct[i].totalValue) < 0 ? `(${formatCurrency(Number(item_direct[i].totalValue).toFixed(0)*-1)})` : Number(item_direct[i].totalValue) == 0 ? '-': formatCurrency(Number(item_direct[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_direct[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)*-1)})` : Number(item_direct[i].rpPerKg) == 0 ? '-': formatCurrency(Number(item_direct[i].rpPerKg).toFixed(2)),
                 })
             }
         }
@@ -605,8 +608,8 @@ export const loadFrakIV56_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_indirect[i].proportion).toFixed(2))+'%',
                     proportion2: item_indirect[i].proportion2 == null ? null : item_indirect[i].proportion2 == 0 ? null : item_indirect[i].proportion2 == 1 ? null : formatCurrency(Number(item_indirect[i].proportion2).toFixed(2))+'%',
                     value: item_indirect[i].value,
-                    total_value: formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_indirect[i].totalValue) < 0 ? `(${formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)*-1)})` : Number(item_indirect[i].totalValue) == 0 ? '-': formatCurrency(Number(item_indirect[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_indirect[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)*-1)})` : Number(item_indirect[i].rpPerKg) == 0 ? '-': formatCurrency(Number(item_indirect[i].rpPerKg).toFixed(2)),
                 })
             }
         }
@@ -622,17 +625,17 @@ export const loadFrakIV56_CostingHppController = async(data) => {
                     proportion: formatCurrency(Number(item_pack[i].proportion).toFixed(2))+'%',
                     proportion2: item_pack[i].proportion2 == null ? null : item_pack[i].proportion2 == 0 ? null : item_pack[i].proportion2 == 1 ? null : formatCurrency(Number(item_pack[i].proportion2).toFixed(2))+'%',
                     value: item_pack[i].value,
-                    total_value: formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
-                    rp_kg: formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
+                    total_value: Number(item_pack[i].totalValue) < 0 ? `(${formatCurrency(Number(item_pack[i].totalValue).toFixed(0)*-1)})` : Number(item_pack[i].totalValue) == 0 ? '-': formatCurrency(Number(item_pack[i].totalValue).toFixed(0)),
+                    rp_kg: Number(item_pack[i].rpPerKg) < 0 ? `(${formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)*-1)})` : Number(item_pack[i].rpPerKg) == 0 ? '-': formatCurrency(Number(item_pack[i].rpPerKg).toFixed(2)),
                 })
             }
         }
 
         // Total
-        total_frak.total_value = response.totalCostFraksinasiIv56 == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv56).toFixed(0)),
-        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv56 == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv56).toFixed(2));
-        total_pack.total_value = response.totalCostFraksinasiIv56PlusPackaging == null ? 0 : formatCurrency(Number(response.totalCostFraksinasiIv56PlusPackaging).toFixed(0)),
-        total_pack.rp_kg = response.totalRpPerKgFraksinasiIv56PlusPackaging == null ? 0 : formatCurrency(Number(response.totalRpPerKgFraksinasiIv56PlusPackaging).toFixed(2));
+        total_frak.total_value = response.totalCostFraksinasiIv56 == null || response.totalCostFraksinasiIv56 == 0 ? '-' : response.totalCostFraksinasiIv56 < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv56).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv56).toFixed(0));
+        total_frak.rp_kg = response.totalRpPerKgFraksinasiIv56 == null || response.totalRpPerKgFraksinasiIv56 == 0 ? '-' : response.totalRpPerKgFraksinasiIv56 < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv56).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv56).toFixed(2));
+        total_pack.total_value = response.totalCostFraksinasiIv56PlusPackaging == null || response.totalCostFraksinasiIv56PlusPackaging == 0 ? '-' : response.totalCostFraksinasiIv56PlusPackaging < 0 ? `(${formatCurrency(Number(response.totalCostFraksinasiIv56PlusPackaging).toFixed(0)*-1)})` : formatCurrency(Number(response.totalCostFraksinasiIv56PlusPackaging).toFixed(0));
+        total_pack.rp_kg = response.totalRpPerKgFraksinasiIv56PlusPackaging == null || response.totalRpPerKgFraksinasiIv56PlusPackaging == 0 ? '-' : response.totalRpPerKgFraksinasiIv56PlusPackaging < 0 ? `(${formatCurrency(Number(response.totalRpPerKgFraksinasiIv56PlusPackaging).toFixed(2)*-1)})` : formatCurrency(Number(response.totalRpPerKgFraksinasiIv56PlusPackaging).toFixed(2));
 
         // Allocation Cost Data table
         const alloc = response.allocationCostFraksinasiIv56 == null ? null : response.allocationCostFraksinasiIv56;

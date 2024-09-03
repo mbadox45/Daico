@@ -6,7 +6,7 @@
     import { useToast } from "primevue/usetoast";
 
     // API ========================================================================================================================================================
-    import { loadAll_KursMandiri, add_KursMandiri, update_KursMandiri, } from "@/controller/accounting/KursMandiriController.js";
+    import { loadAll_KursMandiri, add_KursMandiri, update_KursMandiri, loadByID_KursMandiri } from "@/controller/accounting/KursMandiriController.js";
     import { cek_token } from "@/api/DataVariable.js";
 
     // VARIABLE
@@ -66,6 +66,12 @@
         };
     };
 
+    const showLog = async (data) => {
+        console.log(data)
+        const response = await loadByID_KursMandiri(data.id);
+        console.log(response)
+    }
+
     const saveData = async () => {
         if (forms.value.value == null) {
             toast.add({severity: "warn", summary: "Perhatian", detail: "Harap data diisi dengan lengkap.", life: 3000,});
@@ -101,19 +107,18 @@
                 <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="4" animationDuration="1s" aria-label="Custom ProgressSpinner"/>
             </div>
         </div>
-        <div v-else class="flex gap-5">
+        <div v-else class="flex gap-3">
             <div class="w-full flex flex-column gap-3">
-                <span class="font-medium text-3xl text-green-700">Rp. {{ formatCurrency(Number(val_now.value).toFixed(2)) }}<small class="text-gray-500 text-xs font-medium">Latest update :
-                    <span class="text-blue-300">{{moment(val_now.updated_at).format("DD-MM-YYYY HH:mm:ss")}}</span></small>
+                <span class="font-medium text-3xl text-green-700 cursor-pointer hover:bg-gray-50" @click="showLog(val_now)">Rp. {{ formatCurrency(Number(val_now.value).toFixed(2)) }} <small class="text-gray-500 text-xs font-medium">Latest update :
+                    <span class="text-blue-300">{{moment(val_now.updated_at).format("DD MMMM YYYY HH:mm:ss")}}</span></small>
                 </span>
-              <span class="font-medium text-md text-red-500">Rp. {{ formatCurrency(Number(val_before.value).toFixed(2)) }}
-                  <small class="text-gray-500 text-xs font-medium">Before update :<span class="text-blue-300">{{moment(val_before.updated_at).format("DD-MM-YYYY HH:mm:ss")}}</span></small>
-              </span>
+                <span class="font-medium text-md text-red-500 cursor-pointer hover:bg-gray-50">Rp. {{ formatCurrency(Number(val_before.value).toFixed(2)) }}
+                    <small class="text-gray-500 text-xs font-medium">Before update : <span class="text-blue-300">{{moment(val_before.updated_at).format("DD MMMM YYYY HH:mm:ss")}}</span></small>
+                </span>
             </div>
             <div :class="cek_token == null ? 'hidden' : 'flex'" class="w-full gap-3 align-items-center">
                 <InputNumber v-model="forms.value" inputId="locale-german" locale="de-DE" class="w-full" placeholder="Update Nilai Kurs" :minFractionDigits="2"/>
                 <Button v-tooltip.bottom="'Save'" icon="pi pi-save" severity="info" size="small" @click="saveData" />
-                <Button v-tooltip.bottom="'Log'" icon="pi pi-list" severity="warning" size="small" @click="saveData" />
             </div>
         </div>
     </div>

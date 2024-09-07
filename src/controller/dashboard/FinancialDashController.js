@@ -1,6 +1,32 @@
-import { setChartOptionsCombo, setChartDataCombo, setBasicBarChartData, setBasicBarChartOptions, setChartStackedBarData, setChartStackedBarOptions } from "@/controller/dummy/func_dummy.js";
+import { barChartOptionsApex, setChartOptionsCombo, setChartDataCombo, setBasicBarChartData, setBasicBarChartOptions, setChartStackedBarData, setChartStackedBarData3, setChartStackedBarOptions } from "@/controller/dummy/func_dummy.js";
 import moment from "moment";
 
+// export const cffPayment = async() => {
+//     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+//     const data =[14.2, 14.2, 14.2, 14.2, 14.2, 14.2, 0, 0, 0, 0, 0, 0];
+//     const label = 'Pembayaran Pinjaman Kepada Pihak Berelasi';
+//     const type = 'bar';
+
+//     const listLabels = [];
+//     for (let i = 0; i < labels.length; i++) {
+//         listLabels.push(moment(labels[i], 'MMMM').format('MMM'));
+//     }
+
+//     return {
+//         name: 'CFF Payment Schedule (in IDR Bn)',
+//         total: 'by Month',
+//         type: type,
+//         chartData: {
+//             series: [
+//                 {
+//                     name: label, // Name of the series
+//                     data: data   // Actual data for the series
+//                 }
+//             ]
+//         },
+//         chartOptions: barChartOptionsApex(listLabels),
+//     };
+// };
 
 export const revenueYtd = async() => {
     // Revenue Ytd
@@ -195,6 +221,33 @@ export const cashFlow = async() => {
         name: 'Cash Flow Movement (YTD Jun-24; in IDR Bn)',
         type: typeAll,
         chartData: setChartStackedBarData(listLabels, data1, data2, data3, data4, label1, label2, label3, label4, type),
-        chartOptions: setChartStackedBarOptions(data1, data2, data3, data4),
+        chartOptions: setChartStackedBarOptions(),
+    }
+}
+
+export const cfiPayment = async() => {
+
+    const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const data1 = [0, 0, 0, 0, 0, 0, 0, 47.97, 0, 0, 0, 0]
+    const data2 = [0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0]
+    const data3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81.9]
+    
+    const label1 = 'Kontraktor EPC PMG II by ETI'
+    const label2 = 'Pekerjaan Bangunan Perusahaan'
+    const label3 = 'Licensor Biodiesel by Desment Technology'
+    
+    const type = 'bar'
+    const typeAll = 'stackedBar'
+
+    const listLabels = []
+    for (let i = 0; i < labels.length; i++) {
+        listLabels.push(moment(labels[i],'MMMM').format('MMM'))
+    }
+
+    return {
+        name: 'Cash Flow Movement (YTD Jun-24; in IDR Bn)',
+        type: typeAll,
+        chartData: setChartStackedBarData3(listLabels, data1, data2, data3, label1, label2, label3, type),
+        chartOptions: setChartStackedBarOptions(),
     }
 }

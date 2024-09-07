@@ -1,8 +1,8 @@
 <script setup>
 import { ref, defineProps, watch, onMounted } from 'vue';
-import {revenueYtd, grossProfit, ebitda, netProfit, cashBalance, cffPayment, cashFlow} from '@/controller/dashboard/FinancialDashController.js';
+import {revenueYtd, grossProfit, ebitda, netProfit, cashBalance, cffPayment, cashFlow, cfiPayment} from '@/controller/dashboard/FinancialDashController.js';
 // import { Chart, registerables } from 'chart.js';
-// import ApexCharts from 'vue3-apexcharts'
+import ApexCharts from 'vue3-apexcharts'
 
 onMounted(() => {
     loadProduct()
@@ -24,9 +24,8 @@ const loadProduct = async () => {
         await netProfit(),
         await cashBalance(),
         await cashFlow(),
+        await cfiPayment(),
         await cffPayment(),
-        await cffPayment(),
-        // await cashFlow(),
     )
 
     console.log(listAll)
@@ -64,6 +63,13 @@ const loadProduct = async () => {
                                 class="w-full"
                                 :height="item.type == 'bar' ? '133' : '300'"
                             />
+                            <!-- <ApexCharts
+                                type="bar"
+                                :series="item.chartData.series"
+                                :options="item.chartOptions" 
+                                class="w-full"
+                                :height="item.type == 'bar' ? '280' : '300'"
+                            /> -->
                         </div>
                     </div>
                 </div>

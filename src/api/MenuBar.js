@@ -3,8 +3,10 @@ import { cek_token } from "@/api/DataVariable.js";
 export const akuntansi = [
     { label: 'Dashboard', items: [
         { label: 'Main Dashboard', icon: 'pi pi-fw pi-desktop', to: `${cek_token != null ? '/' : '/dashboard'}` },
-        { label: 'Costing HPP', icon: 'pi pi-fw pi-table', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
-        { label: '(BETA) Financial Dashboard', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` }
+        { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
+        { label: '(BETA) Financial Dashboard', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` },
+        { label: '(BETA) Ops Dashboard', icon: 'pi pi-fw pi-cog', to: `${cek_token != null ? '' : '/viewer'}/ops-dashboard` },
+        { label: '(BETA) Transform Dashboard', icon: 'pi pi-fw pi-sync', to: `${cek_token != null ? '' : '/viewer'}/transform-dashboard` }
     ] },
     {
         label: 'Management',
@@ -77,8 +79,10 @@ export const akuntansi = [
 export const akuntansi2 = [
     { label: 'Dashboard', items: [
         { label: 'Main Dashboard', icon: 'pi pi-fw pi-desktop', to: `${cek_token != null ? '/' : '/dashboard'}` },
-        { label: 'Costing HPP', icon: 'pi pi-fw pi-table', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
-        { label: '(BETA) Financial Dashboard', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` }
+        { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
+        { label: '(BETA) Financial Dashboard', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` },
+        { label: '(BETA) Ops Dashboard', icon: 'pi pi-fw pi-cog', to: `${cek_token != null ? '' : '/viewer'}/ops-dashboard` },
+        { label: '(BETA) Transform Dashboard', icon: 'pi pi-fw pi-sync', to: `${cek_token != null ? '' : '/viewer'}/transform-dashboard` }
     ] },
     {
         label: 'Management',

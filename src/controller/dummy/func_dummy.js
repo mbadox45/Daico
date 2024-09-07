@@ -171,6 +171,40 @@ export const setChartOptionsCpoKpbn = (labels) => {
     };
 }
 
+export const barChartOptionsApex = (labels) => {
+    return {
+        chart: {
+            id: 'cpoKPBNChartMonth',
+            toolbar: {
+                show: true
+            }
+        },
+        xaxis: {
+            categories: labels
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    position: 'top'
+                }
+            }
+        },
+        dataLabels: {
+            enabled: true, // enables labels
+            style: {
+                colors: ['#000'], // sets label text color to black
+            },
+            offsetY: -20, // moves the label above the bar
+        },
+        colors: ['rgba(249, 115, 22, 0.2)'],
+        stroke: { 
+            show: true,
+            width: 1,
+            colors: ['rgb(249, 115, 22)'],
+        }
+    };
+}
+
 export const setChartDataCombo = (labels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2) => {
     const backgroundColor2Dynamic = data2.map(value => value < 0 ? 'rgba(250, 119, 5, 0.5)' : backgroundColor2);
     const borderColor2Dynamic = data2.map(value => value < 0 ? 'rgba(255, 0, 0, 1)' : borderColor2);
@@ -294,7 +328,34 @@ export const setChartStackedBarData = (labels, data1, data2, data3, data4, label
     };
 };
 
-export const setChartStackedBarOptions = (data1, data2, data3, data4) => {
+export const setChartStackedBarData3 = (labels, data1, data2, data3, label1, label2, label3, type) =>  {
+    return {
+        labels: labels,
+        datasets: [
+            {
+                type: type,
+                label: label1,
+                backgroundColor: 'rgba(6, 182, 212, 1)',
+                data: data1
+            },
+            {
+                type: type,
+                label: label2,
+                backgroundColor: 'rgba(107, 114, 128, 1)',
+                data: data2
+            },
+            {
+                type: type,
+                label: label3,
+                backgroundColor: 'rgba(249, 115, 22, 1)',
+                data: data3
+            }
+        ]
+        
+    };
+};
+
+export const setChartStackedBarOptions = () => {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--p-text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');

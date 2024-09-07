@@ -69,7 +69,7 @@
                 categories: labels
             },
             title: {
-                text: `CPO KPBN ${props.year}`
+                text: `Avg CPO KPBN for ${props.year}`
             },
             plotOptions: {
                 bar: {
@@ -79,10 +79,14 @@
                 }
             },
             dataLabels: {
-                enabled: false // labels inside the bars
+                enabled: true, // enables labels
+                style: {
+                    colors: ['#000'], // sets label text color to black
+                },
+                offsetY: -20, // moves the label above the bar
             },
             colors:['rgba(249, 115, 22, 0.2)'],
-            stroke: {   //border
+            stroke: {   // border
                 show: true,
                 width: 1,
                 colors: ['rgb(249, 115, 22)'],
@@ -90,7 +94,7 @@
         };
         chartSeries.value = [
             {
-                name: 'CPO KPBN',
+                name: 'AVG',
                 data: dataChart
             }
         ];

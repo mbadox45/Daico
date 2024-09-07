@@ -100,8 +100,13 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
-import CodeHighlight from '@/components/CodeHighlight.vue';
-import BlockViewer from '@/components/BlockViewer.vue';
+// import ChartJS from 'chart.js/auto';
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+// ChartJS.register(ChartDataLabels);
+
+// import CodeHighlight from '@/components/CodeHighlight.vue';
+// import BlockViewer from '@/components/BlockViewer.vue';
 
 // JSON to Excel for VUE 3
 import JsonExcel from "vue-json-excel3";
@@ -121,8 +126,8 @@ app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
-app.component('CodeHighlight', CodeHighlight);
-app.component('BlockViewer', BlockViewer);
+// app.component('CodeHighlight', CodeHighlight);
+// app.component('BlockViewer', BlockViewer);
 
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);

@@ -76,6 +76,16 @@ export const loadCpoKpbnByDate_CpoController = async(tgl) => {
         return null;
     }
 }
+export const loadCpoKpbnByYearCpoController = async(tgl) => {
+    try {
+        const response = await KpbnCpo.getByYear({tanggal:tgl});
+        const load = response.data;
+        const data = load.data;
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
 export const addCpoKpbn_CpoController = async(form) => {
     try {
         const response = await KpbnCpo.addKpbn(form);

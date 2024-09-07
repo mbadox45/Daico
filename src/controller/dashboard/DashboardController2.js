@@ -2,6 +2,7 @@ import DashService from '@/api/dashboard/DashService.js';
 import {loadAllByPeriod_ProCostController, loadAllMarket_ProCostController} from '@/controller/retail/ProCostController.js';
 import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 import {dummy} from '@/controller/production/TestDummy.js'
+// import { moment } from 'moment';
 
 export const loadDashByDate_DashboardController = async(tgl) => {
     try {
@@ -60,12 +61,12 @@ export const statistikKinerja__DashboardController = async(data) => {
         const nilai_rkap = prodvsutil.find(item => item.name.toLowerCase().includes('utility'));
         const nilai_persen = prodvsutil.find(item => item.name.toLowerCase().includes('target'));
         kinerja_produksi.push({
-            name: 'Real vs RKAP',
+            name: 'Real vs Capacity',
             persen: Number(nilai_persen.value),
             real: Number(nilai_real.value),
             rkap: Number(nilai_rkap.value),
             name_real: 'Real',
-            name_rkap: 'Kap. Terpasang',
+            name_rkap: 'Cap',
         })
     }
 
@@ -156,7 +157,7 @@ export const nilaiStockKemasan_DashboardController = async(data) => {
 export const nilaiStock_DashboardController = async(data) => {
     const avg_price = data == null ? null : data.dataAvgPrice == null ? null : data.dataAvgPrice.stockTersedia == null ? null : data.dataAvgPrice.stockTersedia.items == null ? null : data.dataAvgPrice.stockTersedia.items;
     const nilai_stock = data == null ? null : data.dataStokBulky == null ? null : data.dataStokBulky.bulkyStock == null ? null : data.dataStokBulky.bulkyStock;
-    
+    const dataStockAwal = data == null ? 0 : data.dataStockAwalCpo == null ? 0 : data.dataStockAwalCpo.stokTersedia == null ? 0 : data.dataStockAwalCpo.stokTersedia.totalHarga == null ? 0 : data.dataStockAwalCpo.stokTersedia.totalHarga;
     // Stock Bulky
     const list_bulk = []
     let total_bulk = {qty: 0, harga:0, value:0}
@@ -176,7 +177,7 @@ export const nilaiStock_DashboardController = async(data) => {
                 const price = avg_price == null ? null : avg_price.find(item => item.name.toLowerCase().includes('stearin')) == null ? null : avg_price.find(item => item.name.toLowerCase().includes('stearin'))
                 get_harga = price == null ? 0 : price.rpPerKg
             } else if (non_rbdo[i].name.toLowerCase().includes('cpo')) {
-                get_harga = 0
+                get_harga = dataStockAwal
             } else {
                 const price = avg_price == null ? 0 : avg_price.find(item => item.name.toLowerCase().includes(non_rbdo[i].name.toLowerCase())) == null ? 0 : avg_price.find(item => item.name.toLowerCase().includes(non_rbdo[i].name.toLowerCase()));
                 get_harga = price == null ? 0 : price.rpPerKg
@@ -367,6 +368,20 @@ export const nilaiCpoOutstanding_DashboardController = async(data) => {
     return result;
 }
 
+export const cpoKpbYear = async (data) => {
+    if (!data || !data.cpoKpbnByMonth) {
+        return [];
+    }
+
+    const response = data.cpoKpbnByMonth;
+    const list = response.map(item => ({
+        month: item.month,
+        avg: item.avg,
+        records: item.records
+    }));
+
+    return list;
+};
 
 export const minimumSellingPrice_DashboardController = async(data) => {
     const retail = []
@@ -472,3 +487,4 @@ const renameMappingRetail = (name) => {
     const bracketedName = newName.replace(/(\w+)/, '$1');
     return bracketedName;
 };
+

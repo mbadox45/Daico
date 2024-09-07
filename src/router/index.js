@@ -28,6 +28,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/viewer/financial-dashboard',
+                    name: 'viewer - financial dashboard',
+                    component: () => import('@/views/finance/accounting/finansial/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
                     path: '/viewer/cash',
                     name: 'viewer - cash',
                     component: () => import('@/views/finance/accounting/cash/Index.vue'),
@@ -155,6 +163,16 @@ const router = createRouter({
                     path: '/kurs-mandiri',
                     name: 'kurs mandiri',
                     component: () => import('@/views/finance/accounting/kurs_mandiri/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/financial-dashboard',
+                    name: 'financial dashboard',
+                    component: () => import('@/views/finance/accounting/finansial/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

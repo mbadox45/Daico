@@ -6,17 +6,10 @@
     import moment from 'moment';
 
     // Components
-    import CardDashAvg from '@/views/finance/dashboard/components/CardDashAvg.vue'
-    import CardCashPage from '@/views/finance/dashboard/components/CardCashPage.vue'
-    import CardMinimumSellingPage from '@/views/finance/dashboard/components/CardMinimumSellingPage2.vue'
-    import ChartDougnutPage from '@/views/finance/dashboard/components/ChartDougnutPage.vue'
-    import CardStockInventory from '@/views/finance/dashboard/components/CardStockInventory.vue';
-    import CardCpoPage from '@/views/finance/dashboard/components/CardCPOPage.vue'
-    import CpoAndRoutersPage from '@/views/finance/dashboard/components/CpoAndRoutersPage.vue'
-    import ChartCpoKpbnYear from '@/views/finance/dashboard/components/ChartCpoKpbnYear.vue'
+    import ChartPendapatan from '@/views/finance/accounting/finansial/component/ChartPendapatan.vue'
 
     // API
-    import {loadDashByDate_DashboardController} from '@/controller/dashboard/DashboardController2.js';
+    // import {loadDashByDate_DashboardController} from '@/controller/dashboard/DashboardController2.js';
 
     const toast = useToast();
 
@@ -32,7 +25,7 @@
     const load_data = ref()
     const loadingData = ref(false)
 
-    const op = ref()
+    // const op = ref()
 
     onMounted(() => {
         loadData();
@@ -44,13 +37,13 @@
             // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(moment(now).format('D'))-1).toString().padStart(2, '0')}`;
             const dateString = `2024-04-01`;
             tanggal.value = dateString;
-            const response = await loadDashByDate_DashboardController(dateString)
-            if (response == null) {
-                toast.add({ severity: 'error', summary: 'Error', detail: 'Load data failed, please try again.', life: 5000 });
-            } else {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'Load data success', life: 5000 });
-            }
-            load_data.value = response
+            // const response = await loadDashByDate_DashboardController(dateString)
+            // if (response == null) {
+            //     toast.add({ severity: 'error', summary: 'Error', detail: 'Load data failed, please try again.', life: 5000 });
+            // } else {
+            //     toast.add({ severity: 'success', summary: 'Success', detail: 'Load data success', life: 5000 });
+            // }
+            // load_data.value = response
             loadBulan();
             loadTahun();
             loadingData.value = false
@@ -114,13 +107,13 @@
         <div v-else class="flex flex-column gap-4 w-full">
             <div class="bg-white p-4 border-round shadow-3 gap-5 flex flex-column md:flex-row justify-content-between w-full">
                 <div :class="loadingData == true ? 'flex' : 'hidden'" class="flex-column gap-2 w-full md:w-5 h-full md:h-8rem">
-                    <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Dashboard Trading <i class="pi pi-desktop text-2xl ml-3"></i></strong>
+                    <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Financial Dashboard<i class="pi pi-desktop text-2xl ml-3"></i></strong>
                     <div class="flex justify-content-center align-items-center h-full w-full">
                         <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s" aria-label="Custom ProgressSpinner" />
                     </div>
                 </div>
                 <div :class="loadingData == true ? 'hidden' : 'flex'" class="flex-column gap-2 w-full md:w-5 h-full md:h-8rem">
-                    <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Dashboard Trading <i class="pi pi-desktop text-2xl ml-3"></i></strong>
+                    <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Financial Dashboard <i class="pi pi-desktop text-2xl ml-3"></i></strong>
                     <span class="font-normal text-400">Update data <strong class="">s.d</strong> <span class="text-red-500">{{ moment(tanggal).format('MMMM YYYY') }}</span> </span>
                     <Button label="Change Month" severity="info" size="small" class="mt-3" @click="opByPeriod"/>
                     <OverlayPanel ref="op" :style="{ width: '25rem' }">
@@ -137,9 +130,9 @@
                         </div>
                     </OverlayPanel>
                 </div>
-                <card-dash-avg :kurs="load_data"/>
+                <!-- <card-dash-avg :kurs="load_data"/> -->
             </div>
-            <div class="flex flex-column lg:flex-row gap-5">
+            <!-- <div class="flex flex-column lg:flex-row gap-5">
                 <div class="w-full">
                     <card-minimum-selling-page :sell="load_data"/>
                 </div>
@@ -152,9 +145,9 @@
                 <card-cash-page :cash="load_data"/>
             </div>
             <cpo-and-routers-page :tanggal="tanggal" :rout="load_data"/>
-            <card-stock-inventory :stock="load_data"/>
+            <card-stock-inventory :stock="load_data"/> -->
+            <chart-pendapatan :chart="load_data"/>
             <div class="flex md:flex-row flex-column gap-5 align-items-center md:align-items-start">
-                <chart-cpo-kpbn-year :chart="load_data" :year="tahun"/>
             </div>
         </div>
     </div>

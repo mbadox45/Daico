@@ -12,6 +12,10 @@ export default new class KpbnCpo{
         return http.post(`cpo-kpbn/date`,date);
     }
 
+    getByYear(date){
+        return http.post(`cpo-kpbn/year`,date);
+    }
+
     addKpbn(data){
         return http2.post(`cpo-kpbn/add`, data);
     }

@@ -15,6 +15,64 @@ export const loadDashByDate_DashboardController = async(tgl) => {
     }
 }
 
+export const rekapRekeningSaldoCash = async(data) => {
+    const dataTipeRekening = data == null ? null : data.dataTipeRekening == null ? null : data.dataTipeRekening;
+    const dataCash = data == null ? null : data.dataCash == null ? null : data.dataCash;
+    const lastDayJisdor = data == null ? null : data.lastDayJisdor == null ? null : data.lastDayJisdor;
+
+    const listCash = [];
+    let totCash = 0;
+    if (dataCash != null) {
+        for (let i = 0; i < dataCash.length; i++) {
+            let value = 0
+            if (dataCash[i].rekening.matauang.name == 'IDR') {
+                value = Number(dataCash[i].value);
+            } else {
+                value = Number(dataCash[i].value) * Number(lastDayJisdor);
+            }
+
+            totCash += value;
+            listCash.push({
+                id: dataCash[i].rekening_id,
+                id_type: dataCash[i].rekening.tipe_id,
+                value: value,
+                matauang: dataCash[i].rekening.matauang.name,
+            })
+        }
+    }
+
+    // Rekening Cash on Hand
+    const list = []
+    let totOnHand = 0;
+    if (dataTipeRekening != null) {
+        for (let i = 0; i < dataTipeRekening.length; i++) {
+            const filter = listCash.filter(item => item.id_type == dataTipeRekening[i].id)
+
+            let values = 0
+            // Get Value in Cash on Hand
+            if (filter != null) {
+                for (let j = 0; j < filter.length; j++) {
+                    values += filter[j].value * 1;
+                }
+            }
+
+            totOnHand += values
+            // List Tipe Rekening
+            list.push({
+                id: dataTipeRekening[i].id,
+                nama: dataTipeRekening[i].nama,
+                value: values,
+            })
+        }
+    }
+
+    return{
+        list_on_hand: list,
+        total_on_hand: totOnHand,
+        total_cash: totCash,
+    }
+}
+
 export const statistikKinerja__DashboardController = async(data) => {
     const persentage = data == null ? null : data.dataTarget == null ? null : data.dataTarget.percentageToTarget == null ? null : data.dataTarget.percentageToTarget
     const real = data == null ? null : data.dataTarget == null ? null : data.dataTarget.targetReal == null ? null : data.dataTarget.targetReal

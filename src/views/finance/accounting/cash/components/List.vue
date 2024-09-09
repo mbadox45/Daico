@@ -4,7 +4,7 @@
     import moment from 'moment';
 
     // API ========================================================================================================================================================
-    import {formatCurrency} from '@/views/load_data/func_dummy.js'
+    import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
     const props = defineProps({
         // tanggal:{
@@ -22,6 +22,8 @@
     const load_rekening_on_hand = ref([])
     const total_cash_inl = ref(0)
     const total_cash_on_hand = ref(0)
+    const kurs = ref(0)
+    const dates = ref(moment().format('DD MMMM YYYY'))
 
     // Function ===================================================================================================================================================
     onMounted(() => {
@@ -36,6 +38,8 @@
             load_rekening_on_hand.value = response.list_on_hand
             total_cash_inl.value = response.total
             total_cash_on_hand.value = response.total_on_hand
+            kurs.value = response.nilai_tukar
+            dates.value = moment(response.lastdate).format('DD MMMM YYYY')
             loadingTable.value = false
         } catch (error) {
             load.value = []
@@ -49,8 +53,14 @@
 
 <template>
     <div class="w-full flex flex-column gap-5">
-        <div>
-            <p class="font-italic">REKENING UNIT KERJA</p>
+        <div class="flex flex-column gap-3">
+            <div class="flex justify-content-between gap-3 align-items-center">
+                <span class="font-italic w-full font-medium">REKENING UNIT KERJA</span>
+                <div class="flex flex-column gap-1 w-full align-items-end">
+                    <small class="font-italic">Kurs : <span class="font-medium">{{formatCurrency(Number(kurs).toFixed(2))}}</span></small>
+                    <small class="font-italic">Last Update : <span class="font-medium">{{dates}}</span></small>
+                </div>
+            </div>
             <DataTable :value="load" class="text-sm" >
                 <Column field="nama">
                     <template #header>

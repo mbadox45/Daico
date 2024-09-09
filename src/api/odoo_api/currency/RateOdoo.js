@@ -10,4 +10,7 @@ export default new class RateOdoo{
     postRate(data){
         return http.post(`currency_rate/period`,data);
     }
+    postRateLatest(data){
+        return http.post(`currency_rate/latest`,data);
+    }
 }

@@ -41,8 +41,8 @@
     const loadData = async() => {
         loadingData.value = true
         try {
-            const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(moment(now).format('D'))-1).toString().padStart(2, '0')}`;
-            // const dateString = `2024-04-01`;
+            // const dateString = `${tahun.value}-${bulan.value.toString().padStart(2, '0')}-${(Number(moment(now).format('D'))-1).toString().padStart(2, '0')}`;
+            const dateString = `2024-04-01`;
             tanggal.value = dateString;
             const response = await loadDashByDate_DashboardController(dateString)
             if (response == null) {

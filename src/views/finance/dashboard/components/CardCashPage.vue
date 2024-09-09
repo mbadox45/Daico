@@ -5,7 +5,7 @@
 
     // Controller
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
-    // import {nilaiCash_DashboardController} from '@/controller/dashboard/DashboardController2.js';
+    import {rekapRekeningSaldoCash} from '@/controller/dashboard/DashboardController2.js';
     import {RekeningUnitKerja} from '@/controller/accounting/RekeningUnitController.js'
 
 
@@ -30,10 +30,13 @@
     const loadProduct = async() => {
         loadingData.value = true
         try {
-            const response = await RekeningUnitKerja();
-            load_data.value = response.list_on_hand
-            total_cash.value = response.total
-            total_cash_on_hand.value = response.total_on_hand
+            const response = props.cash;
+            console.log(response)
+            const rekap = await rekapRekeningSaldoCash(response);
+            // const response = await RekeningUnitKerja();
+            load_data.value = rekap.list_on_hand
+            total_cash.value = rekap.total_cash
+            total_cash_on_hand.value = rekap.total_on_hand
             loadingData.value = false
         } catch (error) {
             load_data.value = []

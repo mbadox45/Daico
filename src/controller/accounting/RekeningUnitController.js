@@ -1,7 +1,7 @@
 import Rekening from '@/api/accounting/rekening.js';
 import RekeningKerja from '@/api/accounting/rekening_kerja.js';
-import {loadTypeRekening} from '@/views/load_data/master_config.js'
-import {loadAllKursJisdor} from '@/views/load_data/load_from_odoo.js'
+import {loadAll_TipeRekeningMaster} from '@/controller/master_data/TipeRekeningController.js'
+import {loadByLatest_OdooController} from '@/controller/odoo/OdooController.js'
 import moment from 'moment';
 
 export const loadRekening = async() => {
@@ -29,11 +29,12 @@ export const loadRekeningKerjaLatest = async() => {
 export const RekeningUnitKerja = async() => {
     const items = await loadRekening();
     const items_kerja = await loadRekeningKerjaLatest();
-    const items_type = await loadTypeRekening();
-    const jisdor = await loadAllKursJisdor()
-    const filter = jisdor.filter(item => moment(item.name).format('YYYY-MM') == moment().format('YYYY-MM'))
-    filter.sort((a, b) => b.id - a.id);
-    const nilai_tukar = Number(filter[0].rate)
+    const items_type = await loadAll_TipeRekeningMaster();
+    const jisdor = await loadByLatest_OdooController()
+    console.log(jisdor)
+    // const filter = jisdor.filter(item => moment(item.name).format('YYYY-MM') == moment().format('YYYY-MM'))
+    // filter.sort((a, b) => b.id - a.id);
+    const nilai_tukar = Number(jisdor.rate)
     // Rekening Cash
     let list = []
     for (let i = 0; i < items.length; i++) {
@@ -97,6 +98,8 @@ export const RekeningUnitKerja = async() => {
         total: total,
         list_on_hand: list_on_hand,
         total_on_hand: tot_on_hand,
+        nilai_tukar: nilai_tukar,
+        lastdate: jisdor.name,
     }
 }
 

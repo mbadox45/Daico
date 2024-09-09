@@ -1,4 +1,4 @@
-import { barChartOptionsApex, setChartOptionsCombo, setChartDataCombo, setBasicBarChartData, setBasicBarChartOptions, setChartStackedBarData, setChartStackedBarData3, setChartStackedBarOptions } from "@/controller/dummy/func_dummy.js";
+import { barChartOptionsApex, comboChartOptionsApex, stackedChartOptionsApex} from "@/controller/dummy/func_dummy.js";
 import moment from "moment";
 
 // export const cffPayment = async() => {
@@ -16,14 +16,14 @@ import moment from "moment";
 //         name: 'CFF Payment Schedule (in IDR Bn)',
 //         total: 'by Month',
 //         type: type,
-//         chartData: {
+//         
 //             series: [
 //                 {
 //                     name: label, // Name of the series
 //                     data: data   // Actual data for the series
 //                 }
 //             ]
-//         },
+//         
 //         chartOptions: barChartOptionsApex(listLabels),
 //     };
 // };
@@ -34,16 +34,15 @@ export const revenueYtd = async() => {
     const data1 =[353.32, 802, 852.69, 1207.45, 1718.87, 1643.25, 0, 0, 0, 0, 0, 0]
     const data2 =[378.46, 187.77, 190.14, 240.53, 194.27, 242.86, 0, 0, 0, 0, 0, 0]
     const label1 = 'Target RKAP'
-    const label2 = 'Real'
-    const backgroundColor1 = 'rgba(255, 255, 255, 1)'
-    const borderColor1 = 'rgba(0, 69, 252, 1)'
-    const backgroundColor2 = 'rgba(108, 204, 24, 0.2)'
-    const borderColor2 = 'rgba(108, 204, 24, 1)'
+    const label2 = 'Pendapatan'
     const type1 = 'line'
     const type2 = 'bar'
-    const options1 = 'number' 
-    const options2 = 'number' 
-
+    const colors = ['rgba(0, 255, 128, 0.6)', 'rgba(0, 34, 255, 1)']
+    const total = '*'
+    const scale1 = 'number'
+    const scale2 = 'number'
+    const typeChart = 'line'
+    
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
         listLabels.push(moment(labels[i],'MMMM').format('MMM'))
@@ -51,9 +50,20 @@ export const revenueYtd = async() => {
 
     return {
         name: 'Revenue YTD (in IDR Bn)',
-        type: `${type1} ${type2}`,
-        chartData: setChartDataCombo(listLabels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2),
-        chartOptions: setChartOptionsCombo(options1, options2),
+        type: typeChart,
+        chartOptions: comboChartOptionsApex(total, label1, label2, listLabels, colors, scale1, scale2),
+        series: [
+            {
+                name: label2,
+                type: type2,
+                data: data2
+            }, 
+            {
+                name: label1,
+                type: type1,
+                data: data1
+            }
+        ],
     }
 }
 
@@ -63,17 +73,15 @@ export const grossProfit = async() => {
     const data1 =[3, 4.43, 6.19, 10.66, 5.43, 4.85, 0, 0, 0, 0, 0, 0]
     const data2 =[11.4, 8.3, 11.8, 25.6, 10.6, 11.8, 0, 0, 0, 0, 0, 0]
     const sum = parseFloat(data2.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2));
-
+    const total = sum+'B IDR of Gross Profit (YTD)'
     const label1 = 'GPM%'
     const label2 = 'Laba Kotor'
-    const backgroundColor1 = 'rgba(255, 255, 255, 1)'
-    const borderColor1 = 'rgba(0, 69, 252, 1)'
-    const backgroundColor2 = 'rgba(32, 153, 110, 0.5)'
-    const borderColor2 = 'rgba(32, 153, 110, 1)'
     const type1 = 'line'
-    const type2 = 'bar'
-    const options1 = 'percent' 
-    const options2 = 'number'
+    const type2 = 'column'
+    const colors = ['rgba(14, 135, 46, 0.6)', 'rgba(0, 34, 255, 1)']
+    const scale1 = 'percent' 
+    const scale2 = 'number'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -83,9 +91,20 @@ export const grossProfit = async() => {
     return {
         name: 'Gross Profit Margin & Amount (in % & IDR Bn)',
         total: sum+'B IDR of Gross Profit (YTD)',
-        type: `${type1} ${type2}`,
-        chartData: setChartDataCombo(listLabels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2),
-        chartOptions: setChartOptionsCombo(options1, options2),
+        type: typeChart,
+        chartOptions: comboChartOptionsApex(total, label1, label2, listLabels, colors, scale1, scale2),
+        series: [
+            {
+                name: label2,
+                type: type2,
+                data: data2
+            }, 
+            {
+                name: label1,
+                type: type1,
+                data: data1
+            }
+        ],
     }
 }
 
@@ -95,17 +114,15 @@ export const ebitda = async() => {
     const data1 =[-0.65, 0.22, -1.13, 6.69, -0.86, 2.71, 0, 0, 0, 0, 0, 0]
     const data2 =[-2.46, 0.4, -2.14, 16.1, -1.67, 6.59, 0, 0, 0, 0, 0, 0]
     const sum = parseFloat(data2.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2));
-
+    const total = sum+'B IDR of EBITDA (YTD)'
     const label1 = 'EBITDA%'
     const label2 = 'EBITDA'
-    const backgroundColor1 = 'rgba(255, 255, 255, 1)'
-    const borderColor1 = 'rgba(0, 69, 252, 1)'
-    const backgroundColor2 = 'rgba(32, 153, 110, 0.5)'
-    const borderColor2 = 'rgba(32, 153, 110, 1)'
     const type1 = 'line'
-    const type2 = 'bar'
-    const options1 = 'percent'
-    const options2 = 'number' 
+    const type2 = 'column'
+    const colors = ['rgba(14, 135, 46, 0.6)', 'rgba(0, 34, 255, 1)']
+    const scale1 = 'percent'
+    const scale2 = 'number'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -114,30 +131,39 @@ export const ebitda = async() => {
 
     return {
         name: 'EBITDA Margin & Amount (in % & IDR Bn)',
-        total: sum+'B IDR of EBITDA (YTD)',
-        type: `${type1} ${type2}`,
-        chartData: setChartDataCombo(listLabels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2),
-        chartOptions: setChartOptionsCombo(options1, options2),
+        type: typeChart,
+        chartOptions: comboChartOptionsApex(total, label1, label2, listLabels, colors, scale1, scale2),
+        series: [
+            {
+                name: label2,
+                type: type2,
+                data: data2
+            }, 
+            {
+                name: label1,
+                type: type1,
+                data: data1
+            }
+        ],
     }
 }
 
 export const netProfit = async() => {
     // Revenue Ytd
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const data1 =[0.01, -0.06, -0.07, 0.02, -0.05, 0, 0, 0, 0, 0, 0, 0]
+    const data1 =[0.01, -0.06, -0.07, 0.02, -0.05, -0.002, 0, 0, 0, 0, 0, 0]
     const data2 =[4.97, -10.98, -12.93, 5.07, -9.16, -0.31, 0, 0, 0, 0, 0, 0]
     const sum = parseFloat(data2.reduce((accumulator, currentValue) => accumulator + currentValue, 0).toFixed(2));
+    const total = sum+' Bn IDR of Net Profit (YTD)'
 
     const label1 = 'NPM%'
     const label2 = 'Laba Bersih'
-    const backgroundColor1 = 'rgba(255, 255, 255, 1)'
-    const borderColor1 = 'rgba(0, 69, 252, 1)'
-    const backgroundColor2 = 'rgba(32, 153, 110, 0.5)'
-    const borderColor2 = 'rgba(32, 153, 110, 1)'
     const type1 = 'line'
-    const type2 = 'bar'
-    const options1 = 'percent'
-    const options2 = 'number' 
+    const type2 = 'column'
+    const colors = ['rgba(14, 135, 46, 0.6)', 'rgba(0, 34, 255, 1)']
+    const scale1 = 'percent'
+    const scale2 = 'number'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -146,10 +172,20 @@ export const netProfit = async() => {
 
     return {
         name: 'NET Profit Margin & Amount (in % & IDR Bn)',
-        total: sum+' Bn IDR of Net Profit (YTD)',
-        type: `${type1} ${type2}`,
-        chartData: setChartDataCombo(listLabels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2),
-        chartOptions: setChartOptionsCombo(options1, options2),
+        type: typeChart,
+        chartOptions: comboChartOptionsApex(total, label1, label2, listLabels, colors, scale1, scale2),
+        series: [
+            {
+                name: label2,
+                type: type2,
+                data: data2
+            }, 
+            {
+                name: label1,
+                type: type1,
+                data: data1
+            }
+        ],
     }
 }
 
@@ -159,6 +195,11 @@ export const cashBalance = async() => {
     const data =[343, 365, 553, 581, 486, 535, 0, 0, 0, 0, 0, 0]
     const label = 'Laba Bersih'
     const type = 'bar'
+    const color = ['rgba(255, 145, 0, 0.6)']
+    const strokeColor = ['rgb(249, 115, 22)']
+    const dataLabelStat = true
+    const total = 'by Month'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -167,10 +208,15 @@ export const cashBalance = async() => {
 
     return {
         name: 'Cash Balance (YTD Jun-24; in IDR Bn)',
-        total: 'by Month',
-        type: type,
-        chartData: setBasicBarChartData(data, listLabels, label, type),
-        chartOptions: setBasicBarChartOptions(),
+        type: typeChart,
+        chartOptions: barChartOptionsApex(listLabels, color, strokeColor, dataLabelStat, total),
+        series: [
+            {
+                name: label,
+                type: type,
+                data: data
+            }
+        ],
     }
 
 }
@@ -181,6 +227,11 @@ export const cffPayment = async() => {
     const data =[14.2, 14.2, 14.2, 14.2, 14.2, 14.2, 0, 0, 0, 0, 0, 0]
     const label = 'Pembayaran Pinjaman Kepada Pihak Berelasi'
     const type = 'bar'
+    const color = ['rgba(255, 145, 0, 0.6)']
+    const strokeColor = ['rgb(249, 115, 22)']
+    const dataLabelStat = true
+    const total = 'by Month'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -190,64 +241,75 @@ export const cffPayment = async() => {
     return {
         name: 'CFF Payment Schedule (in IDR Bn)',
         total: 'by Month',
-        type: type,
-        chartData: setBasicBarChartData(data, listLabels, label, type),
-        chartOptions: setBasicBarChartOptions(),
+        type: typeChart,
+        chartOptions: barChartOptionsApex(listLabels, color, strokeColor, dataLabelStat, total),
+        series: [
+            {
+                name: label,
+                type: type,
+                data: data
+            }
+        ],
     }
 }
 
 export const cashFlow = async() => {
 
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const data1 =[178.02, 235.31, 457.8, 256.91, 150.12, 224.94, 0, 0, 0, 0, 0, 0]
-    const data2 =[-265.33, -197.78, -164.38, -159.9, -229.55, -227.66, 0, 0, 0, 0, 0, 0]
-    const data3 =[-2.46, 0, -93.86, -62.93, -0.05, -0.15, 0, 0, 0, 0, 0, 0]
-    const data4 =[-14.67, -14.37, -14.39, -14.79, -14.42, -51.46, 0, 0, 0, 0, 0, 0]
+    const dataSeries = [
+        { label: 'CFO in', data: [178.02, 235.31, 457.8, 256.91, 150.12, 224.94, 0, 0, 0, 0, 0, 0] },
+        { label: 'CFO out', data: [-265.33, -197.78, -164.38, -159.9, -229.55, -227.66, 0, 0, 0, 0, 0, 0] },
+        { label: 'CFI', data: [-2.46, 0, -93.86, -62.93, -0.05, -0.15, 0, 0, 0, 0, 0, 0] },
+        { label: 'CFF', data: [-14.67, -14.37, -14.39, -14.79, -14.42, -51.46, 0, 0, 0, 0, 0, 0] }
+    ];
 
-    const label1 = 'CFO in'
-    const label2 = 'CFO out'
-    const label3 = 'CFI'
-    const label4 = 'CFF'
-
-    const type = 'bar'
-    const typeAll = 'stackedBar'
+    const typeChart = 'bar';
+    const total = '*';
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
         listLabels.push(moment(labels[i],'MMMM').format('MMM'))
     }
+    // Generating the series dynamically using a loop
+    const series = dataSeries.map(dataItem => ({
+        name: dataItem.label,
+        data: dataItem.data
+    }));
 
     return {
         name: 'Cash Flow Movement (YTD Jun-24; in IDR Bn)',
-        type: typeAll,
-        chartData: setChartStackedBarData(listLabels, data1, data2, data3, data4, label1, label2, label3, label4, type),
-        chartOptions: setChartStackedBarOptions(),
-    }
+        type: typeChart,
+        chartOptions: stackedChartOptionsApex(total, listLabels),
+        series: series,
+    };
 }
 
 export const cfiPayment = async() => {
 
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const data1 = [0, 0, 0, 0, 0, 0, 0, 47.97, 0, 0, 0, 0]
-    const data2 = [0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0]
-    const data3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81.9]
-    
-    const label1 = 'Kontraktor EPC PMG II by ETI'
-    const label2 = 'Pekerjaan Bangunan Perusahaan'
-    const label3 = 'Licensor Biodiesel by Desment Technology'
-    
-    const type = 'bar'
-    const typeAll = 'stackedBar'
+    const dataSeries = [
+        { label: 'Kontraktor EPC PMG II by ETI', data: [0, 0, 0, 0, 0, 0, 0, 47.97, 0, 0, 0, 0] },
+        { label: 'Pekerjaan Bangunan Perusahaan', data: [0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0] },
+        { label: 'Licensor Biodiesel by Desment Technology', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81.9] }
+    ];
+
+    const typeChart = 'bar'
+    const total = '*'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
         listLabels.push(moment(labels[i],'MMMM').format('MMM'))
     }
 
+    const series = dataSeries.map(dataItem => ({
+        name: dataItem.label,
+        data: dataItem.data
+    }));
+
     return {
         name: 'Cash Flow Movement (YTD Jun-24; in IDR Bn)',
-        type: typeAll,
-        chartData: setChartStackedBarData3(listLabels, data1, data2, data3, label1, label2, label3, type),
-        chartOptions: setChartStackedBarOptions(),
+        type: typeChart,
+        chartOptions: stackedChartOptionsApex(total, listLabels),
+        series: series,
     }
 }

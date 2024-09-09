@@ -80,103 +80,17 @@ export const setPieChartOptions = () => {
     };
 };
 
-export const setBasicBarChartData = (data, labels, label, type) => {
-    return {
-        labels: labels,
-        datasets: [
-            {   
-                type: type,
-                label: label,
-                data: data,
-                backgroundColor: ['rgba(6, 182, 212, 0.2)'],
-                borderColor: ['rgb(6, 182, 212)'],
-                borderWidth: 2,
-                fill: false,
-                tension: 0.4,
-                yAxisID: 'y',
-            }
-        ]
-    };
-};
-
-export const setBasicBarChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-    return {
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            },
-            datalabels: {
-                display: false // Disable data labels for line charts
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    color: textColorSecondary,
-                },
-                grid: {
-                    color: surfaceBorder
-                },
-            }
-        }
-    };
-}
-
-export const setChartOptionsCpoKpbn = (labels) => {
+export const barChartOptionsApex = (labels, color, strokeColor, dataLabelStat, total) => {
     return {
         chart: {
-            id: 'cpoKPBNChartMonth',
             toolbar: {
                 show: true
             }
         },
-        xaxis: {
-            categories: labels
-        },
-        // title: {
-        //     text: 'CPO KPBN'
-        // },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    position: 'top'
-                }
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        colors: ['rgba(249, 115, 22, 0.2)'],
-        stroke: { 
-            show: true,
-            width: 1,
-            colors: ['rgb(249, 115, 22)'],
-        }
-    };
-}
-
-export const barChartOptionsApex = (labels) => {
-    return {
-        chart: {
-            id: 'cpoKPBNChartMonth',
-            toolbar: {
-                show: true
+        title: {
+            text: total,
+            style: {
+              fontSize: '12px',
             }
         },
         xaxis: {
@@ -190,20 +104,190 @@ export const barChartOptionsApex = (labels) => {
             }
         },
         dataLabels: {
-            enabled: true, // enables labels
+            enabled: dataLabelStat, // enables labels
             style: {
                 colors: ['#000'], // sets label text color to black
             },
-            offsetY: -20, // moves the label above the bar
+            offsetY: -10, // moves the label above the bar
         },
-        colors: ['rgba(249, 115, 22, 0.2)'],
+        colors: color,
         stroke: { 
             show: true,
             width: 1,
-            colors: ['rgb(249, 115, 22)'],
+            colors: strokeColor,
         }
     };
 }
+
+export const comboChartOptionsApex = (total, label1, label2, listLabels, colors, scale1, scale2) => {
+    return {
+        chart: {
+          height: 350,
+          type: 'line',
+        },
+        stroke: {
+          width: [2, 4],
+          curve: 'smooth'
+        },
+        title: {
+          text: total,
+          style: {
+            fontSize: '12px',
+          }
+        },
+        colors: colors,
+        dataLabels: {
+            enabled: false,
+            enabledOnSeries: [0],
+            style: {
+              fontSize: '10px',
+              colors: ['#000']
+            },
+            background: {
+              enabled: false,
+            },
+            formatter: function (val) {
+                if (val >= 1000) {
+                    return (val / 1000).toFixed(1) + 'K';
+                }
+                return val.toFixed(2);
+            }
+        },
+        plotOptions: {
+            dataLabels: {
+                offsetY: 10,
+            },
+            bar: {
+                colors: {
+                    ranges: [
+                        {
+                            from: -Infinity,
+                            to: 0,
+                            color: 'rgb(255, 0, 0)'
+                        }
+                    ]
+                },
+            }
+        },
+        labels: listLabels,
+        yaxis: [{
+            title: {
+              text: label2,
+            },
+            labels: {
+              formatter: function (val) {
+                if (scale2 === 'percent') {
+                  if (val >= 1000) {
+                    return ((val / 1000).toFixed(1)) + 'K%';
+                  }
+                  return val.toFixed(2) + '%';
+                } else {
+                  if (val >= 1000) {
+                    return (val / 1000).toFixed(1) + 'K';
+                  }
+                  return val.toFixed(2);
+                }
+              }
+            }
+        }, 
+        {
+            opposite: true,
+            title: {
+              text: label1
+            },
+            labels: {
+              formatter: function (val) {
+                if (scale1 === 'percent') {
+                  if (val >= 1000) {
+                    return ((val / 1000).toFixed(1)) + 'K%';
+                  }
+                  return val.toFixed(2) + '%';
+                } else {
+                  if (val >= 1000) {
+                    return (val / 1000).toFixed(1) + 'K';
+                  }
+                  return val;
+                }
+              }
+            }
+        }]
+    }
+}
+
+export const stackedChartOptionsApex = (total, listLabels) => {
+    return {
+        chart: {
+          type: 'bar',
+          height: 300,
+          stacked: true,
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            dataLabels: {
+              enabled: true,
+              total: {
+                enabled: true,
+                offsetX: 0,
+                style: {
+                  fontSize: '10px',
+                  fontWeight: 900
+                },
+                formatter: function(val) {
+                    return parseFloat(val).toFixed(2);
+                }
+              }
+            }
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          style: {
+            fontSize: '10px', // Reduce the font size inside the bars
+            fontWeight: 'bold',
+            colors: ['#fff'], // Optional: You can set a color if needed
+          }
+        },
+        stroke: {
+          width: 1,
+          colors: ['#fff']
+        },
+        title: {
+          text: total
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return val;
+            }
+          }
+        },
+        xaxis: {
+          categories: listLabels,
+          title: {
+            text: undefined
+          },
+        },
+        tooltip: {
+          x: {
+            formatter: function (val) {
+              return val + "K";
+            }
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'left',
+          offsetX: 40
+        }
+    };  
+}
+
+
+
 
 export const setChartDataCombo = (labels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2) => {
     const backgroundColor2Dynamic = data2.map(value => value < 0 ? 'rgba(250, 119, 5, 0.5)' : backgroundColor2);

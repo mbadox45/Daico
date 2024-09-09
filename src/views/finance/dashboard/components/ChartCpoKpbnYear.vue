@@ -2,7 +2,7 @@
     import { ref, defineProps, watch, onMounted } from 'vue';
     import moment from "moment";
     import { cpoKpbYear } from '@/controller/dashboard/DashboardController2.js';
-    import { setChartOptionsCpoKpbn } from "@/controller/dummy/func_dummy.js";
+    import { barChartOptionsApex } from "@/controller/dummy/func_dummy.js";
     import ApexCharts from 'vue3-apexcharts';
     import { formatCurrency } from "@/controller/dummy/func_dummy.js";
 
@@ -60,7 +60,6 @@
                         }
                     }
                 },
-                id: 'cpoKPBNChart',
                 toolbar: {
                     show: true // menu button
                 }
@@ -83,9 +82,9 @@
                 style: {
                     colors: ['#000'], // sets label text color to black
                 },
-                offsetY: -20, // moves the label above the bar
+                offsetY: -10, // moves the label above the bar
             },
-            colors:['rgba(249, 115, 22, 0.2)'],
+            colors:['rgba(249, 115, 22, 0.6)'],
             stroke: {   // border
                 show: true,
                 width: 1,
@@ -95,6 +94,7 @@
         chartSeries.value = [
             {
                 name: 'AVG',
+                type: 'bar',
                 data: dataChart
             }
         ];
@@ -102,11 +102,14 @@
     };
 
     const handleChartClick = async (data) => {
-        showDialog.value = true;
-        const response = data.records;
-        const labels = [];
-        const dataChart = [];
-        const label = 'CPO KPBN';
+        showDialog.value = true
+        const response = data.records
+        const labels = []
+        const dataChart = []
+        const label = 'CPO KPBN'
+        const color = ['rgba(255, 145, 0, 0.6)']
+        const strokeColor = ['rgb(249, 115, 22)']
+        const dataLabelStat = false
 
         for (let i = 0; i < response.length; i++) {
             labels.push(moment(response[i].tanggal).format('DD'));
@@ -114,11 +117,12 @@
         }
 
         monthName.value = data.name;
-        optionView.value = setChartOptionsCpoKpbn(labels);
+        optionView.value = barChartOptionsApex(labels,color,strokeColor,dataLabelStat);
         dataView.value = {
             series: [
                 {
                     name: label,
+                    type: 'bar',
                     data: dataChart
                 }
             ]
@@ -138,7 +142,7 @@
                 <ProgressBar v-if="loadingData" mode="indeterminate" style="height: 6px"></ProgressBar>
                 <div v-else class="flex flex-column justify-content-between gap-3">
                     <ApexCharts
-                        type="bar"
+                        type="line"
                         :options="chartOptions"
                         :series="chartSeries"
                         class="w-full"
@@ -149,7 +153,7 @@
         </div>
         <Dialog v-model:visible="showDialog" modal :header="`Detailed Records for ${monthName}`" :style="{ width: '80rem' }">
             <ApexCharts
-                type="bar"
+                type="line"
                 :options="optionView"
                 :series="dataView.series"
                 class="w-full"

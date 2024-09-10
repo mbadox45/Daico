@@ -215,78 +215,108 @@ export const comboChartOptionsApex = (total, label1, label2, listLabels, colors,
     }
 }
 
-export const stackedChartOptionsApex = (total, listLabels) => {
-    return {
-        chart: {
+export const stackedChartOptionsApex = (total, listLabels, scale1) => {
+  return {
+      chart: {
           type: 'bar',
           height: 350,
           stacked: true,
           toolbar: {
-            show: true
+              show: true
           },
           zoom: {
-            enabled: true
+              enabled: true
           }
-        },
-        responsive: [{
+      },
+      responsive: [{
           breakpoint: 480,
           options: {
-            legend: {
-              position: 'bottom',
-              offsetX: -10,
-              offsetY: 0
-            }
-          }
-        }],
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            borderRadius: 10,
-            borderRadiusApplication: 'end', // 'around', 'end'
-            borderRadiusWhenStacked: 'last', // 'all', 'last'
-            dataLabels: {
-              total: {
-                enabled: true,
-                style: {
-                  fontSize: '10px',
-                  fontWeight: 300
-                },
-                formatter: function(val) {
-                    return parseFloat(val).toFixed(2);
-                }
+              legend: {
+                  position: 'bottom',
+                  offsetX: -10,
+                  offsetY: 0
               }
-            }
+          }
+      }],
+      plotOptions: {
+          bar: {
+              horizontal: false,
+              borderRadius: 10,
+              borderRadiusApplication: 'end', // 'around', 'end'
+              borderRadiusWhenStacked: 'last', // 'all', 'last'
+              dataLabels: {
+                  total: {
+                      enabled: true,
+                      style: {
+                          fontSize: '10px',
+                          fontWeight: 300
+                      },
+                      formatter: function(val) {
+                          return parseFloat(val).toFixed(2);
+                      }
+                  }
+              }
           },
-        },
-        title: {
-            text: total,
-            style: {
+      },
+      title: {
+          text: total,
+          style: {
               fontSize: '12px',
-            }
-        },
-        labels: listLabels,
-        dataLabels: {
-            enabled: true,
-            style: {
+          }
+      },
+      labels: listLabels,
+      dataLabels: {
+          enabled: true,
+          style: {
               fontSize: '8px', // Reduced font size for data labels inside the bar
               fontWeight: 'bold',
               colors: ['#fff'], // You can change the color if needed
-            },
-            formatter: function(val) {
-                return parseFloat(val).toFixed(2);
-            }
-        },
-        xaxis: {
-        //   categories: listLabels,
+          },
+          formatter: function(val) {
+              return parseFloat(val).toFixed(2);
+          }
+      },
+      xaxis: {
           tickPlacement: 'on',
-        },
-        legend: {
-            position: 'bottom',
-            // horizontalAlign: 'left',
-            offsetX: 40
-        },
-        fill: {
+          labels: {
+              formatter: function (val) {
+                  if (scale1 === 'percent') {
+                      if (val >= 1000) {
+                          return ((val / 1000).toFixed(1)) + 'K%';
+                      }
+                      return val.toFixed(2) + '%';
+                  } else {
+                      if (val >= 1000) {
+                          return (val / 1000).toFixed(1) + 'K';
+                      }
+                      return val;
+                  }
+              }
+          }
+      },
+      yaxis: {
+          labels: {
+              formatter: function (val) {
+                  if (scale1 === 'percent') {
+                      if (val >= 1000) {
+                          return ((val / 1000).toFixed(1)) + 'K%';
+                      }
+                      return val.toFixed(2) + '%';
+                  } else {
+                      if (val >= 1000) {
+                          return (val / 1000).toFixed(1) + 'K';
+                      }
+                      return val;
+                  }
+              }
+          }
+      },
+      legend: {
+          position: 'bottom',
+          offsetX: 40
+      },
+      fill: {
           opacity: 1
-        }
-    };  
+      }
+  };  
 }

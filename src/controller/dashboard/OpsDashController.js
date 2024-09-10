@@ -1,4 +1,4 @@
-import { comboChartOptionsApex, columMarkerChartOptionsApex, stackedChartOptionsApex} from "@/controller/dummy/func_dummy.js";
+import { comboChartOptionsApex, stackedChartOptionsApex} from "@/controller/dummy/func_dummy.js";
 import moment from "moment";
 
 export const utilVolumeCPO = async() => {

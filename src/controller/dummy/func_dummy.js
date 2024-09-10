@@ -243,9 +243,9 @@ export const stackedChartOptionsApex = (total, listLabels) => {
         dataLabels: {
           enabled: true,
           style: {
-            fontSize: '10px', // Reduce the font size inside the bars
+            fontSize: '10px',
             fontWeight: 'bold',
-            colors: ['#fff'], // Optional: You can set a color if needed
+            colors: ['#fff'],
           }
         },
         stroke: {

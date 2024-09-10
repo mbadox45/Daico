@@ -49,6 +49,8 @@ export const cpoSOurcing = async () => {
     const label1 = 'Actual';
     const label2 = 'Remaining';
     const typeChart = 'bar';
+    const total = '*'
+
 
     // Calculate the remaining target for each point
     const remaining = data2.map((target, index) => Math.max(target - data1[index], 0));
@@ -57,7 +59,7 @@ export const cpoSOurcing = async () => {
         name: 'CPO Sourcing Schedule (in Tons)',
         total: 'by Week',
         type: typeChart,
-        chartOptions: stackedChartOptionsApex(label1, label2),
+        chartOptions: stackedChartOptionsApex(total, labels),
         series: [
             {
                 name: label1,

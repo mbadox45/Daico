@@ -36,6 +36,22 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/viewer/ops-dashboard',
+                    name: 'viewer - ops dashboard',
+                    component: () => import('@/views/finance/accounting/ops/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/viewer/transform-dashboard',
+                    name: 'viewer - transform dashboard',
+                    component: () => import('@/views/finance/accounting/transform/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
                     path: '/viewer/cash',
                     name: 'viewer - cash',
                     component: () => import('@/views/finance/accounting/cash/Index.vue'),
@@ -173,6 +189,26 @@ const router = createRouter({
                     path: '/financial-dashboard',
                     name: 'financial dashboard',
                     component: () => import('@/views/finance/accounting/finansial/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/ops-dashboard',
+                    name: 'ops dashboard',
+                    component: () => import('@/views/finance/accounting/ops/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/transform-dashboard',
+                    name: 'transform dashboard',
+                    component: () => import('@/views/finance/accounting/transform/Index.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

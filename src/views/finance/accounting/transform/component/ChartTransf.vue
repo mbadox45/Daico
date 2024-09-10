@@ -1,6 +1,6 @@
 <script setup>
 import { ref, defineProps, watch, onMounted } from 'vue';
-import {revenueYtd, grossProfit, ebitda, netProfit, cashBalance, cffPayment, cashFlow, cfiPayment} from '@/controller/dashboard/FinancialDashController.js';
+import {revenueYtd, grossProfit, ebitda, netProfit, cashBalance, cffPayment, cashFlow, cfiPayment} from '@/controller/dashboard/TransDashController.js';
 // import { Chart, registerables } from 'chart.js';
 import ApexCharts from 'vue3-apexcharts'
 
@@ -18,14 +18,14 @@ const loadProduct = async () => {
     const listAll = []
 
     listAll.push(
-        await revenueYtd(), 
-        await grossProfit(), 
-        await ebitda(),
-        await netProfit(),
-        await cashBalance(),
-        await cashFlow(),
-        await cfiPayment(),
-        await cffPayment(),
+        // await revenueYtd(), 
+        // await grossProfit(), 
+        // await ebitda(),
+        // await netProfit(),
+        // await cashBalance(),
+        // await cashFlow(),
+        // await cfiPayment(),
+        // await cffPayment(),
     )
 
     console.log(listAll)

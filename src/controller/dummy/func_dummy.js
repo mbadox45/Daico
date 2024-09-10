@@ -94,7 +94,8 @@ export const barChartOptionsApex = (labels, color, strokeColor, dataLabelStat, t
             }
         },
         xaxis: {
-            categories: labels
+            categories: labels,
+            tickPlacement: 'on',
         },
         plotOptions: {
             bar: {
@@ -108,7 +109,7 @@ export const barChartOptionsApex = (labels, color, strokeColor, dataLabelStat, t
             style: {
                 colors: ['#000'], // sets label text color to black
             },
-            offsetY: -10, // moves the label above the bar
+            offsetY: -20, // moves the label above the bar
         },
         colors: color,
         stroke: { 
@@ -218,20 +219,37 @@ export const stackedChartOptionsApex = (total, listLabels) => {
     return {
         chart: {
           type: 'bar',
-          height: 300,
+          height: 350,
           stacked: true,
+          toolbar: {
+            show: true
+          },
+          zoom: {
+            enabled: true
+          }
         },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: 'bottom',
+              offsetX: -10,
+              offsetY: 0
+            }
+          }
+        }],
         plotOptions: {
           bar: {
             horizontal: false,
+            borderRadius: 10,
+            borderRadiusApplication: 'end', // 'around', 'end'
+            borderRadiusWhenStacked: 'last', // 'all', 'last'
             dataLabels: {
-              enabled: true,
               total: {
                 enabled: true,
-                offsetX: 0,
                 style: {
                   fontSize: '10px',
-                  fontWeight: 900
+                  fontWeight: 300
                 },
                 formatter: function(val) {
                     return parseFloat(val).toFixed(2);
@@ -240,240 +258,35 @@ export const stackedChartOptionsApex = (total, listLabels) => {
             }
           },
         },
-        dataLabels: {
-          enabled: true,
-          style: {
-            fontSize: '10px',
-            fontWeight: 'bold',
-            colors: ['#fff'],
-          }
-        },
-        stroke: {
-          width: 1,
-          colors: ['#fff']
-        },
         title: {
-          text: total
-        },
-        yaxis: {
-          labels: {
-            formatter: function (val) {
-              return val;
+            text: total,
+            style: {
+              fontSize: '12px',
             }
-          }
+        },
+        labels: listLabels,
+        dataLabels: {
+            enabled: true,
+            style: {
+              fontSize: '8px', // Reduced font size for data labels inside the bar
+              fontWeight: 'bold',
+              colors: ['#fff'], // You can change the color if needed
+            },
+            formatter: function(val) {
+                return parseFloat(val).toFixed(2);
+            }
         },
         xaxis: {
-          categories: listLabels,
-          title: {
-            text: undefined
-          },
+        //   categories: listLabels,
+          tickPlacement: 'on',
         },
-        tooltip: {
-          x: {
-            formatter: function (val) {
-              return val + "K";
-            }
-          }
+        legend: {
+            position: 'bottom',
+            // horizontalAlign: 'left',
+            offsetX: 40
         },
         fill: {
           opacity: 1
-        },
-        legend: {
-          position: 'top',
-          horizontalAlign: 'left',
-          offsetX: 40
         }
     };  
 }
-
-
-
-
-export const setChartDataCombo = (labels, data1, data2, label1, label2, backgroundColor1, borderColor1, backgroundColor2, borderColor2, type1, type2) => {
-    const backgroundColor2Dynamic = data2.map(value => value < 0 ? 'rgba(250, 119, 5, 0.5)' : backgroundColor2);
-    const borderColor2Dynamic = data2.map(value => value < 0 ? 'rgba(255, 0, 0, 1)' : borderColor2);
-
-    return {
-        labels: labels,
-        datasets: [
-            {
-                type: type1,
-                label: label1,
-                backgroundColor: backgroundColor1,
-                borderColor: borderColor1,
-                borderWidth: 2,
-                fill: false,
-                tension: 0.4,
-                yAxisID: 'y',
-                data: data1
-            },
-            {
-                type: type2,
-                label: label2,
-                backgroundColor: backgroundColor2Dynamic,
-                borderColor: borderColor2Dynamic,
-                borderWidth: 2,
-                yAxisID: 'y1',
-                data: data2
-            }
-        ]
-    };
-};
-export const setChartOptionsCombo = (options1, options2) => {
-    return {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true,
-                position: 'left', 
-                ticks: {
-                    callback: function(value) {
-                        if (value >= 1000) {
-                            return (value / 1000) + 'k';
-                        }
-                        return value;
-                    }
-                },
-                ticks: {
-                    callback: function(value) {
-                        if (options1 === 'percent') {
-                            return value + '%';
-                        } else if (value >= 1000) {
-                            return (value / 1000) + 'k';
-                        }
-                        return value;
-                    }
-                }
-            },
-            y1: {
-                beginAtZero: true,
-                position: 'right',
-                grid: {
-                    drawOnChartArea: false,
-                },
-                ticks: {
-                    callback: function(value) {
-                        if (options2 === 'percent') {
-                            return value + '%';
-                        }
-                        return value;
-                    }
-                }
-            },
-        },
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-            },
-            tooltip: {
-                mode: 'index',
-                intersect: false
-            }
-        },
-        interaction: {
-            mode: 'index',
-            intersect: false
-        }
-    };
-};
-
-export const setChartStackedBarData = (labels, data1, data2, data3, data4, label1, label2, label3, label4, type) =>  {
-    return {
-        labels: labels,
-        datasets: [
-            {
-                type: type,
-                label: label1,
-                backgroundColor: 'rgba(6, 182, 212, 1)',
-                data: data1
-            },
-            {
-                type: type,
-                label: label2,
-                backgroundColor: 'rgba(107, 114, 128, 1)',
-                data: data2
-            },
-            {
-                type: type,
-                label: label3,
-                backgroundColor: 'rgba(249, 115, 22, 1)',
-                data: data3
-            },
-            {
-                type: type,
-                label: label4,
-                backgroundColor: 'rgba(236, 72, 153, 1)',
-                data: data4
-            }
-        ]
-        
-    };
-};
-
-export const setChartStackedBarData3 = (labels, data1, data2, data3, label1, label2, label3, type) =>  {
-    return {
-        labels: labels,
-        datasets: [
-            {
-                type: type,
-                label: label1,
-                backgroundColor: 'rgba(6, 182, 212, 1)',
-                data: data1
-            },
-            {
-                type: type,
-                label: label2,
-                backgroundColor: 'rgba(107, 114, 128, 1)',
-                data: data2
-            },
-            {
-                type: type,
-                label: label3,
-                backgroundColor: 'rgba(249, 115, 22, 1)',
-                data: data3
-            }
-        ]
-        
-    };
-};
-
-export const setChartStackedBarOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.8,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            },
-        },
-        scales: {
-            x: {
-                stacked: true,
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                stacked: true,
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
-};

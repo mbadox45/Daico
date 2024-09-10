@@ -6,7 +6,7 @@
     import moment from 'moment';
 
     // Components
-    import ChartPendapatan from '@/views/finance/accounting/finansial/component/ChartPendapatan.vue'
+    import ChartPendapatan from '@/views/finance/accounting/transform/component/ChartTransf.vue'
 
     // API
     // import {loadDashByDate_DashboardController} from '@/controller/dashboard/DashboardController2.js';
@@ -98,7 +98,7 @@
 <template>
     <div class="flex flex-column justify-content-between p-4 gap-5 bg-white border-round shadow-3">
         <div class="flex justify-content-between">
-            <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Financial Dashboard<i class="pi pi-desktop text-2xl ml-3"></i></strong>
+            <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Transformation Dashboard<i class="pi pi-desktop text-2xl ml-3"></i></strong>
             <div class="flex align-items-center gap-3">
                 <Button label="Select by Period" outlined severity="secondary" size="small" class="py-2" @click="opByPeriod"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">

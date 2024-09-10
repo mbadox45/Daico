@@ -169,10 +169,10 @@ export const cashBalance = async() => {
     const label = 'Laba Bersih'
     const type = 'bar'
     const color = ['rgba(6, 130, 212, 0.6)']
-    const strokeColor = ['rgba(6, 130, 212, 1)']
+    const strokeColor = ['rgb(2, 76, 125)']
     const dataLabelStat = true
     const total = 'by Month'
-    // const typeChart = 'bar'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -181,7 +181,7 @@ export const cashBalance = async() => {
 
     return {
         name: 'Cash Balance (YTD Jun-24; in IDR Bn)',
-        type: type,
+        type: typeChart,
         chartOptions: barChartOptionsApex(listLabels, color, strokeColor, dataLabelStat, total),
         series: [
             {
@@ -201,10 +201,10 @@ export const cffPayment = async() => {
     const label = 'Pembayaran Pinjaman Kepada Pihak Berelasi'
     const type = 'bar'
     const color = ['rgba(204, 4, 4, 0.6)']
-    const strokeColor = ['rgba(204, 4, 4, 1']
+    const strokeColor = ['rgb(69, 1, 1)']
     const dataLabelStat = true
     const total = 'by Month'
-    // const typeChart = 'line'
+    const typeChart = 'line'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -214,11 +214,12 @@ export const cffPayment = async() => {
     return {
         name: 'CFF Payment Schedule (in IDR Bn)',
         total: 'by Month',
-        type: type,
+        type: typeChart,
         chartOptions: barChartOptionsApex(listLabels, color, strokeColor, dataLabelStat, total),
         series: [
             {
                 name: label,
+                type: type,
                 data: data
             }
         ],
@@ -266,7 +267,7 @@ export const cfiPayment = async() => {
     ];
 
     const typeChart = 'bar'
-    const total = 'by Month'
+    const total = '*'
 
     const listLabels = []
     for (let i = 0; i < labels.length; i++) {
@@ -279,7 +280,7 @@ export const cfiPayment = async() => {
     }));
 
     return {
-        name: 'CFI Payment Schedule (in IDR Bn)',
+        name: 'Cash Flow Movement (YTD Jun-24; in IDR Bn)',
         type: typeChart,
         chartOptions: stackedChartOptionsApex(total, listLabels),
         series: series,

@@ -255,7 +255,7 @@ export const stackedChartOptionsApex = (total, listLabels) => {
                         if (val >= 1000) {
                           return (parseFloat(val) / 1000).toFixed(2) + 'K';
                         }
-                        return val;
+                        return parseFloat(val).toFixed(2);
                       }
                   }
               }
@@ -279,7 +279,7 @@ export const stackedChartOptionsApex = (total, listLabels) => {
             if (val >= 1000) {
               return (parseFloat(val) / 1000).toFixed(2) + 'K';
             }
-            return val;
+            return parseFloat(val).toFixed(2);
           }
       },
       xaxis: {
@@ -289,7 +289,7 @@ export const stackedChartOptionsApex = (total, listLabels) => {
                 if (val >= 1000) {
                   return (parseFloat(val) / 1000).toFixed(1) + 'K';
                 }
-                return val;
+                return parseFloat(val).toFixed(2);
               }
           }
       },
@@ -299,7 +299,7 @@ export const stackedChartOptionsApex = (total, listLabels) => {
                 if (val >= 1000) {
                   return (parseFloat(val) / 1000).toFixed(1) + 'K';
                 }
-                return val;
+                return parseFloat(val).toFixed(2);
               }
           }
       },

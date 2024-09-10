@@ -215,7 +215,7 @@ export const comboChartOptionsApex = (total, label1, label2, listLabels, colors,
     }
 }
 
-export const stackedChartOptionsApex = (total, listLabels, scale1) => {
+export const stackedChartOptionsApex = (total, listLabels) => {
   return {
       chart: {
           type: 'bar',
@@ -252,7 +252,10 @@ export const stackedChartOptionsApex = (total, listLabels, scale1) => {
                           fontWeight: 300
                       },
                       formatter: function(val) {
-                          return parseFloat(val).toFixed(2);
+                        if (val >= 1000) {
+                          return (parseFloat(val) / 1000).toFixed(2) + 'K';
+                        }
+                        return val;
                       }
                   }
               }
@@ -273,41 +276,30 @@ export const stackedChartOptionsApex = (total, listLabels, scale1) => {
               colors: ['#fff'], // You can change the color if needed
           },
           formatter: function(val) {
-              return parseFloat(val).toFixed(2);
+            if (val >= 1000) {
+              return (parseFloat(val) / 1000).toFixed(2) + 'K';
+            }
+            return val;
           }
       },
       xaxis: {
           tickPlacement: 'on',
           labels: {
               formatter: function (val) {
-                  if (scale1 === 'percent') {
-                      if (val >= 1000) {
-                          return ((val / 1000).toFixed(1)) + 'K%';
-                      }
-                      return val.toFixed(2) + '%';
-                  } else {
-                      if (val >= 1000) {
-                          return (val / 1000).toFixed(1) + 'K';
-                      }
-                      return val;
-                  }
+                if (val >= 1000) {
+                  return (parseFloat(val) / 1000).toFixed(1) + 'K';
+                }
+                return val;
               }
           }
       },
       yaxis: {
           labels: {
               formatter: function (val) {
-                  if (scale1 === 'percent') {
-                      if (val >= 1000) {
-                          return ((val / 1000).toFixed(1)) + 'K%';
-                      }
-                      return val.toFixed(2) + '%';
-                  } else {
-                      if (val >= 1000) {
-                          return (val / 1000).toFixed(1) + 'K';
-                      }
-                      return val;
-                  }
+                if (val >= 1000) {
+                  return (parseFloat(val) / 1000).toFixed(1) + 'K';
+                }
+                return val;
               }
           }
       },

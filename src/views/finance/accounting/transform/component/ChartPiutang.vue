@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineProps, watch, onMounted } from 'vue';
-import {utilVolumeCPO, cpoSOurcing} from '@/controller/dashboard/OpsDashController.js';
+// import {revenueYtd, grossProfit, ebitda, netProfit, cashBalance, cffPayment, cashFlow, cfiPayment} from '@/controller/dashboard/TransDashController.js';
+import {penagihanPiutang} from '@/controller/dashboard/TransDashController.js';
 // import { Chart, registerables } from 'chart.js';
 import ApexCharts from 'vue3-apexcharts'
 
@@ -8,6 +9,8 @@ onMounted(() => {
     loadProduct()
 });
 
+// const chartData = ref();
+// const chartOptions = ref();
 const listChart = ref([]);
 
 const loadProduct = async () => {
@@ -16,8 +19,7 @@ const loadProduct = async () => {
     const listAll = []
 
     listAll.push(
-        await utilVolumeCPO(), 
-        await cpoSOurcing(), 
+        await penagihanPiutang(),
     )
 
     console.log(listAll)
@@ -33,15 +35,15 @@ const loadProduct = async () => {
         <div v-for="(item, index) in listChart" :key="index" :class="index == (listChart.length - 1) && listChart.length % 2 !== 0 ? 'col-12' : 'col-6'">
             <div class="bg-white p-4 border-round border-2 border-gray-300 flex flex-column gap-4 w-full">
                 <div class="flex justify-content-between border-bottom-1 border-gray-300 pb-1">
-                    <span class="font-medium text-xl uppercase">{{ item.name }}</span>
+                    <span class="font-medium text-xl">{{ item.name }}</span>
                     <i class="pi pi-chart-pie text-xl"></i>
                       
                 </div>
                 <div class="flex justify-content-between border-bottom-1 border-gray-300 pb-1">
-                    <span v-if="item.total !== null && item.total !== undefined" class="font-medium text-xs uppercase">
+                    <span v-if="item.total !== null && item.total !== undefined" class="font-medium text-xs">
                         {{ item.total }}
                     </span>
-                    <span v-else class="font-medium text-xs uppercase">
+                    <span v-else class="font-medium text-xs">
                         *
                     </span>
                 </div>

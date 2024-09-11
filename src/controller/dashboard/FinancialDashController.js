@@ -251,7 +251,7 @@ export const cashFlow = async() => {
     return {
         name: 'Cash Flow Movement (YTD Jun-24; in IDR Bn)',
         type: typeChart,
-        chartOptions: stackedChartOptionsApex(total, listLabels),
+        chartOptions: stackedChartOptionsApex(total, listLabels, null, null),
         series: series,
     };
 }
@@ -281,7 +281,7 @@ export const cfiPayment = async() => {
     return {
         name: 'CFI Payment Schedule (in IDR Bn)',
         type: typeChart,
-        chartOptions: stackedChartOptionsApex(total, listLabels),
+        chartOptions: stackedChartOptionsApex(total, listLabels, null, null),
         series: series,
     }
 }

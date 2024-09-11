@@ -44,9 +44,25 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/viewer/transform-dashboard',
-                    name: 'viewer - transform dashboard',
+                    path: '/viewer/cash-release',
+                    name: 'viewer - cash release',
                     component: () => import('@/views/finance/accounting/transform/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/viewer/commercial-excellence',
+                    name: 'viewer - commercial excellence',
+                    component: () => import('@/views/finance/accounting/transform/Index2.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
+                {
+                    path: '/viewer/ops-sc-excellence',
+                    name: 'viewer - ops sc excellence',
+                    component: () => import('@/views/finance/accounting/transform/Index3.vue'),
                     meta:{
                         guestOnly:true,
                     }
@@ -206,9 +222,29 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/transform-dashboard',
-                    name: 'transform dashboard',
+                    path: '/cash-release',
+                    name: 'cash release',
                     component: () => import('@/views/finance/accounting/transform/Index.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/commercial-excellence',
+                    name: 'commercial excellence',
+                    component: () => import('@/views/finance/accounting/transform/Index2.vue'),
+                    meta:{
+                        requiresAuth: true,
+                        akunting:true,
+                        view:true,
+                    }
+                },
+                {
+                    path: '/ops-sc-excellence',
+                    name: 'ops sc excellence',
+                    component: () => import('@/views/finance/accounting/transform/Index3.vue'),
                     meta:{
                         requiresAuth: true,
                         akunting:true,

@@ -69,6 +69,7 @@ const loadProduct = async () => {
                                 :options="item.chartOptions" 
                                 class="w-full"
                                 height="380"
+                                style="z-index: 1 !important;"
                             />
                         </div>
                     </div>

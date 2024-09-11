@@ -59,7 +59,7 @@ export const cpoSOurcing = async () => {
         name: 'CPO Sourcing Schedule (in Tons)',
         total: 'by Week',
         type: typeChart,
-        chartOptions: stackedChartOptionsApex(total, labels),
+        chartOptions: stackedChartOptionsApex(total, labels, null, null),
         series: [
             {
                 name: label1,

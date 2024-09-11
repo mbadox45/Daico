@@ -4,9 +4,13 @@ export const akuntansi = [
     { label: 'Dashboard', items: [
         { label: 'Main Dashboard', icon: 'pi pi-fw pi-desktop', to: `${cek_token != null ? '/' : '/dashboard'}` },
         { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
-        { label: '(BETA) Financial Dashboard', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` },
-        { label: '(BETA) Ops Dashboard', icon: 'pi pi-fw pi-cog', to: `${cek_token != null ? '' : '/viewer'}/ops-dashboard` },
-        { label: '(BETA) Transform Dashboard', icon: 'pi pi-fw pi-sync', to: `${cek_token != null ? '' : '/viewer'}/transform-dashboard` }
+        { label: '(BETA) Financial', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` },
+        { label: '(BETA) Ops', icon: 'pi pi-fw pi-cog', to: `${cek_token != null ? '' : '/viewer'}/ops-dashboard` },
+        { label: '(BETA) Transform', icon: 'pi pi-fw pi-sync', items:[
+            { label: 'Cash Release', icon: 'pi pi-fw pi-money-bill', to: `${cek_token != null ? '' : '/viewer'}/cash-release` },
+            { label: 'Commercial Excellence', icon: 'pi pi-fw pi-chart-bar', to: `${cek_token != null ? '' : '/viewer'}/commercial-excellence` },
+            { label: 'Ops & SC Excellence', icon: 'pi pi-fw pi-truck', to: `${cek_token != null ? '' : '/viewer'}/ops-sc-excellence` },
+        ]}
     ] },
     {
         label: 'Management',
@@ -74,15 +78,19 @@ export const akuntansi = [
         ]
     },
 ]
-
+// to: `${cek_token != null ? '' : '/viewer'}/cash-release`
 
 export const akuntansi2 = [
     { label: 'Dashboard', items: [
         { label: 'Main Dashboard', icon: 'pi pi-fw pi-desktop', to: `${cek_token != null ? '/' : '/dashboard'}` },
         { label: 'Costing HPP', icon: 'pi pi-fw pi-th-large', to: `${cek_token != null ? '' : '/viewer'}/costing-hpp` },
-        { label: '(BETA) Financial Dashboard', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` },
-        { label: '(BETA) Ops Dashboard', icon: 'pi pi-fw pi-cog', to: `${cek_token != null ? '' : '/viewer'}/ops-dashboard` },
-        { label: '(BETA) Transform Dashboard', icon: 'pi pi-fw pi-sync', to: `${cek_token != null ? '' : '/viewer'}/transform-dashboard` }
+        { label: '(BETA) Financial', icon: 'pi pi-fw pi-wallet', to: `${cek_token != null ? '' : '/viewer'}/financial-dashboard` },
+        { label: '(BETA) Ops', icon: 'pi pi-fw pi-cog', to: `${cek_token != null ? '' : '/viewer'}/ops-dashboard` },
+        { label: '(BETA) Transform', icon: 'pi pi-fw pi-sync', items:[
+            { label: 'Cash Release', icon: 'pi pi-fw pi-money-bill', to: `${cek_token != null ? '' : '/viewer'}/cash-release` },
+            { label: 'Commercial Excellence', icon: 'pi pi-fw pi-chart-bar', to: `${cek_token != null ? '' : '/viewer'}/commercial-excellence` },
+            { label: 'Ops & SC Excellence', icon: 'pi pi-fw pi-truck', to: `${cek_token != null ? '' : '/viewer'}/ops-sc-excellence` },
+        ]}
     ] },
     {
         label: 'Management',

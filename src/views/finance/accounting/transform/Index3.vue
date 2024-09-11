@@ -6,8 +6,7 @@
     import moment from 'moment';
 
     // Components
-    import ChartInventory from '@/views/finance/accounting/transform/component/ChartInventory.vue'
-    import ChartPiutang from '@/views/finance/accounting/transform/component/ChartPiutang.vue'
+    import ChartEfisiensi from '@/views/finance/accounting/transform/component/ChartEfisiensi.vue'
 
     // API
     // import {loadDashByDate_DashboardController} from '@/controller/dashboard/DashboardController2.js';
@@ -99,7 +98,7 @@
 <template>
     <div class="flex flex-column justify-content-between p-4 gap-5 bg-white border-round shadow-3">
         <div class="flex justify-content-between">
-            <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Cash Release<i class="pi pi-desktop text-2xl ml-3"></i></strong>
+            <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Commercial Excellence<i class="pi pi-desktop text-2xl ml-3"></i></strong>
             <div class="flex align-items-center gap-3">
                 <Button label="Select by Period" outlined severity="secondary" size="small" class="py-2" @click="opByPeriod"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">
@@ -124,21 +123,20 @@
             <div class="flex flex-column justify-content-center align-items-center mt-3">
                 <!-- Piutang Label -->
                 <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
-                    <span class="font-medium text-md text-700 uppercase">Piutang</span>
+                    <span class="font-medium text-md text-700 uppercase">Sourcing</span>
                 </div>
 
                 <div class="w-full mt-3">
-                    <chart-piutang :chart="load_data"/>
                 </div>
 
                 <!-- Inventory Label -->
                 <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
-                    <span class="font-medium text-md text-700 uppercase">Inventory</span>
+                    <span class="font-medium text-md text-700 uppercase">Efisiensi Biaya</span>
                 </div>
 
                  <!-- Chart Section -->
                 <div class="w-full mt-3">
-                    <chart-inventory :chart="load_data"/>
+                    <chart-efisiensi :chart="load_data"/>
                 </div>
                 
             </div>

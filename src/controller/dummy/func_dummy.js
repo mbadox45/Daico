@@ -215,76 +215,213 @@ export const comboChartOptionsApex = (total, label1, label2, listLabels, colors,
     }
 }
 
-export const stackedChartOptionsApex = (total, listLabels) => {
-    return {
-        chart: {
-          type: 'bar',
-          height: 350,
-          stacked: true,
-          toolbar: {
-            show: true
-          },
-          zoom: {
-            enabled: true
-          }
-        },
-        responsive: [{
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: 'bottom',
-              offsetX: -10,
-              offsetY: 0
+export const barStackedChartOptionsApex = (total, labels) =>{
+  return {
+    chart: {
+      type: 'bar',
+      height: 350,
+      stacked: true,
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        dataLabels: {
+          total: {
+            enabled: true,
+            offsetX: 0,
+            style: {
+              fontSize: '13px',
+              fontWeight: 600
             }
           }
-        }],
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            borderRadius: 10,
-            borderRadiusApplication: 'end', // 'around', 'end'
-            borderRadiusWhenStacked: 'last', // 'all', 'last'
-            dataLabels: {
-              total: {
-                enabled: true,
-                style: {
-                  fontSize: '10px',
-                  fontWeight: 300
-                },
-                formatter: function(val) {
-                    return parseFloat(val).toFixed(2);
-                }
+        }
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: '10px', // Reduced font size for data labels inside the bar
+        fontWeight: 'bold',
+        colors: ['#fff'], // You can change the color if needed
+      },
+      formatter: function(val) {
+          return parseFloat(val).toFixed(2);
+      }
+  },
+    stroke: {
+      width: 1,
+      colors: ['#fff']
+    },
+    title: {
+      text: total
+    },
+    xaxis: {
+      categories: labels,
+      labels: {
+        formatter: function (val) {
+          return val + "K"
+        }
+      }
+    },
+    yaxis: {
+      title: {
+        text: undefined
+      },
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return val + "K"
+        }
+      }
+    },
+    fill: {
+      opacity: 1
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'left',
+      offsetX: 40
+    }
+  }
+}
+
+export const stackedChartOptionsApex = (total, listLabels, toolbar) => {
+  return {
+      chart: {
+        type: 'bar',
+        height: 350,
+        stacked: true,
+        toolbar: {
+          show: toolbar !== null ? toolbar : true
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: 'bottom',
+            offsetX: -10,
+            offsetY: 0
+          }
+        }
+      }],
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          borderRadius: 10,
+          borderRadiusApplication: 'end',
+          borderRadiusWhenStacked: 'last',
+          // columnWidth: columnWidth !== null ? columnWidth : '80%', // Adjust this value to reduce/increase bar width
+          dataLabels: {
+            total: {
+              enabled: true,
+              style: {
+                fontSize: '10px',
+                fontWeight: 300
+              },
+              formatter: function(val) {
+                  return parseFloat(val).toFixed(2);
               }
             }
+          }
+        },
+      },
+      title: {
+          text: total,
+          style: {
+            fontSize: '12px',
+          }
+      },
+      labels: listLabels,
+      dataLabels: {
+          enabled: true,
+          style: {
+            fontSize: '8px', // Reduced font size for data labels inside the bar
+            fontWeight: 'bold',
+            colors: ['#fff'], // You can change the color if needed
           },
-        },
-        title: {
-            text: total,
-            style: {
-              fontSize: '12px',
+          formatter: function(val) {
+              return parseFloat(val).toFixed(2);
+          }
+      },
+      xaxis: {
+        tickPlacement: 'on',
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            if (val >= 1000) {
+              return (val / 1000).toFixed(1) + 'K'; // Convert to thousands and append 'K'
             }
-        },
-        labels: listLabels,
-        dataLabels: {
-            enabled: true,
-            style: {
-              fontSize: '8px', // Reduced font size for data labels inside the bar
-              fontWeight: 'bold',
-              colors: ['#fff'], // You can change the color if needed
-            },
-            formatter: function(val) {
-                return parseFloat(val).toFixed(2);
-            }
-        },
-        xaxis: {
-          tickPlacement: 'on',
-        },
-        legend: {
-            position: 'bottom',
-            offsetX: 40
-        },
-        fill: {
-          opacity: 1
+            return val;
+          },
+          style: {
+            fontSize: '10px' // Adjust the font size if needed
+          }
         }
-    };  
+      },
+      legend: {
+        position: 'bottom',
+        horizontalAlign: 'left', // Center the legend horizontally
+        // floating: false, // Set to false to make sure it does not float
+        offsetY: 0 
+      },
+      fill: {
+        opacity: 1
+      }
+  };  
+}
+
+export const distributedColumnChart = (labels, colors) => {
+  return {
+    chart: {
+      height: 350,
+      type: 'bar',
+      events: {
+        click: function(chart, w, e) {
+          // Handle chart click event here if needed
+        }
+      }
+    },
+    colors: colors,
+    plotOptions: {
+      bar: {
+        columnWidth: '45%',
+        distributed: true,
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    legend: {
+      show: false
+    },
+    xaxis: {
+      tickPlacement: 'on',
+      categories: labels,
+      labels: {
+        style: {
+          colors: colors,
+          fontSize: '12px'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: function(val) {
+          if (val >= 1000) {
+            return (val / 1000).toFixed(1) + 'K'; // Convert to thousands and add 'K'
+          }
+          return val; // Return the value as-is if it's below 1000
+        },
+        style: {
+          fontSize: '12px'
+        }
+      }
+    }
+  }
 }

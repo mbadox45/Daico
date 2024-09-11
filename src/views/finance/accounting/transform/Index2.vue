@@ -6,8 +6,8 @@
     import moment from 'moment';
 
     // Components
-    import ChartInventory from '@/views/finance/accounting/transform/component/ChartInventory.vue'
-    import ChartPiutang from '@/views/finance/accounting/transform/component/ChartPiutang.vue'
+    import ChartSalesPerform from '@/views/finance/accounting/transform/component/ChartSalesPerform.vue'
+    // import TableExistingSales from '@/views/finance/accounting/transform/component/TableExistingSales.vue'
 
     // API
     // import {loadDashByDate_DashboardController} from '@/controller/dashboard/DashboardController2.js';
@@ -99,7 +99,7 @@
 <template>
     <div class="flex flex-column justify-content-between p-4 gap-5 bg-white border-round shadow-3">
         <div class="flex justify-content-between">
-            <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Cash Release<i class="pi pi-desktop text-2xl ml-3"></i></strong>
+            <strong class="font-medium text-2xl text-700 flex justify-content-between align-items-center uppercase">Commercial Excellence<i class="pi pi-desktop text-2xl ml-3"></i></strong>
             <div class="flex align-items-center gap-3">
                 <Button label="Select by Period" outlined severity="secondary" size="small" class="py-2" @click="opByPeriod"/>
                 <OverlayPanel ref="op" :style="{ width: '25rem' }">
@@ -118,29 +118,30 @@
                 <span class="font-medium text-sm text-gray-400">{{ moment(tanggal).format('MMMM YYYY') }}</span>
             </div>
         </div>
-        
-            
-            <!-- Inner Content with Inventory and Piutang stacked -->
-            <div class="flex flex-column justify-content-center align-items-center mt-3">
-                <!-- Piutang Label -->
-                <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
-                    <span class="font-medium text-md text-700 uppercase">Piutang</span>
-                </div>
-
-                <div class="w-full mt-3">
-                    <chart-piutang :chart="load_data"/>
-                </div>
-
-                <!-- Inventory Label -->
-                <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
-                    <span class="font-medium text-md text-700 uppercase">Inventory</span>
-                </div>
-
-                 <!-- Chart Section -->
-                <div class="w-full mt-3">
-                    <chart-inventory :chart="load_data"/>
-                </div>
-                
+                   
+        <div class="flex flex-column justify-content-center align-items-center mt-3">
+            <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
+                <span class="font-medium text-md text-700 uppercase">Sales Performance</span>
             </div>
+
+            <div class="w-full mt-3">
+                <chart-sales-perform :chart="load_data"/>
+            </div>
+
+            <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
+                <span class="font-medium text-md text-700 uppercase">Existing Sales</span>
+            </div>
+
+            <div class="w-full mt-3">
+            </div>
+
+            <div class="flex flex-column justify-content-center align-items-center p-3 bg-orange-100 border-round shadow-2 w-full mb-3">
+                <span class="font-medium text-md text-700 uppercase">New Sales</span>
+            </div>
+
+            <div class="w-full mt-3">
+            </div>
+            
         </div>
+    </div>
 </template>

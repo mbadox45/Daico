@@ -18,6 +18,14 @@ const router = createRouter({
                         guestOnly:true,
                     }
                 },
+                {
+                    path: '/viewer/mockup-dashboard',
+                    name: 'mockup-dashboard',
+                    component: () => import('@/views/mockup_dashboard/home/Index.vue'),
+                    meta:{
+                        guestOnly:true,
+                    }
+                },
                 // Accounting ====================================
                 {
                     path: '/viewer/kurs-mandiri',

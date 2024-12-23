@@ -114,10 +114,69 @@ export const barChartOptionsApex = (labels, color, strokeColor, dataLabelStat, t
         colors: color,
         stroke: { 
             show: true,
-            width: 1,
+            width: 3,
             colors: strokeColor,
         }
     };
+}
+
+export const barChartOptionsApex2 = (labels, color, strokeColor, dataLabelStat, total) => {
+  return {
+      chart: {
+          toolbar: {
+              show: true
+          }
+      },
+      title: {
+          text: total,
+          style: {
+            fontSize: '12px',
+          }
+      },
+      xaxis: {
+          categories: labels,
+          tickPlacement: 'on',
+      },
+      yaxis: {
+        labels: {
+          formatter: function(val) {
+            if (val >= 1000 && val < 100000) {
+              return (val.toLocaleString() ); // Convert to thousands and add 'K'
+            } else if (val >= 100000 && val < 1000000) {
+              return (val / 1000).toFixed(2) + ' rb'; // Convert to thousands and add 'K'
+            } if (val >= 1000000) {
+              return (val / 1000000).toFixed(2) + ' jt'; // Convert to thousands and add 'K'
+            } else {
+              return val;
+            }
+            return val; // Return the value as-is if it's below 1000
+          },
+          style: {
+            fontSize: '12px'
+          }
+        }
+      },
+      plotOptions: {
+          bar: {
+              dataLabels: {
+                  position: 'top'
+              }
+          }
+      },
+      dataLabels: {
+          enabled: dataLabelStat, // enables labels
+          style: {
+              colors: ['#000'], // sets label text color to black
+          },
+          offsetY: -20, // moves the label above the bar
+      },
+      colors: color,
+      stroke: { 
+          show: true,
+          width: 3,
+          colors: strokeColor,
+      }
+  };
 }
 
 export const comboChartOptionsApex = (total, label1, label2, listLabels, colors, scale1, scale2) => {
@@ -286,6 +345,104 @@ export const barStackedChartOptionsApex = (total, labels) =>{
   }
 }
 
+export const stackedChartOptionsApexNew = (total, listLabels, toolbar) => {
+  return {
+    chart: {
+      type: 'bar',
+      height: 350,
+      stacked: true,
+      toolbar: {
+        show: toolbar !== null ? toolbar : true
+      },
+      zoom: {
+        enabled: true
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0
+        }
+      }
+    }],
+    // plotOptions: {
+    //   bar: {
+    //     horizontal: false,
+    //     borderRadius: 10,
+    //     borderRadiusApplication: 'end',
+    //     borderRadiusWhenStacked: 'last',
+    //     // columnWidth: columnWidth !== null ? columnWidth : '80%', // Adjust this value to reduce/increase bar width
+    //     dataLabels: {
+    //       total: {
+    //         enabled: true,
+    //         style: {
+    //           fontSize: '10px',
+    //           fontWeight: 300
+    //         },
+    //         formatter: function(val) {
+    //             return parseFloat(val).toFixed(2);
+    //         }
+    //       }
+    //     }
+    //   },
+    // },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        borderRadius: 5,
+        borderRadiusApplication: 'end'
+      },
+    },
+    title: {
+        text: total,
+        style: {
+          fontSize: '12px',
+        }
+    },
+    labels: listLabels,
+    dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '8px', // Reduced font size for data labels inside the bar
+          fontWeight: 'bold',
+          colors: ['#fff'], // You can change the color if needed
+        },
+        formatter: function(val) {
+            return parseFloat(val).toFixed(2);
+        }
+    },
+    xaxis: {
+      tickPlacement: 'on',
+    },
+    yaxis: {
+      labels: {
+        formatter: function(val) {
+          if (val >= 1000) {
+            return (val / 1000).toFixed(1) + 'K'; // Convert to thousands and append 'K'
+          }
+          return val;
+        },
+        style: {
+          fontSize: '10px' // Adjust the font size if needed
+        }
+      }
+    },
+    legend: {
+      position: 'bottom',
+      horizontalAlign: 'left', // Center the legend horizontally
+      // floating: false, // Set to false to make sure it does not float
+      offsetY: 0 
+    },
+    fill: {
+      opacity: 1
+    }
+  };  
+}
+
 export const stackedChartOptionsApex = (total, listLabels, toolbar) => {
   return {
       chart: {
@@ -309,25 +466,33 @@ export const stackedChartOptionsApex = (total, listLabels, toolbar) => {
           }
         }
       }],
+      // plotOptions: {
+      //   bar: {
+      //     horizontal: false,
+      //     borderRadius: 10,
+      //     borderRadiusApplication: 'end',
+      //     borderRadiusWhenStacked: 'last',
+      //     // columnWidth: columnWidth !== null ? columnWidth : '80%', // Adjust this value to reduce/increase bar width
+      //     dataLabels: {
+      //       total: {
+      //         enabled: true,
+      //         style: {
+      //           fontSize: '10px',
+      //           fontWeight: 300
+      //         },
+      //         formatter: function(val) {
+      //             return parseFloat(val).toFixed(2);
+      //         }
+      //       }
+      //     }
+      //   },
+      // },
       plotOptions: {
         bar: {
           horizontal: false,
-          borderRadius: 10,
-          borderRadiusApplication: 'end',
-          borderRadiusWhenStacked: 'last',
-          // columnWidth: columnWidth !== null ? columnWidth : '80%', // Adjust this value to reduce/increase bar width
-          dataLabels: {
-            total: {
-              enabled: true,
-              style: {
-                fontSize: '10px',
-                fontWeight: 300
-              },
-              formatter: function(val) {
-                  return parseFloat(val).toFixed(2);
-              }
-            }
-          }
+          columnWidth: '55%',
+          borderRadius: 5,
+          borderRadiusApplication: 'end'
         },
       },
       title: {
@@ -415,6 +580,62 @@ export const distributedColumnChart = (labels, colors) => {
         formatter: function(val) {
           if (val >= 1000) {
             return (val / 1000).toFixed(1) + 'K'; // Convert to thousands and add 'K'
+          }
+          return val; // Return the value as-is if it's below 1000
+        },
+        style: {
+          fontSize: '12px'
+        }
+      }
+    }
+  }
+}
+
+export const distributedColumnChart2 = (labels, colors) => {
+  return {
+    chart: {
+      height: 350,
+      type: 'bar',
+      events: {
+        click: function(chart, w, e) {
+          // Handle chart click event here if needed
+        }
+      }
+    },
+    colors: colors,
+    plotOptions: {
+      bar: {
+        columnWidth: '45%',
+        distributed: true,
+      }
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    legend: {
+      show: false
+    },
+    xaxis: {
+      tickPlacement: 'on',
+      categories: labels,
+      labels: {
+        style: {
+          colors: colors,
+          fontSize: '12px'
+        }
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: function(val) {
+          if (val >= 1000 && val < 100000) {
+            return (val.toLocaleString() ); // Convert to thousands and add 'K'
+          } else if (val >= 100000 && val < 1000000) {
+            return (val / 1000).toFixed(2) + ' rb'; // Convert to thousands and add 'K'
+          } if (val >= 1000000) {
+            return (val / 1000000).toFixed(2) + ' jt'; // Convert to thousands and add 'K'
+          } else {
+            return val;
           }
           return val; // Return the value as-is if it's below 1000
         },

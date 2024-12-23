@@ -10,6 +10,7 @@ export const akuntansi = [
             { label: 'Cash Release', icon: 'pi pi-fw pi-money-bill', to: `${cek_token != null ? '' : '/viewer'}/cash-release` },
             { label: 'Commercial Excellence', icon: 'pi pi-fw pi-chart-bar', to: `${cek_token != null ? '' : '/viewer'}/commercial-excellence` },
             { label: 'Ops & SC Excellence', icon: 'pi pi-fw pi-truck', to: `${cek_token != null ? '' : '/viewer'}/ops-sc-excellence` },
+            { label: '(BETA) Sales Performance', icon: 'pi pi-fw pi-chart-line', to: `${cek_token != null ? '' : '/viewer'}/mockup-dashboard` },
         ]}
     ] },
     {
@@ -90,6 +91,7 @@ export const akuntansi2 = [
             { label: 'Cash Release', icon: 'pi pi-fw pi-money-bill', to: `${cek_token != null ? '' : '/viewer'}/cash-release` },
             { label: 'Commercial Excellence', icon: 'pi pi-fw pi-chart-bar', to: `${cek_token != null ? '' : '/viewer'}/commercial-excellence` },
             { label: 'Ops & SC Excellence', icon: 'pi pi-fw pi-truck', to: `${cek_token != null ? '' : '/viewer'}/ops-sc-excellence` },
+            { label: '(BETA) Sales Performance', icon: 'pi pi-fw pi-chart-line', to: `${cek_token != null ? '' : '/viewer'}/mockup-dashboard` },
         ]}
     ] },
     {
